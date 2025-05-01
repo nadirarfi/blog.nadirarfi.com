@@ -10,23 +10,9 @@ BRANCH_NAME="main"
 ROLE_NAME="GitHubActionsRole"
 USE_EXISTING="no"
 
-# Arguments
 AWS_PROFILE="arfin-admin"
 GITHUB_ORG="nadirarfi"
 
-# Get GitHub organization (required)
-if [ -z "$1" ]; then
-  echo "Error: GitHub organization/username is required"
-  echo "Usage: $0 <github-org> [aws-profile]"
-  exit 1
-else
-  GITHUB_ORG="$1"
-fi
-
-# Get AWS profile if provided
-if [ -n "$2" ]; then
-  AWS_PROFILE="$2"
-fi
 
 echo "Deploying with:"
 echo "- GitHub Organization: $GITHUB_ORG"
