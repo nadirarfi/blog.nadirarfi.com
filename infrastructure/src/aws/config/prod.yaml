@@ -1,0 +1,20 @@
+environment: prod
+
+domain:
+  name: blog.nadirarfi.com
+  hostedZoneName: nadirarfi.com
+  hostedZoneIdSsmParam: /nadir/arfi/aws/ssm/route53/dns/public/hostedzone/nadirarfi.com/id
+
+features:
+  useCloudFront: true
+  useCustomDomain: true
+
+aws:
+  certificateRegion: us-east-1
+  deploymentRegion: eu-west-1
+  account: null # Will be replaced with process.env.CDK_DEFAULT_ACCOUNT
+
+tags:
+  Environment: prod
+  Project: blog.nadirarfi.com
+  IaC: CDK  

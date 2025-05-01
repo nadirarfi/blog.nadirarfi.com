@@ -1,0 +1,15 @@
+services:
+
+  website_build:
+    build:
+      context: ./
+      dockerfile: build.Dockerfile
+    working_dir: /app
+
+  website_local:
+    build:
+      context: ./
+      dockerfile: local.Dockerfile
+    working_dir: /app
+    ports:
+      - "8080:8080"      

@@ -1,0 +1,196 @@
+---
+const { post } = Astro.props;
+import { Button } from '@/components/ui/button';
+import { Icon } from 'astro-icon/components';
+---
+
+<div id="feedback" class="flex flex-row items-center gap-4" data-post-slug={post.id}>
+  <Button 
+    id="like-btn" 
+    variant="outline"
+    className="flex flex-row items-center transition-all"
+    data-post-id={post.id}
+    disabled
+  >
+    <Icon name="mdi:thumb-up-outline" class="text-lg" />
+    Vote Up
+    <span id="like-count" class="text-sm text-neutral-500">0</span>
+  </Button>
+  <Button 
+    id="dislike-btn" 
+    variant="outline"
+    className="flex flex-row items-center transition-all"
+    data-post-id={post.id}
+    disabled
+  >
+    <Icon name="mdi:thumb-down-outline" class="text-lg" />
+    Vote Down
+    <span id="dislike-count" class="text-sm text-neutral-500">0</span>
+  </Button>
+</div>
+
+<style>
+  .button-voted {
+    border: 2px solid white !important;
+    box-shadow: 0 0 5px rgba(255, 255, 255, 0.5);
+  }
+</style>
+
+<script>
+  import FingerprintJS from '@fingerprintjs/fingerprintjs';
+
+  const likeBtn = document.getElementById('like-btn') as HTMLButtonElement;
+  const dislikeBtn = document.getElementById('dislike-btn') as HTMLButtonElement;
+  const likeCount = document.getElementById('like-count') as HTMLElement;
+  const dislikeCount = document.getElementById('dislike-count') as HTMLElement;
+
+  if (!likeBtn || !dislikeBtn || !likeCount || !dislikeCount) {
+    console.error('Required DOM elements not found');
+    throw new Error('Failed to initialize feedback component');
+  }
+
+  let fingerprintId: string | null = null;
+
+  async function fetchPostFeedback(postId: string) {
+    try {
+      const response = await fetch(`/api/like/${postId}`, {
+        method: 'GET',
+        headers: { 'Content-Type': 'application/json' }
+      });
+      const data = await response.json();
+      if (data.success) {
+        likeCount.textContent = String(data?.data?.likes || 0);
+        dislikeCount.textContent = String(data?.data?.dislikes || 0);
+        return data.data;
+      } else {
+        console.error('Failed to fetch post feedback:', data.error);
+        return { likes: 0, dislikes: 0 };
+      }
+    } catch (error) {
+      console.error('Error fetching post feedback:', error);
+      return { likes: 0, dislikes: 0 };
+    }
+  }
+
+  async function initialize() {
+    try {
+      const fp = await FingerprintJS.load();
+      const result = await fp.get();
+      fingerprintId = result.visitorId;
+      const postId = likeBtn.dataset.postId;
+      if (!postId) {
+        console.error('Post ID not found on like button');
+        return;
+      }
+
+      // Fetch current like/dislike counts
+      await fetchPostFeedback(postId);
+
+      const hasActed = localStorage.getItem(`action_${postId}`);
+      if (hasActed) {
+        const voteType = localStorage.getItem(`vote_type_${postId}`);
+        if (voteType === 'like') {
+          likeBtn.classList.add('button-voted');
+        } else if (voteType === 'dislike') {
+          dislikeBtn.classList.add('button-voted');
+        }
+        likeBtn.disabled = true;
+        dislikeBtn.disabled = true;
+      } else {
+        likeBtn.disabled = false;
+        dislikeBtn.disabled = false;
+      }
+    } catch (err) {
+      console.error('Error getting fingerprint:', err);
+      likeBtn.disabled = true;
+      dislikeBtn.disabled = true;
+    }
+  }
+
+  initialize();
+
+  likeBtn.addEventListener('click', async () => {
+    if (!fingerprintId) {
+      console.error('Fingerprint ID not available');
+      alert('Unable to process like. Please try again later.');
+      return;
+    }
+
+    const postId = likeBtn.dataset.postId;
+    if (!postId) {
+      console.error('Post ID not found');
+      alert('Unable to process like. Missing post ID.');
+      return;
+    }
+
+    try {
+      const response = await fetch(`/api/like/${postId}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ fingerprintId }),
+      });
+      const data = await response.json();
+      if (data.success) {
+        likeCount.textContent = String(data?.data?.likes);
+        dislikeCount.textContent = String(data?.data?.dislikes);
+        likeBtn.disabled = true;
+        dislikeBtn.disabled = true;
+        localStorage.setItem(`action_${postId}`, 'true');
+        localStorage.setItem(`vote_type_${postId}`, 'like');
+        likeBtn.classList.add('button-voted');
+      } else {
+        console.error('Failed to update likes:', data.error);
+        alert(data.error || 'Failed to like the post');
+      }
+    } catch (error) {
+      console.error('Error liking post:', error);
+      alert('An error occurred while liking the post');
+    }
+  });
+
+  dislikeBtn.addEventListener('click', async () => {
+    if (!fingerprintId) {
+      console.error('Fingerprint ID not available');
+      alert('Unable to process dislike. Please try again later.');
+      return;
+    }
+
+    const postId = dislikeBtn.dataset.postId;
+    if (!postId) {
+      console.error('Post ID not found');
+      alert('Unable to process dislike. Missing post ID.');
+      return;
+    }
+
+    try {
+      const response = await fetch(`/api/dislike/${postId}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ fingerprintId }),
+      });
+      const data = await response.json();
+      if (data.success) {
+        likeCount.textContent = String(data?.data?.likes);
+        dislikeCount.textContent = String(data?.data?.dislikes);
+        likeBtn.disabled = true;
+        dislikeBtn.disabled = true;
+        localStorage.setItem(`action_${postId}`, 'true');
+        localStorage.setItem(`vote_type_${postId}`, 'dislike');
+        dislikeBtn.classList.add('button-voted');
+      } else {
+        console.error('Failed to update dislikes:', data.error);
+        alert(data.error || 'Failed to dislike the post');
+      }
+    } catch (error) {
+      console.error('Error disliking post:', error);
+      alert('An error occurred while disliking the post');
+    }
+  });
+
+  document.addEventListener("astro:page-load", () => {
+    const postId = likeBtn.dataset.postId;
+    if (postId) {
+      fetchPostFeedback(postId);
+    }
+  });
+</script>

@@ -1,0 +1,15 @@
+services:
+  cdk-dev:
+    image: aws-cdk-s3-static-website-dev-environment
+    container_name: aws-cdk-s3-static-website-dev-environment
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    working_dir: /src
+    volumes:
+      - ./src:/src  # Bind mount the current directory to /src in the container
+      - ~/.aws:/root/.aws:ro  # Mount AWS credentials read-only
+    env_file:
+      - .env
+    ports:
+      - "3000:3000"

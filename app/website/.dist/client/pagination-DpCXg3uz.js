@@ -1,0 +1,16 @@
+import{j as s,c as l}from"./_astro/utils.D672GT0d.js";import"./_astro/index.CRVbtxaI.js";import{b as u}from"./_astro/button.D0iB1n9O.js";import{c as d}from"./_astro/createLucideIcon.HQDL-Gq3.js";import"./_astro/index.BofamZUI.js";import"./_astro/index.ByPUa5kk.js";/**
+ * @license lucide-react v0.503.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */const j=[["path",{d:"m15 18-6-6 6-6",key:"1wnfg3"}]],g=d("chevron-left",j);/**
+ * @license lucide-react v0.503.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */const N=[["path",{d:"m9 18 6-6-6-6",key:"mthhwq"}]],v=d("chevron-right",N);/**
+ * @license lucide-react v0.503.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */const b=[["circle",{cx:"12",cy:"12",r:"1",key:"41hilf"}],["circle",{cx:"19",cy:"12",r:"1",key:"1wjl8i"}],["circle",{cx:"5",cy:"12",r:"1",key:"1pcz8c"}]],y=d("ellipsis",b);function k({className:i,...n}){return s.jsx("nav",{role:"navigation","aria-label":"pagination","data-slot":"pagination",className:l("mx-auto flex w-full justify-center",i),...n})}function w({className:i,...n}){return s.jsx("ul",{"data-slot":"pagination-content",className:l("flex flex-row items-center gap-1",i),...n})}function r({...i}){return s.jsx("li",{"data-slot":"pagination-item",...i})}function h({className:i,isActive:n,isDisabled:e,size:c="icon",...m}){return s.jsx("a",{"aria-current":n?"page":void 0,"data-slot":"pagination-link","data-active":n,"data-disabled":e,className:l(u({variant:n?"outline":"ghost",size:c}),e&&"pointer-events-none opacity-50",i),...m})}function _({className:i,isDisabled:n,...e}){return s.jsxs(h,{"aria-label":"Go to previous page",size:"default",className:l("gap-1 px-2.5 sm:pl-2.5",i),isDisabled:n,...e,children:[s.jsx(g,{}),s.jsx("span",{className:"hidden sm:block",children:"Previous"})]})}function z({className:i,isDisabled:n,...e}){return s.jsxs(h,{"aria-label":"Go to next page",size:"default",className:l("gap-1 px-2.5 sm:pr-2.5",i),isDisabled:n,...e,children:[s.jsx("span",{className:"hidden sm:block",children:"Next"}),s.jsx(v,{})]})}function V({className:i,...n}){return s.jsxs("span",{"aria-hidden":!0,"data-slot":"pagination-ellipsis",className:l("flex size-9 items-center justify-center",i),...n,children:[s.jsx(y,{className:"size-4"}),s.jsx("span",{className:"sr-only",children:"More pages"})]})}const G=({currentPage:i,totalPages:n,baseUrl:e})=>{const c=a=>a===1?e:`${e}${a}`,f=(()=>{const t=[];if(n<=6)for(let o=1;o<=n;o++)t.push(o);else{const o=Math.max(1,i-2),p=Math.min(n,i+2);o>1&&t.push(1),o>2&&t.push(-1);for(let x=o;x<=p;x++)t.push(x);p<n-1&&t.push(-1),p<n&&t.push(n)}return t})();return s.jsx(k,{children:s.jsxs(w,{className:"flex-wrap",children:[s.jsx(r,{children:s.jsx(_,{href:i>1?c(i-1):void 0,isDisabled:i===1})}),f.map((a,t)=>a===-1?s.jsx(r,{children:s.jsx(V,{})},`ellipsis-${t}`):s.jsx(r,{children:s.jsx(h,{href:c(a),isActive:a===i,children:a})},a)),s.jsx(r,{children:s.jsx(z,{href:i<n?c(i+1):void 0,isDisabled:i===n})})]})})};export{G as default};
