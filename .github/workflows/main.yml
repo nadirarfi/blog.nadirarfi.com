@@ -1,39 +1,45 @@
 name: Deploy to S3 and Invalidate CloudFront Cache
-
 on:
   push:
     branches:
       - main
     paths:
-      - 'app/website/.dist/client/**' 
+      - 'app/website/.dist/client/**'
+  # Allow manual trigger
+  workflow_dispatch:
+
+env:
+  AWS_DEFAULT_REGION: eu-west-1
+  AWS_DEFAULT_OUTPUT: json
+  SOURCE_DIR: 'app/website/.dist/client'
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    
-    env:
-      AWS_REGION: 'eu-west-1'
-      SOURCE_DIR: 'app/website/.dist/client'
-      
+    # These permissions are needed to interact with GitHub's OIDC Token endpoint
+    permissions:
+      id-token: write
+      contents: read
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
+      - name: Checkout Code
+        uses: actions/checkout@v4
       
-      - name: Configure AWS credentials
+        - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ${{ env.AWS_REGION }}
+          aws-region: ${{ env.AWS_DEFAULT_REGION }}
+          role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID }}:role/GitHubActionsRole
+          role-session-name: GitHubActionsDeployment
       
-      - name: Test AWS credentials
-        run: aws sts get-caller-identity
-      
-      - name: Sync files to S3 bucket
+          # Optional: Deploy website content to S3
+      - name: Deploy to S3
+        if: success()
         run: |
-          aws s3 sync ${{ env.SOURCE_DIR }} s3://${{ secrets.S3_BUCKET }}/ --delete 
-      
-      - name: Invalidate CloudFront cache
+          aws s3 sync ${{ env.SOURCE_DIR }} s3://${{ secrets.S3_BUCKET }}/ --delete
+
+      # Optional: Invalidate CloudFront
+      - name: Invalidate CloudFront
+        if: success()
         run: |
           aws cloudfront create-invalidation \
             --distribution-id ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID }} \
