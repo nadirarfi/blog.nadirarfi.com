@@ -39,7 +39,7 @@ Resources:
     Properties:
       Url: https://token.actions.githubusercontent.com
       ClientIdList:
-        - sts.amazonaws.com
+        - sts.eu-west-1.amazonaws.com
         - !Sub https://github.com/${GitHubOrganization}/${RepositoryName}
       ThumbprintList:
         - 6938fd4d98bab03faadb97b34396831e3780aea1
@@ -61,7 +61,8 @@ Resources:
                 - !Ref IdpGitHubOidc
                 - !Sub arn:${AWS::Partition}:iam::${AWS::AccountId}:oidc-provider/token.actions.githubusercontent.com
             Condition:
-              StringLike:
+              StringEquals:  # https://github.com/terraform-aws-modules/terraform-aws-iam/issues/522
+                token.actions.githubusercontent.com:aud: sts.eu-west-1.amazonaws.com,
                 token.actions.githubusercontent.com:sub: !Sub repo:${GitHubOrganization}/${RepositoryName}:ref:refs/heads/${BranchName}
       ManagedPolicyArns:
         - !Sub arn:${AWS::Partition}:iam::aws:policy/AdministratorAccess

@@ -11,8 +11,8 @@ ROLE_NAME="GitHubActionsRole"
 USE_EXISTING="no"
 
 # Arguments
-AWS_PROFILE=""
-GITHUB_ORG=""
+AWS_PROFILE="arfin-admin"
+GITHUB_ORG="nadirarfi"
 
 # Get GitHub organization (required)
 if [ -z "$1" ]; then

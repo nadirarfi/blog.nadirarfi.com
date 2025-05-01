@@ -33,6 +33,7 @@ jobs:
           aws-region: ${{ env.AWS_DEFAULT_REGION }}
           role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID }}:role/GitHubActionsRole
           role-session-name: GitHubActionsDeployment
+          audience: sts.${{ env.AWS_DEFAULT_REGION }}.amazonaws.com
 
       # Optional: Deploy website content to S3
       - name: Deploy to S3
