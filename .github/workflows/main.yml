@@ -13,7 +13,7 @@ jobs:
     
     env:
       AWS_REGION: ${{ secrets.AWS_REGION }}
-      SOURCE_DIR: 'app/website/.dist/client' # Replace with your folder path to sync
+      SOURCE_DIR: 'app/website/.dist/client'
       S3_BUCKET: ${{ secrets.S3_BUCKET }}
       CLOUDFRONT_DISTRIBUTION_ID: ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID }}
       
