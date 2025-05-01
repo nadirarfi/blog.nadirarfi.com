@@ -13,6 +13,7 @@ jobs:
     
     env:
       SOURCE_DIR: 'app/website/.dist/client'
+      AWS_REGION: 'eu-west-1'
       
     steps:
       - name: Checkout repository
