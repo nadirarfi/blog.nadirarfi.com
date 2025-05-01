@@ -16,6 +16,7 @@ env:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    environment: PROD
 
     # These permissions are needed to interact with GitHub's OIDC Token endpoint
     permissions:
