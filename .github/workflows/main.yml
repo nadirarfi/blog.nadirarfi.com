@@ -20,27 +20,28 @@ jobs:
     permissions:
       id-token: write
       contents: read
-    steps:
-      - name: Checkout Code
-        uses: actions/checkout@v4
-      
-        - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v4
-        with:
-          aws-region: ${{ env.AWS_DEFAULT_REGION }}
-          role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID }}:role/GitHubActionsRole
-          role-session-name: GitHubActionsDeployment
-      
-          # Optional: Deploy website content to S3
-      - name: Deploy to S3
-        if: success()
-        run: |
-          aws s3 sync ${{ env.SOURCE_DIR }} s3://${{ secrets.S3_BUCKET }}/ --delete
 
-      # Optional: Invalidate CloudFront
-      - name: Invalidate CloudFront
-        if: success()
-        run: |
-          aws cloudfront create-invalidation \
-            --distribution-id ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID }} \
-            --paths "/*"
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v4
+
+      - name: Configure AWS Credentials
+      uses: aws-actions/configure-aws-credentials@v4
+      with:
+        aws-region: ${{ env.AWS_DEFAULT_REGION }}
+        role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID }}:role/GitHubActionsRole
+        role-session-name: GitHubActionsDeployment
+
+        # Optional: Deploy website content to S3
+    - name: Deploy to S3
+      if: success()
+      run: |
+        aws s3 sync ${{ env.SOURCE_DIR }} s3://${{ secrets.S3_BUCKET }}/ --delete
+
+    # Optional: Invalidate CloudFront
+    - name: Invalidate CloudFront
+      if: success()
+      run: |
+        aws cloudfront create-invalidation \
+          --distribution-id ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID }} \
+          --paths "/*"
