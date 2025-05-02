@@ -1,183 +1,284 @@
-# Static Website CDK Infrastructure for Personal Blog
+# Personal Blog Website on AWS - Cloud & DevOps Focus
 
-This CDK (Cloud Development Kit) project allows you to quickly deploy a personal blog website on AWS using S3, CloudFront, ACM certificates, and Route 53. The infrastructure can be tailored to different environments through simple YAML configuration files.
+This repository hosts the **full-stack infrastructure and application code** for a personal blog focused on **Cloud and DevOps technologies**. It uses **Astro.js** to build the website frontend and **AWS CDK** (TypeScript) to provision and manage cloud infrastructure. The project supports multi-environment deployment (e.g., dev, prod) and integrates with **GitHub Actions** via **OIDC** for CI/CD automation.
 
-## Features
+---
 
-- **S3 Website Hosting**: Deploy your blog content to Amazon S3
-- **CloudFront Distribution** (optional): Serve your blog securely via CloudFront CDN 
-- **Custom Domain Support** (optional): Use your own domain with an existing Route 53 hosted zone
-- **SSL Certificates** (automatic): Auto-generated and validated certificates for secure HTTPS access
-- **Multi-Environment Support**: Different configurations for development and production environments
+## 📋 Main component
 
-### Deployment Options
+| Section        | Description                                                         |
+| -------------- | ------------------------------------------------------------------- |
+| Application    | Astro.js static website run with Docker locally                     |
+| Infrastructure | AWS resources deployed using CDK: S3, CloudFront, ACM, Route53, SSM |
+| CI/CD          | GitHub Actions + OIDC Role for secure deployment automation         |
 
-| useCloudFront | useCustomDomain | Result |
-|---------------|----------------|--------|
-| false | false | Basic S3 website with default S3 URL |
-| false | true  | S3 website with your custom domain (HTTP only) |
-| true  | false | CloudFront distribution with default domain (HTTPS) |
-| true  | true  | CloudFront distribution with your custom domain (HTTPS) |
+## ✨ Summary
 
-## Prerequisites
+This repository contains everything you need to run a **Cloud & DevOps** focused personal blog:
 
-- **Docker**: Used to create a consistent development environment
-- **Docker Compose**: Used to orchestrate the development container
-- **AWS Configuration**: Valid AWS credentials configured in your `~/.aws` directory
-  - The project mounts your local AWS credentials into the container (read-only)
-  - You should have a valid AWS profile configured on your local machine
+- **Frontend**: Astro.js static site, served locally via Docker Compose.
+- **Infrastructure**: AWS resources (S3, CloudFront, ACM, Route 53, SSM) managed declaratively with AWS CDK and environment YAML configs.
+- **CI/CD**: Two GitHub Actions workflows:
 
-## Development Environment
+  1. **Website**: Builds and deploys static files to S3 & invalidates CloudFront.
+  2. **Infrastructure**: Synthesizes and deploys CDK stacks per environment.
 
-This project uses a containerized development environment to ensure consistency and simplify setup. The development container includes all necessary tools:
+Everything is designed for **multi-environment**, **secure**, and **repeatable** deployments.
+
+---
+
+## 📁 Project Structure
+
+```
+.
+├── app/
+│   ├── content/               # Static content for blog
+│   └── website/               # Astro.js frontend source code
+├── infrastructure/
+│   ├── setup.sh               # Dev container launcher script
+│   ├── Dockerfile             # CDK dev container definition
+│   ├── docker-compose.yaml    # Container orchestration
+│   ├── github-oidc/           # GitHub OIDC role creation scripts
+│   └── src/aws/
+│       ├── config/            # YAML config files for each environment
+│       │   ├── dev.yaml
+│       │   └── prod.yaml
+│       └── cdk/               # CDK app source code
+│           ├── bin/           # Entry point
+│           ├── lib/           # Stack definitions
+│           └── package.json
+└── .github/workflows/
+    ├── deploy-app.yaml        # Static website deployment to S3
+    └── deploy-infra.yaml      # CDK deployment using GitHub OIDC
+```
+
+---
+
+## 🖥️ Application: Astro.js Website
+
+The static website is built using [Astro.js](https://astro.build/) open source template. You can run it locally inside a Docker container:
+
+```bash
+docker compose \
+    -f docker-compose.yaml run --rm --build \
+    -p 8080:8080 \
+    website_local
+```
+
+Website content lives in `app/content/` and the build system in `app/website/`.
+
+### Content Structure
+
+Markdown blog posts live in the `app/content/blog/` directory. Example:
+
+```
+app/
+├─ content/
+│  ├─ blog/
+│  │  ├─ cicd-pipelines-automate-your-way-to-faster-releases.md
+│  │  ├─ cloud-architecture-design-scalable-and-resilient-systems.md
+│  │  └─ ... other posts ...
+│  └─ projects/
+├─ website/
+│  ├─ public/
+│  └─ src/
+│     ├─ components/
+│     ├─ layouts/
+│     ├─ pages/
+│     └─ styles/
+```
+
+The content folder is then injected into the Astro build step in order to be able to write blog posts and separate it from the frontend template code.
+
+## 🏗 Infrastructure: AWS CDK Project
+
+AWS CDK project in `infrastructure/src/aws/cdk` provision the following:
+
+- **S3** for static website hosting
+- **CloudFront** (optional) for secure HTTPS delivery
+- **ACM** (in `us-east-1` for CloudFront) for automatic SSL certificates
+- **Route53** for DNS records and domain support
+- **SSM Parameter Store** for dynamic values like Hosted Zone ID and Bucket names which can be used for cross-stack parameters and also Github Actions pipelines
+
+### 🔀 Deployment Modes
+
+| useCloudFront | useCustomDomain | Result                                   |
+| ------------- | --------------- | ---------------------------------------- |
+| false         | false           | Basic S3 site with default S3 URL        |
+| false         | true            | S3 with custom domain (HTTP only)        |
+| true          | false           | CloudFront with default domain (HTTPS)   |
+| true          | true            | Full CDN + Custom Domain + HTTPS via ACM |
+
+### ⚙️ Configuration with YAML
+
+Environment-specific configuration is stored in `src/aws/config/*.yaml`. Example:
+
+```yaml
+environment: prod
+
+domain:
+  name: blog.nadirarfi.com
+  hostedZoneName: nadirarfi.com
+
+features:
+  useCloudFront: true
+  useCustomDomain: true
+
+aws:
+  certificateRegion: us-east-1
+  deploymentRegion: eu-west-1
+  account: null
+  ssm:
+    hostedZoneIdSsmParam: /arfin/aws/ssm/route53/dns/public/hostedzone/nadirarfi.com/id
+    cloudFrontDistributionIdSsmParam: /arfin/aws/ssm/prod/blog/nadiarfi/com/cloudfront/distribution/id
+    s3BucketNameSsmParam: /arfin/aws/ssm/prod/blog/nadiarfi/com/s3/bucket/name
+
+tags:
+  Environment: prod
+  Project: blog.nadirarfi.com
+  IaC: CDK
+```
+
+### 🔧 Development Container Setup (`setup.sh`)
+
+A helper to initialize your local CDK dev container:
+
+- Ensures `.env` file exists (or prompts you)
+- Reads AWS profile & region (interactive if needed)
+- Verifies AWS credentials via `aws sts get-caller-identity`
+- Generates `.env` from `.env.template` (populating AWS_PROFILE, CDK_DEFAULT_REGION, CDK_DEFAULT_ACCOUNT)
+- Launches Docker Compose to build and drop you into a `cdk-dev` CDK dev container for development and testing
+- Mounts your local `~/.aws` directory as read-only for authentication
+
+Run this from `infrastructure/`:
+
+```bash
+cd infrastructure
+./setup.sh
+```
+
+Inside the container you get:
 
 - AWS CLI
 - AWS CDK
 - Node.js
 - TypeScript
-- Other required dependencies
 
-### Setup Process
+### 🛠 CDK Usage Examples
 
 ```bash
-git clone https://github.com/nadirarfi/blog.nadirarfi.com.git
-cd blog.nadirarfi.com/infrastructure
-./setup.sh
+# Inside container
+cd /src/aws/cdk
+
+# View planned changes
+cdk diff --context env=dev
+
+# Deploy infrastructure
+cdk deploy --all --context env=prod
+
+# Destroy when needed
+cdk destroy --all --context env=dev
 ```
 
-The setup script performs the following actions:
-- The script will ask to type down the target aws profile configured
-- Creates a `.env` file from `.env.template`, substituting automatically your AWS profile, region, and account ID
-- Builds the Docker development container
-- Installs required dependencies inside the container
-- Sets up the AWS CDK environment
-
-## How It Works
+#### How It Works
 
 The containerized development environment simplifies the setup process and ensures that everyone trying the project has the same environment, regardless of their local machine's configuration. The Docker container includes all necessary tools and dependencies, and the AWS configuration is securely mounted from your local machine.
-
-The CDK module creates several stacks that work together:
-
-1. **Certificate Stack**: Creates and validates an SSL certificate
-2. **Static Website Stack**: Creates the S3 bucket for hosting your blog content and optionally a CloudFront distribution
-3. **DNS Stack**: Sets up Route 53 DNS records pointing to your website
 
 The CDK app uses the environment context value (set with `--context env=dev` or similar) to load the appropriate YAML configuration file and create stacks with environment-specific settings.
 
 After deployment, the stacks produce outputs with URLs and other important information about the created resources. Then after that, we can simplfy upload our website static files into the s3 bucket.
 
-## Project Structure
+---
 
-```
+## 🔐 GitHub Actions & OIDC Role
 
-          infrastructure
-          ├── Dockerfile              # Defines the development container
-          ├── docker-compose.yaml     # Configuration for the container
-          ├── setup.sh                # Setup script for initial configuration
-          ├── scripts/                # Container setup and entrypoint scripts
-          └── src/aws/                    # Source code for the CDK project
-                      ├── /cconfig/             # Environment configuration files
-                      │   ├── dev.yaml
-                      │   └── prod.yaml
-                      └── cdk/
-                          ├── bin/                # CDK application entry point
-                          │   └── website-cdk.ts  # Main app entry point
-                          ├── lib/                # CDK stack definitions
-                          │   ├── acm-certificate-stack.ts
-                          │   ├── config-loader.ts
-                          │   ├── route53-dns-stack.ts
-                          │   └── static-website-stack.ts    
-                          └── package.json        # Node.js dependencies
-```
-
-### Environment Configuration
-
-The `.env` file contains important configurations:
-- `AWS_PROFILE`: The AWS profile to use for deployment
-- `CDK_DEFAULT_REGION`: The default AWS region for deployment
-- `CDK_DEFAULT_ACCOUNT`: The AWS account ID for deployment
-
-The Docker development container:
-- Mounts your local `~/.aws` directory as read-only for authentication
-- Mounts the `./src` directory as a volume for your project code
-- Uses environment variables from the `.env` file
-
-## Configuring Your Blog Infrastructure
-
-The project uses YAML files for configuration. These files are located in the `src/config/` directory and contain all the settings needed for deployment.
-
-### Configuration Files
-
-Edit the configuration files (`dev.yaml`, `prod.yaml`) in the `src/config/` directory to customize your blog deployment:
-
-```yaml
-environment: dev                      # Environment name (dev, prod)
-domain:
-  name: dev.nadirarfi.com              # Your blog domain name
-  hostedZoneName: nadirarfi.com        # Your Route 53 hosted zone name
-  hostedZoneIdParam: /aws/ssm/route53/dns/public/hostedzone/nadirarfi.com/id  # SSM parameter name for your hosted zone ID
-
-features:
-  useCloudFront: true                 # Whether to use CloudFront or just S3
-  useCustomDomain: true               # Whether to use a custom domain
-
-aws:
-  certificateRegion: us-east-1        # Region for ACM certificate (must be us-east-1 for CloudFront)
-  deploymentRegion: us-east-1         # Region to deploy resources
-  account: null                       # AWS account ID (null to use CDK default)
-
-tags:                                 # Tags to apply to all resources
-  Environment: dev
-  Project: PersonalBlog
-```
-
-## Infrastructure Deployment
-
-
-### Using SSM Parameter Store for Hosted Zone ID
-Instead of hardcoding the Hosted Zone ID in your configuration files, you can store it in AWS Systems Manager Parameter Store and reference it by parameter name:
-
-## Using SSM Parameter Store for Hosted Zone IDs
-
-Instead of hardcoding the Hosted Zone ID in your configuration files, you can store it in AWS Systems Manager Parameter Store and reference it by parameter name:
-
-```bash
-# Inside the container
-aws ssm put-parameter \
---name "<ssm_parameter_key>" \ 
---value "<hostedzone_id>" \
---type "String" \
---profile <aws_profile> \
---region <aws_region>
-```
-All commands should be run inside the development container. The container is automatically started when you run the setup script.
+Before setting up GitHub Actions, you must **create an IAM Role with OIDC trust** so GitHub can deploy to your AWS account securely.
+Run the script in `github-oidc/` to create an IAM role trusting GitHub’s OIDC provider. This role grants `sts:AssumeRoleWithWebIdentity` permission to your workflows.
+Make sure to change the default values:
 
 ```bash
 
-# Inside the container:
+# Default values
+TEMPLATE_FILE="github-oidc.cfn.yaml"
+REPO_NAME="<REPO_NAME>"
+BRANCH_NAME="main"
+ROLE_NAME="GitHubActionsRole"
+USE_EXISTING="no"
+AWS_PROFILE="<AWS_PROFILE>"
+GITHUB_ORG="<GITHUB_USERNAME>"
+STACK_NAME="$GITHUB_ORG-$REPO_NAME-github-actions-oidc"
 
-# Synthesize CloudFormation for environment
-cdk synth --context env=dev
-cdk synth --context env=prod
-
-# Deploy to specific environment
-cdk deploy --all --context env=dev
-cdk deploy --all --context env=prod
-
-# Check differences before deployment
-cdk diff --context env=dev
-cdk diff --context env=prod
-
-# Destroy resources when no longer needed
-cdk destroy --all --context env=dev
-cdk destroy --all --context env=prod
 ```
 
-## Security and Best Practices
+Use the script in `infrastructure/github-oidc/`:
 
-- This setup follows AWS best practices for hosting static websites
-- Using CloudFront provides HTTPS by default, improving SEO and security
-- The development container isolates dependencies and ensures consistent deployments
-- AWS credentials are mounted read-only for security
+```bash
+cd infrastructure/github-oidc
+./github-oidc-deploy.sh
+```
+
+GitHub Actions uses this role to authenticate without needing long-lived credentials.
+
+---
+
+## 🔄 CI/CD: GitHub Actions
+
+### ✅ Infrastructure Pipeline (`deploy-infra.yaml`)
+
+Deploys infrastructure (`.github/workflows/deploy-infra.yml`)
+
+- **Triggers**: `push` on `main` (changes to `infrastructure/src/aws/cdk` or `config`), and manual `workflow_dispatch`
+- **Steps**:
+
+  1. Checkout code
+  2. Configure AWS credentials via OIDC role
+  3. Setup Node.js & install CDK globally
+  4. Install project dependencies
+  5. `cdk synth --all --context env=<env>`
+  6. `cdk diff --all --context env=<env>` (summarized)
+  7. `cdk deploy --all --context env=<env> --require-approval never`
+  8. Post‑deployment: list CloudFormation stack statuses
+
+### ✅ Website Pipeline (`deploy-app.yaml`)
+
+Deploys the static website (`.github/workflows/deploy-app.yml`):
+
+- **Triggers**: `push` & `pull_request` on `main` (changes to `app/website` or `app/content`), and manual `workflow_dispatch`
+- **Build**:
+
+  1. Checkout code
+  2. Setup Node.js
+  3. Install dependencies in `app/website`
+  4. Copy `app/content` → `app/website/src/content`
+  5. Run `npm run build` (Astro.js)
+  6. Upload artifact (`dist/client`)
+
+- **Deploy** (on `push` or manual):
+
+  1. Download artifact
+  2. Configure AWS credentials via OIDC role
+  3. Fetch S3 bucket & CloudFront distribution IDs from SSM
+  4. `aws s3 sync` with fine‑grained cache control
+  5. Create CloudFront invalidation
+  6. Optional curl-based health check
+  7. Summary
+
+---
+
+## ✅ Best Practices Followed
+
+- Environments fully isolated (dev, prod)
+- Secure deployment via GitHub OIDC
+- Minimal IAM permissions
+- Dockerized dev setup for reproducibility
+- Config files separated from code
+- HTTPS by default with CloudFront + ACM
+
+---
+
+## 📬 Contact
+
+This project is maintained by [Nadir Arfi](https://github.com/nadirarfi).
+Feel free to reach out for questions or contributions.
 
 ---
