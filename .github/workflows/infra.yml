@@ -19,7 +19,6 @@ on:
 env:
   AWS_DEFAULT_REGION: eu-west-1
   AWS_DEFAULT_OUTPUT: json
-  CDK_VERSION: "2.62.2"
   NODE_VERSION: "18"
   GITHUB_ACTIONS_ROLE_NAME: GitHubActionsRole
 
@@ -52,9 +51,9 @@ jobs:
         working-directory: ./infrastructure/src/aws/cdk
         run: npm install
 
-      - name: Install CDK
+      - name: Install CDK and typescript
         working-directory: ./infrastructure/src/aws/cdk
-        run: npm install -g aws-cdk@${{ env.CDK_VERSION }}
+        run: npm install -g aws-cdk typescript
 
       - name: Synth CDK
         working-directory: ./infrastructure/src/aws/cdk
@@ -108,7 +107,6 @@ jobs:
 
       - name: Install CDK
         working-directory: ./infrastructure/src/aws/cdk
-        run: npm install -g aws-cdk@${{ env.CDK_VERSION }}
 
       - name: Deploy CDK
         working-directory: ./infrastructure/src/aws/cdk
