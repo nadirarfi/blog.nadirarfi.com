@@ -17,12 +17,6 @@ aws:
     cloudFrontDistributionIdSsmParam: /arfin/aws/ssm/dev/blog/nadiarfi/com/cloudfront/distribution/id
     s3BucketNameSsmParam: /arfin/aws/ssm/dev/blog/nadiarfi/com/s3/bucket/name
 
-github:
-  organization: nadirarfi
-  repository: blog.nadirarfi.com
-  oidc:
-    roleName: GitHubActionsRole
-
 tags:
   Environment: dev
   Project: blog.nadirarfi.com
