@@ -17,7 +17,7 @@ on:
         type: choice
         options:
           - PROD
-          
+
 env:
   AWS_DEFAULT_REGION: eu-west-1
   AWS_DEFAULT_OUTPUT: json
@@ -30,6 +30,7 @@ jobs:
   cdk-iac:
     name: Setup CDK environment and deploy resources
     runs-on: ubuntu-latest
+    environment: ${{ github.event.inputs.environment || 'PROD' }}
     permissions:
       id-token: write
       contents: read
