@@ -3,7 +3,7 @@ name: Deploy AWS Infrastructure via CDK
 on:
   push:
     branches: [main]
-    paths: ["infrastructure/**"]
+    paths: ["infrastructure/src/aws/cdk**", "infrastructure/src/aws/config**"]
   workflow_dispatch:
     inputs:
       environment:
@@ -28,7 +28,7 @@ jobs:
     permissions:
       id-token: write
       contents: read
-    
+
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
@@ -62,31 +62,31 @@ jobs:
           echo "✅ Synthesis completed successfully!"
           echo "📜 Generated the following stacks:"
           grep -A 1 "Stack:" synth-output.txt | grep -v "\-\-"
-          
+
       - name: Show Infrastructure Changes
         id: cdk-diff
         working-directory: ${{ env.CDK_DIRECTORY }}
-        continue-on-error: true  # Diff might fail if resources don't exist yet
+        continue-on-error: true # Diff might fail if resources don't exist yet
         run: |
           echo "🔄 Comparing infrastructure changes..."
           npx cdk diff --all --context ${{ env.CDK_CONTEXT }} | tee diff-output.txt
-          
+
           # Extract key changes for a more concise summary
           echo "📊 Change Summary:"
           grep -E "^[±~]|will be" diff-output.txt | head -20
-          
+
           if grep -q "will be" diff-output.txt; then
             echo "⚠️ Resources will be created/updated/deleted"
-          else 
+          else
             echo "✓ No significant changes detected"
           fi
-          
+
       - name: Deploy Infrastructure Stacks
         working-directory: ${{ env.CDK_DIRECTORY }}
         run: |
           echo "🚀 Deploying infrastructure stacks to ${{ github.event.inputs.environment || 'prod' }}..."
           npx cdk deploy --all --context ${{ env.CDK_CONTEXT }} --require-approval never
-          
+
           # Show stack status after deployment
           echo "✅ Deployment complete!"
           echo "📋 Stack Status:"
