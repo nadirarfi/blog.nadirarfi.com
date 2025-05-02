@@ -58,15 +58,15 @@ Everything is designed for **multi-environment**, **secure**, and **repeatable**
 │   ├── setup.sh               # Dev container launcher script
 │   ├── Dockerfile             # CDK dev container definition
 │   ├── docker-compose.yaml    # Container orchestration
-│   ├── github-oidc/           # GitHub OIDC role creation scripts
-│   └── src/aws/
+│   └── src/
 │       ├── config/            # YAML config files for each environment
 │       │   ├── dev.yaml
 │       │   └── prod.yaml
-│       └── cdk/               # CDK app source code
-│           ├── bin/           # Entry point
-│           ├── lib/           # Stack definitions
-│           └── package.json
+│       └── aws/
+│           └── cdk/               # CDK app source code
+│               ├── bin/           # Entry point
+│               ├── lib/           # Stack definitions
+│               └── package.json
 └── .github/workflows/
     ├── deploy-app.yaml        # Static website deployment to S3
     └── deploy-infra.yaml      # CDK deployment using GitHub OIDC
@@ -250,14 +250,14 @@ Deploys infrastructure (`.github/workflows/deploy-infra.yml`)
 - **Triggers**: `push` on `main` (changes to `infrastructure/src/aws/cdk` or `config`), and manual `workflow_dispatch`
 - **Steps**:
 
-  1. Checkout code
-  2. Configure AWS credentials via OIDC role
-  3. Setup Node.js & install CDK globally
-  4. Install project dependencies
-  5. `cdk synth --all --context env=<env>`
-  6. `cdk diff --all --context env=<env>` (summarized)
-  7. `cdk deploy --all --context env=<env> --require-approval never`
-  8. Post‑deployment: list CloudFormation stack statuses
+  - Checkout code
+  - Configure AWS credentials via OIDC role
+  - Setup Node.js & install CDK globally
+  - Install project dependencies
+  - `cdk synth --all --context env=<env>`
+  - `cdk diff --all --context env=<env>` (summarized)
+  - `cdk deploy --all --context env=<env> --require-approval never`
+  - Post‑deployment: list CloudFormation stack statuses
 
 ### ✅ Website Pipeline (`deploy-app.yaml`)
 
@@ -266,22 +266,22 @@ Deploys the static website (`.github/workflows/deploy-app.yml`):
 - **Triggers**: `push` & `pull_request` on `main` (changes to `app/website` or `app/content`), and manual `workflow_dispatch`
 - **Build**:
 
-  1. Checkout code
-  2. Setup Node.js
-  3. Install dependencies in `app/website`
-  4. Copy `app/content` → `app/website/src/content`
-  5. Run `npm run build` (Astro.js)
-  6. Upload artifact (`dist/client`)
+  - Checkout code
+  - Setup Node.js
+  - Install dependencies in `app/website`
+  - Copy `app/content` → `app/website/src/content`
+  - Run `npm run build` (Astro.js)
+  - Upload artifact (`dist/client`)
 
 - **Deploy** (on `push` or manual):
 
-  1. Download artifact
-  2. Configure AWS credentials via OIDC role
-  3. Fetch S3 bucket & CloudFront distribution IDs from SSM
-  4. `aws s3 sync` with fine‑grained cache control
-  5. Create CloudFront invalidation
-  6. Optional curl-based health check
-  7. Summary
+  - Download artifact
+  - Configure AWS credentials via OIDC role
+  - Fetch S3 bucket & CloudFront distribution IDs from SSM
+  - `aws s3 sync` with fine‑grained cache control
+  - Create CloudFront invalidation
+  - Optional curl-based health check
+  - Summary
 
 ---
 
