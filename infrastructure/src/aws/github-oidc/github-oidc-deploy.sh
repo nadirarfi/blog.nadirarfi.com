@@ -4,14 +4,15 @@ set -e
 
 # Default values
 TEMPLATE_FILE="github-oidc.cfn.yaml"
-STACK_NAME="github-actions-oidc"
 REPO_NAME="blog.nadirarfi.com"
 BRANCH_NAME="main"
 ROLE_NAME="GitHubActionsRole"
 USE_EXISTING="no"
-
 AWS_PROFILE="arfin-admin"
 GITHUB_ORG="nadirarfi"
+
+STACK_NAME="$GITHUB_ORG-$REPO_NAME-github-actions-oidc"
+
 
 echo "Deploying with:"
 echo "- GitHub Organization: $GITHUB_ORG"
