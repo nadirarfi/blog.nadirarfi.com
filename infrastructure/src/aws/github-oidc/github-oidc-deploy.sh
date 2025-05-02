@@ -1,7 +1,6 @@
 #!/bin/bash
 set -e
 
-
 # Default values
 TEMPLATE_FILE="github-oidc.cfn.yaml"
 REPO_NAME="blog.nadirarfi.com"
@@ -10,9 +9,7 @@ ROLE_NAME="GitHubActionsRole"
 USE_EXISTING="no"
 AWS_PROFILE="arfin-admin"
 GITHUB_ORG="nadirarfi"
-
-STACK_NAME="$GITHUB_ORG-blog-nadir-github-actions-oidc"
-
+STACK_NAME="$GITHUB_ORG-blog-github-actions-oidc"
 
 echo "Deploying with:"
 echo "- GitHub Organization: $GITHUB_ORG"
@@ -24,11 +21,11 @@ aws cloudformation deploy \
   --template-file "$TEMPLATE_FILE" \
   --stack-name "$STACK_NAME" \
   --parameter-overrides \
-        GitHubOrganization="$GITHUB_ORG" \
-        RepositoryName="$REPO_NAME" \
-        BranchName="$BRANCH_NAME" \
-        RoleName="$ROLE_NAME" \
-        UseExistingProvider="$USE_EXISTING" \
+  GitHubOrganization="$GITHUB_ORG" \
+  RepositoryName="$REPO_NAME" \
+  BranchName="$BRANCH_NAME" \
+  RoleName="$ROLE_NAME" \
+  UseExistingProvider="$USE_EXISTING" \
   --capabilities CAPABILITY_NAMED_IAM
 
 # Get the IAM role ARN
