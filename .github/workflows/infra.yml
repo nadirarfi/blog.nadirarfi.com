@@ -11,7 +11,7 @@ on:
         required: true
         default: "prod"
         type: choice
-        options: [prod, staging]
+        options: [prod]
 
 env:
   AWS_REGION: eu-west-1
@@ -52,13 +52,13 @@ jobs:
         run: |
           echo "Installing project dependencies..."
           npm ci
-          echo "Using project's CDK version: $(npx aws-cdk --version)"
+          echo "Using project's CDK version: $(npm aws-cdk --version)"
 
       - name: Synthesize CloudFormation Templates
         working-directory: ${{ env.CDK_DIRECTORY }}
         run: |
           echo "🔍 Synthesizing CloudFormation templates for environment: ${{ github.event.inputs.environment || 'prod' }}"
-          npx cdk synth --all --context ${{ env.CDK_CONTEXT }} > synth-output.txt
+          npm cdk synth --all --context ${{ env.CDK_CONTEXT }} > synth-output.txt
           echo "✅ Synthesis completed successfully!"
           echo "📜 Generated the following stacks:"
           grep -A 1 "Stack:" synth-output.txt | grep -v "\-\-"
@@ -69,7 +69,7 @@ jobs:
         continue-on-error: true # Diff might fail if resources don't exist yet
         run: |
           echo "🔄 Comparing infrastructure changes..."
-          npx cdk diff --all --context ${{ env.CDK_CONTEXT }} | tee diff-output.txt
+          npm cdk diff --all --context ${{ env.CDK_CONTEXT }} | tee diff-output.txt
 
           # Extract key changes for a more concise summary
           echo "📊 Change Summary:"
@@ -85,7 +85,7 @@ jobs:
         working-directory: ${{ env.CDK_DIRECTORY }}
         run: |
           echo "🚀 Deploying infrastructure stacks to ${{ github.event.inputs.environment || 'prod' }}..."
-          npx cdk deploy --all --context ${{ env.CDK_CONTEXT }} --require-approval never
+          npm cdk deploy --all --context ${{ env.CDK_CONTEXT }} --require-approval never
 
           # Show stack status after deployment
           echo "✅ Deployment complete!"
