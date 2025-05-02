@@ -63,10 +63,6 @@ jobs:
         run: |
           echo "🔍 Synthesizing CloudFormation templates for environment: ${{ github.event.inputs.environment || 'prod' }}"
           cdk synth --all --context ${{ env.CDK_CONTEXT }} 
-          cdk synth --all --context ${{ env.CDK_CONTEXT }} > synth-output.txt
-          echo "✅ Synthesis completed successfully!"
-          echo "📜 Generated the following stacks:"
-          grep -A 1 "Stack:" synth-output.txt | grep -v "\-\-"
 
       - name: Show Infrastructure Changes
         id: cdk-diff
