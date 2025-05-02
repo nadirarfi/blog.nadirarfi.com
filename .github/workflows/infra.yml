@@ -9,7 +9,15 @@ on:
 
   # Allow manual trigger
   workflow_dispatch:
-
+    inputs:
+      environment:
+        description: "Deployment Environment"
+        required: true
+        default: "PROD"
+        type: choice
+        options:
+          - PROD
+          
 env:
   AWS_DEFAULT_REGION: eu-west-1
   AWS_DEFAULT_OUTPUT: json
