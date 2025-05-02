@@ -34,6 +34,7 @@ env:
   S3_BUCKET_PARAMETER_KEY: /arfin/aws/ssm/prod/blog/nadiarfi/com/s3/bucket/name
   CLOUDFRONT_DISTRIBUTION_ID_PARAMETER_KEY: /arfin/aws/ssm/prod/blog/nadiarfi/com/cloudfront/distribution/id
   GITHUB_ACTIONS_ROLE_NAME: GitHubActionsRole
+  SITE_URL: https://blog.nadirarfi.com
   NODE_VERSION: "18"
 
 jobs:
@@ -162,8 +163,7 @@ jobs:
         run: |
           echo "Verifying deployment..."
           # Use curl to check if the site is accessible
-          # This is a basic check - adjust the URL to match your specific site
-          SITE_URL="https://$(aws s3api get-bucket-website --bucket ${{ steps.fetch-parameters.outputs.S3_BUCKET }} --query 'WebsiteConfiguration.IndexDocument.Suffix' --output text 2>/dev/null || echo "blog.nadiarfi.com")"
+          # This is a basic check - adjust the URL to match your specific site          
           echo "Checking website at: $SITE_URL"
 
           # Adding a short delay to allow for propagation
