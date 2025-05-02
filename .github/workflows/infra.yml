@@ -5,7 +5,13 @@ on:
     branches:
       - main
     paths:
-      - "infrastructure/**"
+      - "infrastructure/src/**"
+
+  pull_request:
+    branches:
+      - main
+    paths:
+      - "infrastructure/src/**"
 
   # Allow manual trigger
   workflow_dispatch:
@@ -18,15 +24,12 @@ env:
   GITHUB_ACTIONS_ROLE_NAME: GitHubActionsRole
 
 jobs:
-  deploy:
-    name: Deploy Infrastructure
+  cdk-diff:
+    name: CDK Diff
     runs-on: ubuntu-latest
-
-    # Permissions are needed to interact with GitHub's OIDC Token endpoint and read repo contents
     permissions:
       id-token: write
       contents: read
-
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
@@ -57,25 +60,56 @@ jobs:
         working-directory: ./infrastructure/src/aws/cdk
         run: cdk synth
 
-      - name: Synth CDK
+      - name: Diff CDK
         working-directory: ./infrastructure/src/aws/cdk
         run: cdk diff --all --context env=prod
 
-      - manual-approval:
-        name: Manual Approval
-        runs-on: ubuntu-latest
-        needs: cdk-diff
-        if: success() # Only proceed if cdk-diff job succeeds
-        steps:
-        - name: Wait for Approval
-            uses: trstringer/manual-approval@v1.0.0
-            with:
-            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-            APPROVER: ${{ github.actor }}
+  manual-approval:
+    name: Manual Approval
+    runs-on: ubuntu-latest
+    needs: cdk-diff
+    if: success() # Only proceed if cdk-diff job succeeds
+    steps:
+      - name: Wait for Approval
+        uses: trstringer/manual-approval@v1.0.0
+        with:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          APPROVER: ${{ github.actor }}
+
+  cdk-deploy:
+    name: CDK Deploy
+    runs-on: ubuntu-latest
+    needs: manual-approval
+    if: success() # Only proceed if manual-approval job succeeds
+    permissions:
+      id-token: write
+      contents: read
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          role-to-assume: ${{ env.GITHUB_ACTIONS_ROLE_NAME }}
+          aws-region: ${{ env.AWS_DEFAULT_REGION }}
+          role-session-name: GitHubActions-${{ github.run_id }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: "npm"
+          cache-dependency-path: ./infrastructure/src/aws/cdk/package-lock.json
+
+      - name: Install Dependencies
+        working-directory: ./infrastructure/src/aws/cdk
+        run: npm install
+
+      - name: Install CDK
+        working-directory: ./infrastructure/src/aws/cdk
+        run: npm install -g aws-cdk@${{ env.CDK_VERSION }}
 
       - name: Deploy CDK
-        needs: manual-approval
         working-directory: ./infrastructure/src/aws/cdk
-        run: cdk deploy --all --context env=prod
-
-
+        run: cdk deploy --all --context env=prod --require-approval never
