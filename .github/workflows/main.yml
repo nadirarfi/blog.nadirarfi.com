@@ -55,7 +55,7 @@ jobs:
 
       - name: Install Dependencies
         working-directory: ./app/website
-        run: npm ci
+        run: npm install
 
       - name: Copy Content Folder
         run: |
