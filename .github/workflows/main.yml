@@ -118,6 +118,9 @@ jobs:
             exit 1
           fi
 
+          echo "::add-mask::$S3_BUCKET"
+          echo "::add-mask::$CLOUDFRONT_DISTRIBUTION_ID"
+
           echo "S3_BUCKET=$S3_BUCKET" >> $GITHUB_OUTPUT
           echo "CLOUDFRONT_DISTRIBUTION_ID=$CLOUDFRONT_DISTRIBUTION_ID" >> $GITHUB_OUTPUT
           echo "Parameters retrieved successfully"
@@ -183,9 +186,7 @@ jobs:
           echo "✅ DEPLOYMENT COMPLETED SUCCESSFULLY"
           echo "============================================"
           echo "🚀 Environment: ${{ github.event.inputs.environment || 'PROD' }}"
-          echo "📁 S3 Bucket: ${{ steps.fetch-parameters.outputs.S3_BUCKET }}"
-          echo "🔄 CloudFront Distribution: ${{ steps.fetch-parameters.outputs.CLOUDFRONT_DISTRIBUTION_ID }}"
-          echo "❄️ CloudFront Invalidation ID: ${{ steps.cloudfront-invalidation.outputs.INVALIDATION_ID }}"
+          echo "❄️ CloudFront Cache Invalidation ID: ${{ steps.cloudfront-invalidation.outputs.INVALIDATION_ID }}"
           echo "🔗 Website URL: https://blog.nadiarfi.com"
           echo "📅 Deployed at: $(date)"
           echo "============================================"
