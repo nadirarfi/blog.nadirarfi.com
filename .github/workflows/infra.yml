@@ -47,11 +47,15 @@ jobs:
           cache: "npm"
           cache-dependency-path: ${{ env.CDK_DIRECTORY }}/package-lock.json
 
+      - name: Install CDK
+        working-directory: ./infrastructure/src/aws/cdk
+        run: npm install -g aws-cdk typescript          
+
       - name: Install Dependencies
         working-directory: ${{ env.CDK_DIRECTORY }}
         run: |
           echo "Installing project dependencies..."
-          npm ci
+          npm install
           echo "Using project's CDK version: $(npm aws-cdk --version)"
 
       - name: Synthesize CloudFormation Templates
