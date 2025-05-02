@@ -38,6 +38,7 @@ export function loadConfig(environment: string): WebsiteConfig {
   const configPath = path.join(
     __dirname,
     "..",
+    "..",
     "config",
     `${environment}.yaml`
   );
