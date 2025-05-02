@@ -30,7 +30,7 @@ on:
 env:
   AWS_DEFAULT_REGION: eu-west-1
   AWS_DEFAULT_OUTPUT: json
-  SOURCE_DIR: "app/website/.dist/client"
+  SOURCE_DIR: "app/website/dist/client"
   S3_BUCKET_PARAMETER_KEY: /arfin/aws/ssm/prod/blog/nadiarfi/com/s3/bucket/name
   CLOUDFRONT_DISTRIBUTION_ID_PARAMETER_KEY: /arfin/aws/ssm/prod/blog/nadiarfi/com/cloudfront/distribution/id
   GITHUB_ACTIONS_ROLE_NAME: GitHubActionsRole
@@ -74,7 +74,7 @@ jobs:
           retention-days: 1
           if-no-files-found: error
           overwrite: true
-          
+
   deploy:
     name: Deploy to AWS
     needs: build
