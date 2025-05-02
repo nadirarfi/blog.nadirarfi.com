@@ -4,7 +4,6 @@ import { SsmParametersStack } from "../lib/ssm-parameters-stack";
 import { CertificateStack } from "../lib/acm-certificate-stack";
 import { StaticWebsiteStack } from "../lib/static-website-stack";
 import { DnsStack } from "../lib/route53-dns-stack";
-import { GithubOidcStack } from "../lib/github-oidc";
 import { loadConfig, WebsiteConfig } from "../config-loader";
 
 // Parse command line arguments to get environment
@@ -108,21 +107,6 @@ if (config.features.useCustomDomain) {
   });
 }
 
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-/////////////////////////////////////// GITHUB ODIC SETUP
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-const githubOidcStack = new GithubOidcStack(app, `${stackPrefix}-github-oidc`, {
-  env: {
-    account: process.env.CDK_DEFAULT_ACCOUNT,
-    region: process.env.CDK_DEFAULT_REGION,
-  },
-  githubOrganization: config.github.organization,
-  repositoryName: config.github.repository,
-  branchName: "*", // Using branch name causes this to not work
-  roleName: config.github.oidc.roleName,
-  useExistingProvider: "no",
-});
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////// APP SYNTH
