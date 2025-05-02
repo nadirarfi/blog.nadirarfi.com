@@ -11,7 +11,7 @@ USE_EXISTING="no"
 AWS_PROFILE="arfin-admin"
 GITHUB_ORG="nadirarfi"
 
-STACK_NAME="$GITHUB_ORG-$REPO_NAME-github-actions-oidc"
+STACK_NAME="$GITHUB_ORG-blog-nadir-github-actions-oidc"
 
 
 echo "Deploying with:"
