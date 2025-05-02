@@ -37,7 +37,6 @@ env:
   NODE_VERSION: "18"
 
 jobs:
-
   build:
     name: Build Static Files
     needs: validate
