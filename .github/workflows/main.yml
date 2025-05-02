@@ -37,7 +37,7 @@ env:
   NODE_VERSION: "18"
 
 jobs:
-  
+
   build:
     name: Build Static Files
     runs-on: ubuntu-latest
@@ -65,14 +65,6 @@ jobs:
       - name: Build Website
         working-directory: ./app/website
         run: npm run build
-
-      - name: Upload Build Artifact
-        uses: actions/upload-artifact@v3
-        with:
-          name: website-build
-          path: ${{ env.SOURCE_DIR }}
-          retention-days: 1
-          if-no-files-found: error
 
   deploy:
     name: Deploy to AWS
