@@ -1,4 +1,4 @@
-# Personal Blog Website on AWS - Cloud & DevOps Focus
+# Cloud-Native Personal Blog on AWS: Automated Deployment of Astro.js Static Site using CDK & GitHub Actions
 
 This repository hosts the **full-stack infrastructure and application code** for a personal blog focused on **Cloud and DevOps technologies**. It uses **Astro.js** to build the website frontend and **AWS CDK** (TypeScript) to provision and manage cloud infrastructure. The project supports multi-environment deployment (e.g., dev, prod) and integrates with **GitHub Actions** via **OIDC** for CI/CD automation.
 
