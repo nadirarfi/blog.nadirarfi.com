@@ -58,6 +58,7 @@ jobs:
         working-directory: ${{ env.CDK_DIRECTORY }}
         run: |
           echo "🔍 Synthesizing CloudFormation templates for environment: ${{ github.event.inputs.environment || 'prod' }}"
+          npm cdk synth --all --context ${{ env.CDK_CONTEXT }} 
           npm cdk synth --all --context ${{ env.CDK_CONTEXT }} > synth-output.txt
           echo "✅ Synthesis completed successfully!"
           echo "📜 Generated the following stacks:"
