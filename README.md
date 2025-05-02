@@ -69,24 +69,25 @@ After deployment, the stacks produce outputs with URLs and other important infor
 ## Project Structure
 
 ```
-.
-├── Dockerfile              # Defines the development container
-├── docker-compose.yaml     # Configuration for the container
-├── setup.sh                # Setup script for initial configuration
-├── scripts/                # Container setup and entrypoint scripts
-└── src/                    # Source code for the CDK project
-    ├── config/             # Environment configuration files
-    │   ├── dev.yaml
-    │   └── prod.yaml
-    └── cdk/
-        ├── bin/                # CDK application entry point
-        │   └── website-cdk.ts  # Main app entry point
-        ├── lib/                # CDK stack definitions
-        │   ├── acm-certificate-stack.ts
-        │   ├── config-loader.ts
-        │   ├── route53-dns-stack.ts
-        │   └── static-website-stack.ts    
-        └── package.json        # Node.js dependencies
+
+          infrastructure
+          ├── Dockerfile              # Defines the development container
+          ├── docker-compose.yaml     # Configuration for the container
+          ├── setup.sh                # Setup script for initial configuration
+          ├── scripts/                # Container setup and entrypoint scripts
+          └── src/aws/                    # Source code for the CDK project
+                      ├── /cconfig/             # Environment configuration files
+                      │   ├── dev.yaml
+                      │   └── prod.yaml
+                      └── cdk/
+                          ├── bin/                # CDK application entry point
+                          │   └── website-cdk.ts  # Main app entry point
+                          ├── lib/                # CDK stack definitions
+                          │   ├── acm-certificate-stack.ts
+                          │   ├── config-loader.ts
+                          │   ├── route53-dns-stack.ts
+                          │   └── static-website-stack.ts    
+                          └── package.json        # Node.js dependencies
 ```
 
 ### Environment Configuration

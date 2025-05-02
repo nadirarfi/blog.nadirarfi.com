@@ -23,8 +23,8 @@ export class CertificateStack extends cdk.Stack {
 
     // Import the hosted zone using the provided ID
     const hostedZone = route53.HostedZone.fromHostedZoneId(
-      this, 
-      "HostedZone", 
+      this,
+      "HostedZone",
       props.hostedZoneId
     );
 

@@ -3,7 +3,6 @@ environment: prod
 domain:
   name: blog.nadirarfi.com
   hostedZoneName: nadirarfi.com
-  hostedZoneIdSsmParam: /nadir/arfi/aws/ssm/route53/dns/public/hostedzone/nadirarfi.com/id
 
 features:
   useCloudFront: true
@@ -12,9 +11,19 @@ features:
 aws:
   certificateRegion: us-east-1
   deploymentRegion: eu-west-1
-  account: null # Will be replaced with process.env.CDK_DEFAULT_ACCOUNT
+  account: null
+  ssm:
+    hostedZoneIdSsmParam: /arfin/aws/ssm/route53/dns/public/hostedzone/nadirarfi.com/id
+    cloudFrontDistributionIdSsmParam: /arfin/aws/ssm/prod/blog/nadiarfi/com/cloudfront/distribution/id
+    s3BucketNameSsmParam: /arfin/aws/ssm/prod/blog/nadiarfi/com/s3/bucket/name
+
+github:
+  organization: nadirarfi
+  repository: blog.nadirarfi.com
+  oidc:
+    roleName: GitHubActionsRole
 
 tags:
   Environment: prod
   Project: blog.nadirarfi.com
-  IaC: CDK  
+  IaC: CDK

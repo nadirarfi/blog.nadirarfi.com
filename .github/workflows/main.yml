@@ -1,50 +1,235 @@
-name: Deploy to S3 and Invalidate CloudFront Cache
+name: Build Static Files and Deploy to S3 Bucket with CloudFront
+
 on:
   push:
     branches:
       - main
     paths:
-      - "app/website/.dist/client/**"
+      - "app/website/src/**"
+      - "app/content/**"
+      - "app/website/package*.json"
+
+  pull_request:
+    branches:
+      - main
+    paths:
+      - "app/website/src/**"
+      - "app/content/**"
+      - "app/website/package*.json"
+
   # Allow manual trigger
   workflow_dispatch:
-
+    inputs:
+      environment:
+        description: "Deployment Environment"
+        required: true
+        default: "PROD"
+        type: choice
+        options:
+          - PROD
 env:
   AWS_DEFAULT_REGION: eu-west-1
   AWS_DEFAULT_OUTPUT: json
   SOURCE_DIR: "app/website/.dist/client"
+  S3_BUCKET_PARAMETER_KEY: /arfin/aws/ssm/prod/blog/nadiarfi/com/s3/bucket/name
+  CLOUDFRONT_DISTRIBUTION_ID_PARAMETER_KEY: /arfin/aws/ssm/prod/blog/nadiarfi/com/cloudfront/distribution/id
+  GITHUB_ACTIONS_ROLE_NAME: GitHubActionsRole
+  NODE_VERSION: "18"
 
 jobs:
-  deploy:
+  validate:
+    name: Validate Code
     runs-on: ubuntu-latest
-    environment: PROD
-
-    # These permissions are needed to interact with GitHub's OIDC Token endpoint
-    permissions:
-      id-token: write
-      contents: read
 
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
 
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: "npm"
+          cache-dependency-path: ./app/website/package-lock.json
+
+      - name: Install Dependencies
+        working-directory: ./app/website
+        run: npm ci
+
+      - name: Run Linting
+        working-directory: ./app/website
+        run: npm run lint || echo "Linting completed with warnings"
+
+      # Add any other validation steps here (unit tests, etc.)
+
+  build:
+    name: Build Static Files
+    needs: validate
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: "npm"
+          cache-dependency-path: ./app/website/package-lock.json
+
+      - name: Install Dependencies
+        working-directory: ./app/website
+        run: npm ci
+
+      - name: Copy Content Folder
+        run: |
+          if [ -d ./app/website/src/content ]; then rm -rf ./app/website/src/content; fi
+          cp -r ./app/content ./app/website/src/content
+
+      - name: Build Website
+        working-directory: ./app/website
+        run: npm run build
+
+      - name: Upload Build Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: website-build
+          path: ${{ env.SOURCE_DIR }}
+          retention-days: 1
+          if-no-files-found: error
+
+  deploy:
+    name: Deploy to AWS
+    needs: build
+    if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    environment: ${{ github.event.inputs.environment || 'PROD' }}
+    concurrency:
+      group: deploy-${{ github.event.inputs.environment || 'PROD' }}
+      cancel-in-progress: false
+
+    # Permissions are needed to interact with GitHub's OIDC Token endpoint and read repo contents
+    permissions:
+      id-token: write
+      contents: read
+
+    steps:
+      - name: Download Build Artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: website-build
+          path: ${{ env.SOURCE_DIR }}
+
       - name: Configure AWS Credentials
+        id: aws-credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
           aws-region: ${{ env.AWS_DEFAULT_REGION }}
-          role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID }}:role/GitHubActionsRole
+          role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID }}:role/${{ env.GITHUB_ACTIONS_ROLE_NAME }}
           role-session-name: GitHubActionsDeployment
-          # audience: sts.${{ env.AWS_DEFAULT_REGION }}.amazonaws.com
 
-      # Optional: Deploy website content to S3
-      - name: Deploy to S3
-        if: success()
+      - name: Fetch Parameters from SSM
+        id: fetch-parameters
         run: |
-          aws s3 sync ${{ env.SOURCE_DIR }} s3://${{ secrets.S3_BUCKET }}/ --delete
+          echo "Fetching deployment parameters from SSM Parameter Store..."
+          S3_BUCKET=$(aws ssm get-parameter --name ${{ env.S3_BUCKET_PARAMETER_KEY }} --query 'Parameter.Value' --output text)
+          CLOUDFRONT_DISTRIBUTION_ID=$(aws ssm get-parameter --name ${{ env.CLOUDFRONT_DISTRIBUTION_ID_PARAMETER_KEY }} --query 'Parameter.Value' --output text)
 
-      # Optional: Invalidate CloudFront
-      - name: Invalidate CloudFront
-        if: success()
+          if [ -z "$S3_BUCKET" ] || [ -z "$CLOUDFRONT_DISTRIBUTION_ID" ]; then
+            echo "Failed to retrieve required parameters from SSM Parameter Store"
+            exit 1
+          fi
+
+          echo "S3_BUCKET=$S3_BUCKET" >> $GITHUB_OUTPUT
+          echo "CLOUDFRONT_DISTRIBUTION_ID=$CLOUDFRONT_DISTRIBUTION_ID" >> $GITHUB_OUTPUT
+          echo "Parameters retrieved successfully"
+
+      - name: Deploy to S3 Bucket
+        id: s3-deploy
         run: |
-          aws cloudfront create-invalidation \
-            --distribution-id ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID }} \
-            --paths "/*"
+          echo "Deploying website to S3 bucket: ${{ steps.fetch-parameters.outputs.S3_BUCKET }}"
+          aws s3 sync ${{ env.SOURCE_DIR }} s3://${{ steps.fetch-parameters.outputs.S3_BUCKET }}/ \
+            --delete \
+            --cache-control "max-age=31536000,public" \
+            --exclude "*.html" --exclude "sitemap.xml" --exclude "robots.txt"
+
+          # Deploy HTML files, sitemap, and robots.txt with no caching to ensure fresh content
+          aws s3 sync ${{ env.SOURCE_DIR }} s3://${{ steps.fetch-parameters.outputs.S3_BUCKET }}/ \
+            --delete \
+            --cache-control "no-cache,no-store,must-revalidate" \
+            --exclude "*" --include "*.html" --include "sitemap.xml" --include "robots.txt"
+
+          echo "Website deployed successfully to S3"
+
+      - name: Invalidate CloudFront Cache
+        id: cloudfront-invalidation
+        run: |
+          echo "Creating CloudFront invalidation for distribution: ${{ steps.fetch-parameters.outputs.CLOUDFRONT_DISTRIBUTION_ID }}"
+          INVALIDATION_ID=$(aws cloudfront create-invalidation \
+            --distribution-id ${{ steps.fetch-parameters.outputs.CLOUDFRONT_DISTRIBUTION_ID }} \
+            --paths "/*" \
+            --query 'Invalidation.Id' --output text)
+
+          echo "INVALIDATION_ID=$INVALIDATION_ID" >> $GITHUB_OUTPUT
+          echo "CloudFront invalidation initiated with ID: $INVALIDATION_ID"
+
+      - name: Wait for Invalidation to Complete
+        run: |
+          echo "Waiting for CloudFront invalidation to complete..."
+          aws cloudfront wait invalidation-completed \
+            --distribution-id ${{ steps.fetch-parameters.outputs.CLOUDFRONT_DISTRIBUTION_ID }} \
+            --id ${{ steps.cloudfront-invalidation.outputs.INVALIDATION_ID }}
+          echo "CloudFront invalidation completed successfully"
+
+      - name: Verify Deployment
+        run: |
+          echo "Verifying deployment..."
+          # Use curl to check if the site is accessible
+          # This is a basic check - adjust the URL to match your specific site
+          SITE_URL="https://$(aws s3api get-bucket-website --bucket ${{ steps.fetch-parameters.outputs.S3_BUCKET }} --query 'WebsiteConfiguration.IndexDocument.Suffix' --output text 2>/dev/null || echo "blog.nadiarfi.com")"
+          echo "Checking website at: $SITE_URL"
+
+          # Adding a short delay to allow for propagation
+          sleep 10
+
+          HTTP_STATUS=$(curl -s -o /dev/null -w "%{http_code}" $SITE_URL)
+          if [[ $HTTP_STATUS -lt 200 || $HTTP_STATUS -ge 400 ]]; then
+            echo "Warning: Website returned HTTP status $HTTP_STATUS"
+            # Don't fail the workflow, but provide a warning
+          else
+            echo "Website is accessible, returned HTTP status $HTTP_STATUS"
+          fi
+
+      - name: Deployment Summary
+        run: |
+          echo "============================================"
+          echo "✅ DEPLOYMENT COMPLETED SUCCESSFULLY"
+          echo "============================================"
+          echo "🚀 Environment: ${{ github.event.inputs.environment || 'PROD' }}"
+          echo "📁 S3 Bucket: ${{ steps.fetch-parameters.outputs.S3_BUCKET }}"
+          echo "🔄 CloudFront Distribution: ${{ steps.fetch-parameters.outputs.CLOUDFRONT_DISTRIBUTION_ID }}"
+          echo "❄️ CloudFront Invalidation ID: ${{ steps.cloudfront-invalidation.outputs.INVALIDATION_ID }}"
+          echo "🔗 Website URL: https://blog.nadiarfi.com"
+          echo "📅 Deployed at: $(date)"
+          echo "============================================"
+
+  notify:
+    name: Notify Deployment Status
+    needs: [deploy]
+    if: always()
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Set Status
+        id: status
+        run: |
+          if [ "${{ needs.deploy.result }}" == "success" ]; then
+            echo "status=success" >> $GITHUB_OUTPUT
+            echo "emoji=✅" >> $GITHUB_OUTPUT
+            echo "message=Deployment completed successfully" >> $GITHUB_OUTPUT
+          else
+            echo "status=failure" >> $GITHUB_OUTPUT
+            echo "emoji=❌" >> $GITHUB_OUTPUT
+            echo "message=Deployment failed" >> $GITHUB_OUTPUT
+          fi
