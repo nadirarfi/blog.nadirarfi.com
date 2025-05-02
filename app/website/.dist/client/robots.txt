@@ -1,5 +1,0 @@
-
-User-agent: *
-Allow: /
-
-Sitemap: https://blog.nadirarfi.com/sitemap-index.xml
