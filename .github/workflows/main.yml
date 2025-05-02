@@ -74,8 +74,7 @@ jobs:
           retention-days: 1
           if-no-files-found: error
           overwrite: true
-          includen-hidden-files: overwrite
-
+          
   deploy:
     name: Deploy to AWS
     needs: build
