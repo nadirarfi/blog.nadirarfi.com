@@ -1,4 +1,4 @@
-name: Deploy Infrastructure
+name: Deploy Infrastructure using AWS CDK for static website
 
 on:
   push:
