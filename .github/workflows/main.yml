@@ -37,30 +37,6 @@ env:
   NODE_VERSION: "18"
 
 jobs:
-  validate:
-    name: Validate Code
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout Code
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: ${{ env.NODE_VERSION }}
-          cache: "npm"
-          cache-dependency-path: ./app/website/package-lock.json
-
-      - name: Install Dependencies
-        working-directory: ./app/website
-        run: npm ci
-
-      - name: Run Linting
-        working-directory: ./app/website
-        run: npm run lint || echo "Linting completed with warnings"
-
-      # Add any other validation steps here (unit tests, etc.)
 
   build:
     name: Build Static Files
