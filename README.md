@@ -4,6 +4,26 @@ This repository hosts the **full-stack infrastructure and application code** for
 
 ---
 
+## Table of Content
+
+1. [📋 Main component](#-main-component)
+2. [✨ Summary](#-summary)
+3. [📁 Project Structure](#-project-structure)
+4. [🖥️ Application: Astro.js Website](#️-application-astrojs-website)
+   - [Content Structure](#content-structure)
+5. [🏗 Infrastructure: AWS CDK Project](#-infrastructure-aws-cdk-project)
+   - [🔀 Deployment Modes](#-deployment-modes)
+   - [⚙️ Configuration with YAML](#️-configuration-with-yaml)
+   - [🔧 Development Container Setup (setup.sh)](#-development-container-setup-setupsh)
+   - [🛠 CDK Usage Examples](#-cdk-usage-examples)
+6. [🔐 GitHub Actions & OIDC Role](#-github-actions--oidc-role)
+7. [🔄 CI/CD: GitHub Actions](#-cicd-github-actions)
+   - [✅ Infrastructure Pipeline (deploy-infra.yaml)](#-infrastructure-pipeline-deploy-infrayamlex)
+   - [✅ Website Pipeline (deploy-app.yaml)](#-website-pipeline-deploy-appyaml)
+8. [✅ Best Practices Followed](#-best-practices-followed)
+9. [📬 Contact](#-contact)
+
+
 ## 📋 Main component
 
 | Section        | Description                                                         |
