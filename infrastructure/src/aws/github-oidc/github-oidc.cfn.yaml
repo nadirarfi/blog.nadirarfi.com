@@ -61,8 +61,10 @@ Resources:
                 - !Ref IdpGitHubOidc
                 - !Sub arn:${AWS::Partition}:iam::${AWS::AccountId}:oidc-provider/token.actions.githubusercontent.com
             Condition:
-              StringLike:
-                token.actions.githubusercontent.com:sub: !Sub repo:${GitHubOrganization}/${RepositoryName}:ref:refs/heads/${BranchName}
+              StringEquals:  # https://github.com/terraform-aws-modules/terraform-aws-iam/issues/522
+                token.actions.githubusercontent.com:aud: sts.amazonaws.com
+              StringLike: 
+                token.actions.githubusercontent.com:sub: !Sub 'repo:${GitHubOrganization}/${RepositoryName}:*'
       ManagedPolicyArns:
         - !Sub arn:${AWS::Partition}:iam::aws:policy/AdministratorAccess
 
