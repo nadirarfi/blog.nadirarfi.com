@@ -1,74 +1,93 @@
-name: Deploy Infrastructure using AWS CDK for static website
+name: Deploy AWS Infrastructure via CDK
 
 on:
   push:
-    branches:
-      - main
-    paths:
-      - "infrastructure/**"
-
-  # Allow manual trigger
+    branches: [main]
+    paths: ["infrastructure/**"]
   workflow_dispatch:
     inputs:
       environment:
         description: "Deployment Environment"
         required: true
-        default: "PROD"
+        default: "prod"
         type: choice
-        options:
-          - PROD
+        options: [prod, staging]
 
 env:
-  AWS_DEFAULT_REGION: eu-west-1
-  AWS_DEFAULT_OUTPUT: json
-  CDK_VERSION: "2.62.2"
+  AWS_REGION: eu-west-1
   NODE_VERSION: "18"
-  GITHUB_ACTIONS_ROLE_NAME: GitHubActionsRole
+  GITHUB_ACTIONS_ROLE: GitHubActionsRole
+  CDK_DIRECTORY: ./infrastructure/src/aws/cdk
+  CDK_CONTEXT: "env=${{ github.event.inputs.environment || 'prod' }}"
 
 jobs:
-
-  cdk-iac:
-    name: Setup CDK environment and deploy resources
+  deploy-infrastructure:
+    name: Deploy AWS Infrastructure
     runs-on: ubuntu-latest
-    environment: ${{ github.event.inputs.environment || 'PROD' }}
+    environment: ${{ github.event.inputs.environment || 'prod' }}
     permissions:
       id-token: write
       contents: read
+    
     steps:
-      - name: Checkout Code
+      - name: Checkout Repository
         uses: actions/checkout@v4
 
       - name: Configure AWS Credentials
-        id: aws-credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
-          aws-region: ${{ env.AWS_DEFAULT_REGION }}
-          role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID }}:role/${{ env.GITHUB_ACTIONS_ROLE_NAME }}
-          role-session-name: GitHubActionsDeployment
+          aws-region: ${{ env.AWS_REGION }}
+          role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID }}:role/${{ env.GITHUB_ACTIONS_ROLE }}
+          role-session-name: GitHubActionsCDKDeployment
 
-      - name: Setup Node.js
+      - name: Setup Node.js Environment
         uses: actions/setup-node@v3
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: "npm"
-          cache-dependency-path: ./infrastructure/src/aws/cdk/package-lock.json
-
-      - name: Install CDK
-        working-directory: ./infrastructure/src/aws/cdk
-        run: npm install -g aws-cdk typescript
+          cache-dependency-path: ${{ env.CDK_DIRECTORY }}/package-lock.json
 
       - name: Install Dependencies
-        working-directory: ./infrastructure/src/aws/cdk
-        run: npm install
+        working-directory: ${{ env.CDK_DIRECTORY }}
+        run: |
+          echo "Installing project dependencies..."
+          npm ci
+          echo "Using project's CDK version: $(npx aws-cdk --version)"
 
-      - name: Synth CDK
-        working-directory: ./infrastructure/src/aws/cdk
-        run: cdk synth
-
-      - name: Diff CDK
-        working-directory: ./infrastructure/src/aws/cdk
-        run: cdk diff --all --context env=prod
-
-      - name: Deploy CDK
-        working-directory: ./infrastructure/src/aws/cdk
-        run: cdk deploy --all --context env=prod --require-approval never
+      - name: Synthesize CloudFormation Templates
+        working-directory: ${{ env.CDK_DIRECTORY }}
+        run: |
+          echo "🔍 Synthesizing CloudFormation templates for environment: ${{ github.event.inputs.environment || 'prod' }}"
+          npx cdk synth --all --context ${{ env.CDK_CONTEXT }} > synth-output.txt
+          echo "✅ Synthesis completed successfully!"
+          echo "📜 Generated the following stacks:"
+          grep -A 1 "Stack:" synth-output.txt | grep -v "\-\-"
+          
+      - name: Show Infrastructure Changes
+        id: cdk-diff
+        working-directory: ${{ env.CDK_DIRECTORY }}
+        continue-on-error: true  # Diff might fail if resources don't exist yet
+        run: |
+          echo "🔄 Comparing infrastructure changes..."
+          npx cdk diff --all --context ${{ env.CDK_CONTEXT }} | tee diff-output.txt
+          
+          # Extract key changes for a more concise summary
+          echo "📊 Change Summary:"
+          grep -E "^[±~]|will be" diff-output.txt | head -20
+          
+          if grep -q "will be" diff-output.txt; then
+            echo "⚠️ Resources will be created/updated/deleted"
+          else 
+            echo "✓ No significant changes detected"
+          fi
+          
+      - name: Deploy Infrastructure Stacks
+        working-directory: ${{ env.CDK_DIRECTORY }}
+        run: |
+          echo "🚀 Deploying infrastructure stacks to ${{ github.event.inputs.environment || 'prod' }}..."
+          npx cdk deploy --all --context ${{ env.CDK_CONTEXT }} --require-approval never
+          
+          # Show stack status after deployment
+          echo "✅ Deployment complete!"
+          echo "📋 Stack Status:"
+          aws cloudformation list-stacks --query "StackSummaries[?StackStatus!='DELETE_COMPLETE'].{Name:StackName,Status:StackStatus}" --output table
