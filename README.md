@@ -260,6 +260,7 @@ Deploys infrastructure (`.github/workflows/deploy-infra.yml`)
   - `cdk diff --all --context env=<env>` (summarized)
   - `cdk deploy --all --context env=<env> --require-approval never`
   - Post‑deployment: list CloudFormation stack statuses
+![GitHub Actions Deploy Infra](./images/github-action-deploy-infra.jpg)
 
 ### ✅ Website Pipeline (`deploy-app.yaml`)
 
@@ -284,6 +285,8 @@ Deploys the static website (`.github/workflows/deploy-app.yml`):
   - Create CloudFront invalidation
   - Optional curl-based health check
   - Summary
+
+![GitHub Actions Deploy App](./images/github-action-deploy-app.jpg)
 
 ---
 
