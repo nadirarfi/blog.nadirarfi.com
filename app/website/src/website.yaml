@@ -1,0 +1,52 @@
+# website.yaml
+site:
+  title: Nadir Arfi
+  description: I'm a Cloud/DevOps Engineer.
+  href: https://nadirarfi.com
+  author: Nadir Arfi
+  locale: en-US
+  location: Algeria
+
+navLinks:
+  - href: /
+    label: home
+  - href: /projects
+    label: projects
+  - href: /blog
+    label: blog
+
+socialLinks:
+  - href: https://github.com/cojocaru-david?ref=personal-website
+    label: GitHub
+  - href: mailto:contact@cojocarudavid.me
+    label: Email
+  - href: +40 764 132 266
+    label: Phone
+  - href: https://www.instagram.com/david._.cojo?ref=personal-website
+    label: Instagram
+  - href: /rss.xml
+    label: RSS
+
+iconMap:
+  Website: lucide:globe
+  GitHub: lucide:github
+  Instagram: lucide:instagram
+  Phone: lucide:phone
+  Email: lucide:mail
+  RSS: lucide:rss
+
+technologies:
+  Web Development:
+    - text: HTML
+      logo: mdi:language-html5
+    - text: JavaScript
+      logo: mdi:language-javascript
+    - text: CSS
+      logo: mdi:language-css3
+    - text: PHP
+      logo: mdi:language-php
+    - text: Astro
+      logo: simple-icons:astro
+    - text: Tailwind CSS
+      logo: mdi:tailwind
+  # ...other categories continue
