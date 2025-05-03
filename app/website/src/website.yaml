@@ -1,11 +1,11 @@
 # website.yaml
 site:
   title: Nadir Arfi
-  description: I'm a Cloud/DevOps Engineer.
+  description: Passionate about tech and cloud, always pushing the boundaries to consistently improve.
   href: https://nadirarfi.com
   author: Nadir Arfi
   locale: en-US
-  location: Algeria
+  location: Luxembourg
 
 # Navigation structure
 navLinks:
@@ -16,17 +16,16 @@ navLinks:
 # Social media and contact links
 socialLinks:
   - { href: "https://blog.nadirarfi.com", label: Website }
+  - { href: "https://www.linkedin.com/in/nadirarfi", label: Linkedin }
   - { href: "https://github.com/nadirarfi", label: GitHub }
-  - { href: "nadir.arfi@outlook.com", label: Email }
-  - { href: "/rss.xml", label: RSS }
+  - { href: "mailto:nadir.arfi@outlook.com", label: Email }
 
 # Icon mappings for various platforms/services
 iconMap:
   Website: lucide:globe
+  Linkedin: lucide:linkedin
   GitHub: lucide:github
   Email: lucide:mail
-  RSS: lucide:rss
-
 
 pages:
   home:
@@ -42,125 +41,171 @@ pages:
 
 # Resume information
 resume:
-  
-  title: "Professional Experience"
-  description: "A summary of my professional journey and experience:"
-  pdfLink: "/resume.pdf"
-  educationTitle: "Education"  
+
+  title: "Work Experience"
+  headline: "Cloud/DevOps Engineer"
+  description: ""
+  pdfLink: ""
+  educationTitle: "Education"
   certificationsTitle: "Certifications"
   credentialLinkText: "View credential"
   pdfLinkText: "View Full Resume PDF"
 
   experiences:
-    - company: "Cloud Solutions Inc."
+    - company: "ARHS Group, part of Accenture"
       position: "Cloud/DevOps Engineer"
-      period: "2022 - Present"
-      description: "Leading cloud infrastructure development and deployment automation, focusing on AWS and Azure environments for enterprise clients."
+      period: "Oct 2023 - Present (~ 2 years)"
+      description: |
+        I embarked on an enriching academic journey with an Erasmus Mundus scholarship, specializing in Green Networking and Cloud Computing through the GENIAL program. This opportunity took me across 
+        Europe, where I gained valuable insights into advanced cloud technologies. Upon completing my studies, I joined the Young Graduate Cloud Academy program at ARHS Group in Luxembourg, where I honed my skills 
+        and deepened my understanding of cloud technologies. I then transitioned to the Managed Service Provider (MSP) team, providing 24/7 cloud infrastructure support and ensuring seamless operations for various clients.
       achievements:
-        - "Reduced deployment times by 70% through CI/CD pipeline optimization"
-        - "Implemented infrastructure-as-code practices using Terraform" 
-        - "Designed and deployed containerized microservices architecture"
+        - |
+            Delivered 24/7 support as part of the MSP team, providing reliable and critical cloud production 
+            on-call support during and outside working hours for over 10 different projects and customers, 
+            mainly banks and European institutions in the public sector in Luxembourg.
+        - |
+            Specialized in cloud platform operations across AWS and Azure; managed infrastructure upgrades, 
+            services, and day-to-day operations, resolving over 1,300 Jira tickets.
+        - |
+            Hands-on with Infrastructure as Code (IaC) using Terraform, Terragrunt, CloudFormation, CDK, 
+            and Ansible for change requests, cloud operations, and delivering scalable/secure cloud 
+            infrastructure deployments.
+        - |
+            Managed Kubernetes clusters (AKS/EKS), performing security patches (critical CVEs), 
+            infrastructure upgrades, and component updates to ensure high availability, security, 
+            and resource optimization.
+        - |
+            Automated daily operations by leveraging Jira Automation, Python, Bash, Datadog monitoring APIs, 
+            and integration services, streamlining scheduled maintenance tasks and improving 
+            day-to-day team efficiency.
+        - |
+            Executed deployments across several projects using CI/CD pipelines based on Azure DevOps, 
+            GitLab, and Jenkins, ensuring smooth and timely delivery of cloud infrastructure and applications.
+        - |
+            Mentored and onboarded new team members, sharing best practices in cloud operations, 
+            deployments, and automation to accelerate their integration and team performance.
+        - |
+            Contributed to the development of the Azure Landing Zone, ensuring alignment with 
+            Microsoft best practices for networking, security, and governance, including Terraform 
+            modules for automated infrastructure provisioning.
+        - |
+            Administered governance tasks, including managing Azure Policies, Entra ID, RBAC, 
+            resource locks, and monitoring to ensure compliance and security, while configuring 
+            Azure networking resources (VNets, NSGs, private endpoints, DNS).
+
       projects:
-        - name: "Financial Services Cloud Migration"
-          description: "Led the migration of a critical banking application from on-premise to AWS infrastructure."
-          technologies: ["AWS", "Terraform", "Docker", "Jenkins"]
-          outcomes: "Achieved 99.99% uptime and 40% cost reduction compared to on-premise infrastructure."
-          
-        - name: "DevOps Automation Platform"
-          description: "Developed an internal platform for standardizing deployment processes across multiple teams."
-          technologies: ["Kubernetes", "Python", "Go", "Prometheus"]
-          outcomes: "Reduced average deployment time from 2 days to 20 minutes and eliminated configuration drift."
-    
-    - company: "TechInfra Systems"
-      position: "Junior DevOps Specialist"
-      period: "2020 - 2022"
-      description: "Collaborated with development teams to automate deployment processes and maintain cloud infrastructure across multiple environments."
-      achievements:
-        - "Migrated on-premise applications to AWS cloud services"
-        - "Created monitoring dashboards using Prometheus and Grafana"
-        - "Automated backup and disaster recovery procedures"
-      projects:
-        - name: "E-commerce Platform Infrastructure"
-          description: "Designed and implemented scalable infrastructure for high-traffic e-commerce application."
-          technologies: ["AWS", "Elastic Beanstalk", "RDS", "Terraform"]
-          outcomes: "Successfully handled 10x traffic increase during Black Friday sale with zero downtime."
-          
-        - name: "Monitoring System Overhaul"
-          description: "Replaced legacy monitoring solutions with modern observability stack."
-          technologies: ["Prometheus", "Grafana", "ELK Stack"]
-          outcomes: "Improved incident response time by 65% and enabled proactive issue detection."
-    
-    - company: "DataTech Solutions"
-      position: "IT Operations Intern"
-      period: "2019 - 2020"
-      description: "Assisted in maintaining Linux servers and network infrastructure while learning cloud computing fundamentals."
-      achievements:
-        - "Contributed to migration from legacy systems to cloud services"
-        - "Implemented log monitoring solutions"
-        - "Gained hands-on experience with Docker containerization"
-      projects:
-        - name: "Server Documentation Project"
-          description: "Created comprehensive documentation for the company's server infrastructure."
-          technologies: ["Linux", "Confluence", "Networking"]
-          outcomes: "Reduced onboarding time for new IT staff by 50% and standardized server management procedures."
-          
-        - name: "Docker Pilot Project"
-          description: "Containerized internal development environments for consistency across the team."
-          technologies: ["Docker", "Docker Compose", "Bash"]
-          outcomes: "Eliminated 'works on my machine' problems and standardized development environments."
+        - name: "Managed Services Team Support"
+          description: "Provided 24/7 cloud production support for multiple projects across various European institutions."
+          technologies: [
+            AWS, Azure, Terraform, Kubernetes, AWS, Azure, Docker, Kubernetes, CloudFormation, 
+            CDK, Terraform, Terragrunt, Python, Bash, Datadog, Elastic, CloudWatch, Cloudtrails
+            ]
+          outcomes: "Resolved over 1,300 Jira tickets and optimized cloud operations."
+        - name: "Azure Landing Zone Project"
+          description: "Led Azure cloud operations within a team, handling 180+ tickets and actively onboarded new members."
+          technologies: [
+            "Azure", "Terraform", "Governance", "Azure Devops (CI/CD)", "RBAC", "Networking", 
+            "Entra ID", "Troubleshooting", Azure Monitor, Log Analytics Workspace, KQL
+            ]
+          outcomes: "Provided troubleshooting and support for application teams, ensuring seamless application infrastructure integration."
+
 
   # Education information
   education:
     title: "Education"
-    description: "My academic background:"
+    description: "Erasmus Mundus Scholarship (selected out of 600 applicants for a fully funded scholarship by the European Commission)"
     institutions:
-      - name: "University of Technology"
-        degree: "Master of Science in Computer Engineering"
-        field: "Specialization in Cloud Computing and Distributed Systems"
-        period: "2017 - 2019"
+
+      - name: "Luleå University of Technology (Erasmus Mundus Mobility Programme)"
+        degree: "Master’s in Pervasive Computing and Communications for Sustainable Development"
+        field: "Computer Science"
+        period: "Sep 2022 - Jan 2023"
+        location: "Sweden"
+        description: "Focused on cloud services, distributed systems, and advanced wireless networks."
+        achievements: []
+
+      - name: "Leeds Beckett University (Erasmus Mundus Mobility Programme)"
+        degree: "Master’s degree in IT Sustainable Computing"
+        field: "Computer Science"
+        period: "Jan 2022 - May 2022"
+        location: "United Kingdom"
+        description: "Specialized in data analytics and machine learning."
+        achievements: []
+
+      - name: "Université de Lorraine (Erasmus Mundus Mobility Programme)"
+        degree: "Master's degree in Complex System Engineering - Networking, Signals and Green ICT"
+        period: "Sep 2021 - Jan 2022"
+        location: "France"
+        description: "Concentrated on networking and green ICT solutions."
+        achievements: []
+
+      - name: "Ecole Nationale Polytechnique"
+        degree: "Engineering degree in Electronics"
+        period: "2016 - 2021"
         location: "Algiers, Algeria"
-        description: "Focused on advanced cloud architecture, distributed systems, and DevOps methodologies."
+        description: "Focused on signals and communication."
         achievements:
-          - "Graduated with honors (GPA: 3.8/4.0)"
-          - "Master's thesis on 'Optimizing Kubernetes Resource Allocation in Multi-Cloud Environments'"
-          - "Runner-up in University Cloud Innovation Competition"
-      
-      - name: "Polytechnic Institute"
-        degree: "Bachelor of Science in Computer Science"
-        field: "Computer Science and Network Engineering"
-        period: "2014 - 2017"
-        location: "Oran, Algeria"
-        description: "Obtained a strong foundation in computer science principles, networking, and systems administration."
-        achievements:
-          - "Graduated with distinction"
-          - "Led student team in developing campus network monitoring tool"
-          - "Recipient of Academic Excellence Scholarship for 3 consecutive years"
-  
+          - "Ranked 21st out of 1338 students in national preparatory classes."
+
+
   certifications:
-    - name: "AWS Certified Solutions Architect – Professional"
-      issuer: "Amazon Web Services"
-      date: "2023"
-      description: "Advanced certification demonstrating expertise in designing distributed systems on AWS."
-      link: "https://www.credly.com/badges/aws-certified-solutions-architect-professional"
-      badge: "aws-developer.png"  # Add this line for the badge image
-      
-    - name: "Certified Kubernetes Administrator (CKA)"
-      issuer: "Cloud Native Computing Foundation"
-      date: "2022"
-      description: "Validated ability to perform the responsibilities of Kubernetes administrators."
-      link: "https://www.cncf.io/certification/cka/"
-      
-    - name: "HashiCorp Certified: Terraform Associate"
-      issuer: "HashiCorp"
-      date: "2022"
-      description: "Proven knowledge of infrastructure as code using Terraform."
-      link: "https://www.hashicorp.com/certification/terraform-associate"
-      
-    - name: "Microsoft Certified: Azure DevOps Engineer Expert"
-      issuer: "Microsoft"
-      date: "2021"
-      description: "Expert-level certification for DevOps professionals who combine people, process, and technologies for Azure."
-      link: "https://learn.microsoft.com/en-us/credentials/certifications/azure-devops/"
+  - name: "Microsoft Certified: Azure Administrator Associate"
+    issuer: "Microsoft"
+    date: "2024"
+    description: "Demonstrates expertise in managing Azure cloud services."
+    link: "https://learn.microsoft.com/en-us/users/nadirarfi/credentials/92ee3fb7fbc3b95b?ref=https%3A%2F%2Fwww.linkedin.com%2F"
+    badge: "azure-administrator.png"
+
+  - name: "CKA: Certified Kubernetes Administrator"
+    issuer: "The Linux Foundation"
+    date: "2023"
+    description: "Assesses knowledge of Kubernetes architecture, installation, configuration, and troubleshooting."
+    link: "https://www.credly.com/badges/4a3f0a7a-630b-4895-aa2f-dca0ccd5cf38/linked_in_profile"
+    badge: "cka.png"
+
+  - name: "AWS Certified Developer – Associate"
+    issuer: "Amazon Web Services (AWS)"
+    date: "2023"
+    description: "Demonstrates proficiency in developing and maintaining applications on the AWS platform."
+    link: "https://www.credly.com/badges/4cd3410c-9113-41fb-b918-298b9631c59f/linked_in_profile"
+    badge: "aws-developer.png"
+
+  - name: "AWS Certified Solutions Architect – Associate"
+    issuer: "Amazon Web Services (AWS)"
+    date: "2023"
+    description: "Validates ability to design distributed systems on AWS that are scalable, resilient, and cost-efficient."
+    link: "https://www.credly.com/badges/fa6259d4-fc04-46f3-871d-f913e6ee5d19/linked_in_profile"
+    badge: "aws-solutions-architect.png"
+
+  # - name: "Oracle Cloud Infrastructure Certified Foundations Associate"
+  #   issuer: "Oracle"
+  #   date: "2024"
+  #   description: "Validates foundational knowledge of Oracle Cloud Infrastructure services and core concepts."
+  #   link: "https://catalog-education.oracle.com/ords/certview/sharebadge?id=06E72F5728B9EE38B06E5CFF3CD0C1860A03C70A935A0899617D7E83B7AB711F"
+  #   badge: "oci-foundations.png"
+
+  - name: "AWS Certified Cloud Practitioner"
+    issuer: "Amazon Web Services (AWS)"
+    date: "2022"
+    description: "Demonstrates a foundational understanding of AWS Cloud and global infrastructure."
+    link: "https://www.credly.com/badges/2a574f80-4f5e-41be-b3ff-c3f06dbdf5f9/linked_in_profile"
+    badge: "aws-cloud-practitioner.png"
+
+  - name: "HashiCorp Certified: Terraform Associate (002)"
+    issuer: "HashiCorp"
+    date: "2023"
+    description: "Demonstrates knowledge of Terraform CLI and its use in managing infrastructure as code."
+    link: "https://www.hashicorp.com/certification/terraform-associate"
+    badge: "terraform-associate.png"
+
+  - name: "Cisco Certified Network Associate (CCNA 200-301)"
+    issuer: "Cisco"
+    date: "2020"
+    description: "Validates foundational networking skills, including IP addressing, routing, and switching."
+    link: "https://www.cisco.com/c/en/us/training-events/training-certifications/certifications/associate/ccna.html"
+    badge: "ccna.png"
+
 
 # Technology stack organized by category
 technologies:
@@ -177,10 +222,8 @@ technologies:
     - { text: "Docker", logo: logos:docker-icon }
     - { text: "Kubernetes", logo: logos:kubernetes }
     - { text: "Terraform", logo: logos:terraform-icon }
+    - { text: "Ansible", logo: logos:ansible }
     - { text: "Jenkins", logo: logos:jenkins }
   "Programming":
     - { text: "Python", logo: logos:python }
     - { text: "Bash", logo: logos:bash-icon }
-    - { text: "Go", logo: logos:go }
-    - { text: "Node.js", logo: logos:nodejs-icon }
-  # Other categories would follow the same pattern...
