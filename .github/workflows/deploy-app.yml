@@ -61,7 +61,7 @@ jobs:
       - name: Copy Content Folder
         run: |
           if [ -d ./app/website/src/content ]; then rm -rf ./app/website/src/content; fi
-          cp -r ./app/content ./app/website/src/content
+          if [ -d ./app/content ]; then cp -r ./app/content ./app/website/src/content; fi
 
       - name: Build Website
         working-directory: ./app/website
