@@ -11,6 +11,31 @@ import { SITE } from '@/consts'
 
 const blog = await getRecentPosts(3)
 const currentUrl = Astro.url;
+
+// Fake resume data
+const resumeData = [
+  {
+    company: "TechSolutions Inc.",
+    position: "Junior Full Stack Developer",
+    period: "2022 - Present",
+    description: "Developing responsive web applications using React, TypeScript, and Node.js. Contributed to the company's main product by implementing new features and fixing bugs.",
+    achievements: ["Reduced page load time by 40%", "Implemented authentication system", "Migrated legacy code to modern frameworks"]
+  },
+  {
+    company: "CodeCraft Academy",
+    position: "Web Development Intern",
+    period: "2021 - 2022",
+    description: "Worked on various client projects as part of an agile development team. Focused on front-end development with HTML, CSS, and JavaScript.",
+    achievements: ["Designed and built 5+ responsive websites", "Learned industry best practices", "Participated in code reviews"]
+  },
+  {
+    company: "University Projects",
+    position: "Student Developer",
+    period: "2020 - 2021",
+    description: "Created web applications as part of computer science curriculum. Focused on learning fundamentals of web development and software engineering principles.",
+    achievements: ["Built an e-commerce platform from scratch", "Created a task management application", "Implemented RESTful APIs"]
+  }
+];
 ---
 
 <Layout canonicalUrl={currentUrl}>
@@ -42,6 +67,55 @@ const currentUrl = Astro.url;
         </p>
       </div>
     </div>
+
+    <!-- Resume Section -->
+    <section class="relative" aria-labelledby="resume-title">
+      <h2
+        id="resume-title"
+        class="font-custom text-foreground text-2xl font-bold"
+        title="Professional Experience"
+        aria-label="Professional Experience"
+        role="heading"
+      >
+        Professional Experience
+      </h2>
+      <p class="text-muted-foreground text-sm mb-6" aria-label="resume description">
+        A summary of my professional journey and experience:
+      </p>
+      
+      <div class="space-y-8">
+        {resumeData.map((job, index) => (
+          <div class="relative pl-8 border-l border-primary/30" key={index}>
+            <div class="absolute left-[-8px] top-0 h-4 w-4 rounded-full bg-primary"></div>
+            <div class="flex flex-col sm:flex-row sm:items-baseline sm:justify-between">
+              <h3 class="font-semibold text-lg">{job.company}</h3>
+              <span class="text-muted-foreground text-sm font-medium">{job.period}</span>
+            </div>
+            <p class="font-medium text-md text-primary mt-1">{job.position}</p>
+            <p class="mt-2 text-sm text-muted-foreground">{job.description}</p>
+            <ul class="mt-3 list-disc pl-5 text-sm space-y-1">
+              {job.achievements.map((achievement, i) => (
+                <li key={i} class="text-foreground/80">{achievement}</li>
+              ))}
+            </ul>
+          </div>
+        ))}
+      </div>
+
+      <div class="flex justify-center mt-6" aria-label="download full resume">
+        <Link
+          href="/resume.pdf"
+          class={buttonVariants({ variant: 'outline' }) + ' group'}
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          Download Full Resume <span
+            class="ml-1.5 transition-transform group-hover:translate-x-1"
+            >&rarr;</span
+          >
+        </Link>
+      </div>
+    </section>
 
     <section class="relative" aria-labelledby="skills-title">
       <h2

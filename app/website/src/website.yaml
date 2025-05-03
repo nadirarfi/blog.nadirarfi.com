@@ -27,6 +27,121 @@ iconMap:
   Email: lucide:mail
   RSS: lucide:rss
 
+# Resume information
+resume:
+  title: "Professional Experience"
+  description: "A summary of my professional journey and experience:"
+  pdfLink: "/resume.pdf"
+  experiences:
+    - company: "Cloud Solutions Inc."
+      position: "Cloud/DevOps Engineer"
+      period: "2022 - Present"
+      description: "Leading cloud infrastructure development and deployment automation, focusing on AWS and Azure environments for enterprise clients."
+      achievements:
+        - "Reduced deployment times by 70% through CI/CD pipeline optimization"
+        - "Implemented infrastructure-as-code practices using Terraform" 
+        - "Designed and deployed containerized microservices architecture"
+      projects:
+        - name: "Financial Services Cloud Migration"
+          description: "Led the migration of a critical banking application from on-premise to AWS infrastructure."
+          technologies: ["AWS", "Terraform", "Docker", "Jenkins"]
+          outcomes: "Achieved 99.99% uptime and 40% cost reduction compared to on-premise infrastructure."
+          
+        - name: "DevOps Automation Platform"
+          description: "Developed an internal platform for standardizing deployment processes across multiple teams."
+          technologies: ["Kubernetes", "Python", "Go", "Prometheus"]
+          outcomes: "Reduced average deployment time from 2 days to 20 minutes and eliminated configuration drift."
+    
+    - company: "TechInfra Systems"
+      position: "Junior DevOps Specialist"
+      period: "2020 - 2022"
+      description: "Collaborated with development teams to automate deployment processes and maintain cloud infrastructure across multiple environments."
+      achievements:
+        - "Migrated on-premise applications to AWS cloud services"
+        - "Created monitoring dashboards using Prometheus and Grafana"
+        - "Automated backup and disaster recovery procedures"
+      projects:
+        - name: "E-commerce Platform Infrastructure"
+          description: "Designed and implemented scalable infrastructure for high-traffic e-commerce application."
+          technologies: ["AWS", "Elastic Beanstalk", "RDS", "Terraform"]
+          outcomes: "Successfully handled 10x traffic increase during Black Friday sale with zero downtime."
+          
+        - name: "Monitoring System Overhaul"
+          description: "Replaced legacy monitoring solutions with modern observability stack."
+          technologies: ["Prometheus", "Grafana", "ELK Stack"]
+          outcomes: "Improved incident response time by 65% and enabled proactive issue detection."
+    
+    - company: "DataTech Solutions"
+      position: "IT Operations Intern"
+      period: "2019 - 2020"
+      description: "Assisted in maintaining Linux servers and network infrastructure while learning cloud computing fundamentals."
+      achievements:
+        - "Contributed to migration from legacy systems to cloud services"
+        - "Implemented log monitoring solutions"
+        - "Gained hands-on experience with Docker containerization"
+      projects:
+        - name: "Server Documentation Project"
+          description: "Created comprehensive documentation for the company's server infrastructure."
+          technologies: ["Linux", "Confluence", "Networking"]
+          outcomes: "Reduced onboarding time for new IT staff by 50% and standardized server management procedures."
+          
+        - name: "Docker Pilot Project"
+          description: "Containerized internal development environments for consistency across the team."
+          technologies: ["Docker", "Docker Compose", "Bash"]
+          outcomes: "Eliminated 'works on my machine' problems and standardized development environments."
+
+# Education information
+education:
+  title: "Education"
+  description: "My academic background and certifications:"
+  institutions:
+    - name: "University of Technology"
+      degree: "Master of Science in Computer Engineering"
+      field: "Specialization in Cloud Computing and Distributed Systems"
+      period: "2017 - 2019"
+      location: "Algiers, Algeria"
+      description: "Focused on advanced cloud architecture, distributed systems, and DevOps methodologies."
+      achievements:
+        - "Graduated with honors (GPA: 3.8/4.0)"
+        - "Master's thesis on 'Optimizing Kubernetes Resource Allocation in Multi-Cloud Environments'"
+        - "Runner-up in University Cloud Innovation Competition"
+    
+    - name: "Polytechnic Institute"
+      degree: "Bachelor of Science in Computer Science"
+      field: "Computer Science and Network Engineering"
+      period: "2014 - 2017"
+      location: "Oran, Algeria"
+      description: "Obtained a strong foundation in computer science principles, networking, and systems administration."
+      achievements:
+        - "Graduated with distinction"
+        - "Led student team in developing campus network monitoring tool"
+        - "Recipient of Academic Excellence Scholarship for 3 consecutive years"
+  
+  certifications:
+    - name: "AWS Certified Solutions Architect – Professional"
+      issuer: "Amazon Web Services"
+      date: "2023"
+      description: "Advanced certification demonstrating expertise in designing distributed systems on AWS."
+      link: "https://www.credly.com/badges/aws-certified-solutions-architect-professional"
+      
+    - name: "Certified Kubernetes Administrator (CKA)"
+      issuer: "Cloud Native Computing Foundation"
+      date: "2022"
+      description: "Validated ability to perform the responsibilities of Kubernetes administrators."
+      link: "https://www.cncf.io/certification/cka/"
+      
+    - name: "HashiCorp Certified: Terraform Associate"
+      issuer: "HashiCorp"
+      date: "2022"
+      description: "Proven knowledge of infrastructure as code using Terraform."
+      link: "https://www.hashicorp.com/certification/terraform-associate"
+      
+    - name: "Microsoft Certified: Azure DevOps Engineer Expert"
+      issuer: "Microsoft"
+      date: "2021"
+      description: "Expert-level certification for DevOps professionals who combine people, process, and technologies for Azure."
+      link: "https://learn.microsoft.com/en-us/credentials/certifications/azure-devops/"
+
 # Technology stack organized by category
 technologies:
   "Web Development":
@@ -36,4 +151,16 @@ technologies:
     - { text: PHP, logo: mdi:language-php }
     - { text: Astro, logo: simple-icons:astro }
     - { text: "Tailwind CSS", logo: mdi:tailwind }
+  "Cloud & DevOps":
+    - { text: "AWS", logo: logos:aws }
+    - { text: "Azure", logo: logos:microsoft-azure }
+    - { text: "Docker", logo: logos:docker-icon }
+    - { text: "Kubernetes", logo: logos:kubernetes }
+    - { text: "Terraform", logo: logos:terraform-icon }
+    - { text: "Jenkins", logo: logos:jenkins }
+  "Programming":
+    - { text: "Python", logo: logos:python }
+    - { text: "Bash", logo: logos:bash-icon }
+    - { text: "Go", logo: logos:go }
+    - { text: "Node.js", logo: logos:nodejs-icon }
   # Other categories would follow the same pattern...
