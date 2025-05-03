@@ -7,40 +7,20 @@ import { buttonVariants } from '@/components/ui/button'
 import Logo from '@/components/ui/logo'
 import Layout from '@/layouts/Layout.astro'
 import { getRecentPosts } from '@/lib/data-utils'
-import { SITE } from '@/consts'
+import { SITE, technologies, SOCIAL_LINKS, ICON_MAP } from '@/consts'
+import configData from '../website.yaml'
 
 const blog = await getRecentPosts(3)
 const currentUrl = Astro.url;
-
-// Fake resume data
-const resumeData = [
-  {
-    company: "TechSolutions Inc.",
-    position: "Junior Full Stack Developer",
-    period: "2022 - Present",
-    description: "Developing responsive web applications using React, TypeScript, and Node.js. Contributed to the company's main product by implementing new features and fixing bugs.",
-    achievements: ["Reduced page load time by 40%", "Implemented authentication system", "Migrated legacy code to modern frameworks"]
-  },
-  {
-    company: "CodeCraft Academy",
-    position: "Web Development Intern",
-    period: "2021 - 2022",
-    description: "Worked on various client projects as part of an agile development team. Focused on front-end development with HTML, CSS, and JavaScript.",
-    achievements: ["Designed and built 5+ responsive websites", "Learned industry best practices", "Participated in code reviews"]
-  },
-  {
-    company: "University Projects",
-    position: "Student Developer",
-    period: "2020 - 2021",
-    description: "Created web applications as part of computer science curriculum. Focused on learning fundamentals of web development and software engineering principles.",
-    achievements: ["Built an e-commerce platform from scratch", "Created a task management application", "Implemented RESTful APIs"]
-  }
-];
+const resume = configData.resume;
+const experiences = resume.experiences || [];
+const certifications = resume.certifications || [];
+const educations = resume.education || [];
 ---
 
 <Layout canonicalUrl={currentUrl}>
-  <PageHead slot="head" title="Junior Full Stack Developer" />
-  <section class="flex flex-col gap-y-12 px-4 py-8 sm:px-8 lg:px-16">
+  <PageHead slot="head" title="Cloud/DevOps Engineer" />
+  <section class="container mx-auto flex flex-col gap-y-12 px-4 py-8 sm:px-8 lg:px-16 xl:px-0">
     <div
       class="flex flex-col items-center text-center sm:flex-row sm:items-start sm:gap-8 sm:text-left"
     >
@@ -65,57 +45,175 @@ const resumeData = [
         <p class="text-md text-foreground mt-4 text-start font-sans" title="description" aria-label="description">
           {SITE.description}
         </p>
+        
+        <div class="mt-6 flex flex-wrap gap-3">
+          {SOCIAL_LINKS.map((link) => (
+            <a 
+              href={link.href} 
+              class="inline-flex items-center gap-1.5 rounded-lg bg-muted px-3 py-1.5 text-sm font-medium text-muted-foreground hover:bg-muted/80"
+              target={link.href.startsWith('http') ? '_blank' : undefined}
+              rel={link.href.startsWith('http') ? 'noopener noreferrer' : undefined}
+            >
+              <span>{link.label}</span>
+            </a>
+          ))}
+        </div>
       </div>
     </div>
 
-    <!-- Resume Section -->
-    <section class="relative" aria-labelledby="resume-title">
+    <section class="relative" aria-labelledby="experience-title">
       <h2
-        id="resume-title"
+        id="experience-title"
         class="font-custom text-foreground text-2xl font-bold"
-        title="Professional Experience"
-        aria-label="Professional Experience"
+        title="professional experience"
+        aria-label="professional experience"
         role="heading"
       >
-        Professional Experience
+        {resume.title}
       </h2>
-      <p class="text-muted-foreground text-sm mb-6" aria-label="resume description">
-        A summary of my professional journey and experience:
+      <p class="text-muted-foreground text-sm mb-6" aria-label="experience description">
+        {resume.description}
       </p>
       
-      <div class="space-y-8">
-        {resumeData.map((job, index) => (
-          <div class="relative pl-8 border-l border-primary/30" key={index}>
-            <div class="absolute left-[-8px] top-0 h-4 w-4 rounded-full bg-primary"></div>
-            <div class="flex flex-col sm:flex-row sm:items-baseline sm:justify-between">
-              <h3 class="font-semibold text-lg">{job.company}</h3>
-              <span class="text-muted-foreground text-sm font-medium">{job.period}</span>
+      {experiences.map((exp, index) => (
+        <div class={`border-l-2 border-muted pl-4 ${index !== experiences.length - 1 ? 'mb-8' : ''}`}>
+          <h3 class="font-bold text-lg">{exp.position} @ {exp.company}</h3>
+          <p class="text-sm text-muted-foreground">{exp.period}</p>
+          <p class="my-2">{exp.description}</p>
+          
+          {exp.achievements && exp.achievements.length > 0 && (
+            <div class="mt-3">
+              <h4 class="text-sm font-semibold mb-1">Key Achievements:</h4>
+              <ul class="list-disc list-inside text-sm space-y-1 text-muted-foreground">
+                {exp.achievements.map(achievement => (
+                  <li>{achievement}</li>
+                ))}
+              </ul>
             </div>
-            <p class="font-medium text-md text-primary mt-1">{job.position}</p>
-            <p class="mt-2 text-sm text-muted-foreground">{job.description}</p>
-            <ul class="mt-3 list-disc pl-5 text-sm space-y-1">
-              {job.achievements.map((achievement, i) => (
-                <li key={i} class="text-foreground/80">{achievement}</li>
+          )}
+          
+          {exp.projects && exp.projects.length > 0 && (
+            <div class="mt-4">
+              <h4 class="text-sm font-semibold mb-2">Notable Projects:</h4>
+              {exp.projects.map(project => (
+                <div class="mb-3 bg-muted/40 p-3 rounded-md">
+                  <h5 class="font-medium">{project.name}</h5>
+                  <p class="text-sm mb-2">{project.description}</p>
+                  <div class="flex flex-wrap gap-1.5 mb-2">
+                    {project.technologies.map(tech => (
+                      <span class="inline-block text-xs bg-primary/10 text-primary py-0.5 px-2 rounded-full">
+                        {tech}
+                      </span>
+                    ))}
+                  </div>
+                  <p class="text-xs text-muted-foreground">
+                    <span class="font-medium">Outcome:</span> {project.outcomes}
+                  </p>
+                </div>
               ))}
-            </ul>
-          </div>
-        ))}
-      </div>
+            </div>
+          )}
+        </div>
+      ))}
+      
+    </section>
 
-      <div class="flex justify-center mt-6" aria-label="download full resume">
-        <Link
-          href="/resume.pdf"
-          class={buttonVariants({ variant: 'outline' }) + ' group'}
-          target="_blank"
-          rel="noopener noreferrer"
+{/* Certifications Section */}
+{certifications && certifications.length > 0 && (
+  <section class="relative" aria-labelledby="certifications-title">
+    <h2
+      id="certifications-title"
+      class="font-custom text-foreground text-2xl font-bold"
+      title="certifications"
+      aria-label="certifications"
+      role="heading"
+    >
+      Certifications
+    </h2>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-6 -mx-4 px-4 overflow-x-auto">
+      {certifications.map(cert => {
+        // Use the badge property from YAML if it exists
+        const badgePath = cert.badge ? `/static/images/badges/${cert.badge}` : '';
+        
+        return (
+          <div class="border rounded-lg p-5 hover:border-primary/50 transition-colors min-w-[300px] w-full">
+            <div class="flex flex-col items-center gap-4">
+              {badgePath && (
+                <div class="w-36 h-36 flex items-center justify-center">
+                  <img 
+                    src={badgePath}
+                    alt="" 
+                    width="144" 
+                    height="144" 
+                    class="rounded-md max-w-full max-h-full object-contain"
+                    onError={(e) => {
+                      // Remove the img element if it fails to load
+                      e.target.style.display = 'none';
+                    }}
+                  />
+                </div>
+              )}
+              <div class="w-full text-center">
+                <h3 class="font-bold text-lg">{cert.name}</h3>
+                <p class="text-sm text-muted-foreground">{cert.issuer} • {cert.date}</p>
+                <p class="mt-3 text-sm">{cert.description}</p>
+                {cert.link && (
+                  <a 
+                    href={cert.link} 
+                    class="text-primary text-sm mt-3 inline-block hover:underline"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    View credential
+                  </a>
+                )}
+              </div>
+            </div>
+          </div>
+        );
+      })}
+    </div>
+  </section>
+)}
+ 
+     {/* Education Section */}
+    {educations && educations.length > 0 && (
+      <section class="relative" aria-labelledby="education-title">
+        <h2
+          id="education-title"
+          class="font-custom text-foreground text-2xl font-bold"
+          title="education"
+          aria-label="education" 
+          role="heading"
         >
-          Download Full Resume <span
-            class="ml-1.5 transition-transform group-hover:translate-x-1"
-            >&rarr;</span
-          >
+          Education
+        </h2>
+        <div class="mt-4 space-y-4">
+          {educations.map(edu => (
+            <div class="border-l-2 border-muted pl-4">
+              <h3 class="font-bold">{edu.degree}</h3>
+              <p class="text-sm font-medium">{edu.institution}</p>
+              <p class="text-sm text-muted-foreground">{edu.period}</p>
+              {edu.description && (
+                <p class="mt-2 text-sm">{edu.description}</p>
+              )}
+            </div>
+          ))}
+        </div>
+      </section>
+    )}
+
+      <div class="mt-6">
+        <Link
+          href={resume.pdfLink}
+          class={buttonVariants({ variant: 'outline' })}
+          target="_blank"
+        >
+          View Full Resume PDF
         </Link>
       </div>
-    </section>
+
+
 
     <section class="relative" aria-labelledby="skills-title">
       <h2
@@ -171,5 +269,34 @@ const resumeData = [
         </Link>
       </div>
     </section>
+
+
+    <section class="relative" aria-labelledby="projects-title">
+      <h2
+        id="projects-title"
+        class="font-custom text-foreground text-2xl font-bold"
+        title="projects"
+        aria-label="projects"
+        role="heading"
+      >
+        Featured Projects
+      </h2>
+      <p class="text-muted-foreground text-sm" aria-label="projects description">
+        Check out some of my recent work:
+      </p>
+      <div class="mt-6">
+        <Link
+          href="/projects"
+          class={buttonVariants({ variant: 'ghost' }) + ' group'}
+        >
+          View all projects <span
+            class="ml-1.5 transition-transform group-hover:translate-x-1"
+            >&rarr;</span
+          >
+        </Link>
+      </div>
+    </section>
+
+
   </section>
 </Layout>

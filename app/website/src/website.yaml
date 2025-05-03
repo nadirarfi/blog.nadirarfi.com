@@ -29,9 +29,11 @@ iconMap:
 
 # Resume information
 resume:
+  
   title: "Professional Experience"
   description: "A summary of my professional journey and experience:"
   pdfLink: "/resume.pdf"
+
   experiences:
     - company: "Cloud Solutions Inc."
       position: "Cloud/DevOps Engineer"
@@ -90,32 +92,32 @@ resume:
           technologies: ["Docker", "Docker Compose", "Bash"]
           outcomes: "Eliminated 'works on my machine' problems and standardized development environments."
 
-# Education information
-education:
-  title: "Education"
-  description: "My academic background and certifications:"
-  institutions:
-    - name: "University of Technology"
-      degree: "Master of Science in Computer Engineering"
-      field: "Specialization in Cloud Computing and Distributed Systems"
-      period: "2017 - 2019"
-      location: "Algiers, Algeria"
-      description: "Focused on advanced cloud architecture, distributed systems, and DevOps methodologies."
-      achievements:
-        - "Graduated with honors (GPA: 3.8/4.0)"
-        - "Master's thesis on 'Optimizing Kubernetes Resource Allocation in Multi-Cloud Environments'"
-        - "Runner-up in University Cloud Innovation Competition"
-    
-    - name: "Polytechnic Institute"
-      degree: "Bachelor of Science in Computer Science"
-      field: "Computer Science and Network Engineering"
-      period: "2014 - 2017"
-      location: "Oran, Algeria"
-      description: "Obtained a strong foundation in computer science principles, networking, and systems administration."
-      achievements:
-        - "Graduated with distinction"
-        - "Led student team in developing campus network monitoring tool"
-        - "Recipient of Academic Excellence Scholarship for 3 consecutive years"
+  # Education information
+  education:
+    title: "Education"
+    description: "My academic background and certifications:"
+    institutions:
+      - name: "University of Technology"
+        degree: "Master of Science in Computer Engineering"
+        field: "Specialization in Cloud Computing and Distributed Systems"
+        period: "2017 - 2019"
+        location: "Algiers, Algeria"
+        description: "Focused on advanced cloud architecture, distributed systems, and DevOps methodologies."
+        achievements:
+          - "Graduated with honors (GPA: 3.8/4.0)"
+          - "Master's thesis on 'Optimizing Kubernetes Resource Allocation in Multi-Cloud Environments'"
+          - "Runner-up in University Cloud Innovation Competition"
+      
+      - name: "Polytechnic Institute"
+        degree: "Bachelor of Science in Computer Science"
+        field: "Computer Science and Network Engineering"
+        period: "2014 - 2017"
+        location: "Oran, Algeria"
+        description: "Obtained a strong foundation in computer science principles, networking, and systems administration."
+        achievements:
+          - "Graduated with distinction"
+          - "Led student team in developing campus network monitoring tool"
+          - "Recipient of Academic Excellence Scholarship for 3 consecutive years"
   
   certifications:
     - name: "AWS Certified Solutions Architect – Professional"
@@ -123,6 +125,7 @@ education:
       date: "2023"
       description: "Advanced certification demonstrating expertise in designing distributed systems on AWS."
       link: "https://www.credly.com/badges/aws-certified-solutions-architect-professional"
+      badge: "aws-developer.png"  # Add this line for the badge image
       
     - name: "Certified Kubernetes Administrator (CKA)"
       issuer: "Cloud Native Computing Foundation"
