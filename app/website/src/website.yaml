@@ -27,12 +27,29 @@ iconMap:
   Email: lucide:mail
   RSS: lucide:rss
 
+
+pages:
+  home:
+    metaTitle: "Cloud/DevOps Engineer"  # Was hardcoded in PageHead component
+    skillsTitle: "Skills & Technologies"
+    skillsDescription: "Here are some of the technologies I've been working with:"
+    blogSectionTitle: "Latest Blog Posts"
+    blogSectionDescription: "Here are some of my latest blog posts. You can find more on my blog page."
+    blogLinkText: "See all posts"
+    projectsSectionTitle: "Featured Projects"
+    projectsSectionDescription: "Check out some of my recent work:"
+    projectsLinkText: "View all projects"
+
 # Resume information
 resume:
   
   title: "Professional Experience"
   description: "A summary of my professional journey and experience:"
   pdfLink: "/resume.pdf"
+  educationTitle: "Education"  
+  certificationsTitle: "Certifications"
+  credentialLinkText: "View credential"
+  pdfLinkText: "View Full Resume PDF"
 
   experiences:
     - company: "Cloud Solutions Inc."
@@ -95,7 +112,7 @@ resume:
   # Education information
   education:
     title: "Education"
-    description: "My academic background and certifications:"
+    description: "My academic background:"
     institutions:
       - name: "University of Technology"
         degree: "Master of Science in Computer Engineering"
