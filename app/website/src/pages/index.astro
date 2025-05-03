@@ -120,7 +120,7 @@ const metaTitle = pageConfig.metaTitle || SITE.title;
 
       <div class="space-y-12">
         {experiences.map((exp: ResumeExperience, index: number) => (
-          <div class="border-b border-border pb-8 mb-8 last:border-0 last:pb-0 last:mb-0" key={index}>
+          <div class="border-b border-border pb-8 mb-8 last:border-0 last:pb-0 last:mb-0">
             <h3 class="font-bold text-xl text-primary">{exp.position} @ {exp.company}</h3>
             <p class="text-sm font-medium text-muted-foreground mt-1 mb-3">{exp.period}</p>
             <p class="my-4 text-foreground/90 leading-relaxed">{exp.description}</p>
