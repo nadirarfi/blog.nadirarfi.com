@@ -7,46 +7,33 @@ site:
   locale: en-US
   location: Algeria
 
+# Navigation structure
 navLinks:
-  - href: /
-    label: home
-  - href: /projects
-    label: projects
-  - href: /blog
-    label: blog
+  - { href: /, label: home }
+  - { href: /projects, label: projects }
+  - { href: /blog, label: blog }
 
+# Social media and contact links
 socialLinks:
-  - href: https://github.com/cojocaru-david?ref=personal-website
-    label: GitHub
-  - href: mailto:contact@cojocarudavid.me
-    label: Email
-  - href: +40 764 132 266
-    label: Phone
-  - href: https://www.instagram.com/david._.cojo?ref=personal-website
-    label: Instagram
-  - href: /rss.xml
-    label: RSS
+  - { href: "https://blog.nadirarfi.com", label: Website }
+  - { href: "https://github.com/nadirarfi", label: GitHub }
+  - { href: "nadir.arfi@outlook.com", label: Email }
+  - { href: "/rss.xml", label: RSS }
 
+# Icon mappings for various platforms/services
 iconMap:
   Website: lucide:globe
   GitHub: lucide:github
-  Instagram: lucide:instagram
-  Phone: lucide:phone
   Email: lucide:mail
   RSS: lucide:rss
 
+# Technology stack organized by category
 technologies:
-  Web Development:
-    - text: HTML
-      logo: mdi:language-html5
-    - text: JavaScript
-      logo: mdi:language-javascript
-    - text: CSS
-      logo: mdi:language-css3
-    - text: PHP
-      logo: mdi:language-php
-    - text: Astro
-      logo: simple-icons:astro
-    - text: Tailwind CSS
-      logo: mdi:tailwind
-  # ...other categories continue
+  "Web Development":
+    - { text: HTML, logo: mdi:language-html5 }
+    - { text: JavaScript, logo: mdi:language-javascript }
+    - { text: CSS, logo: mdi:language-css3 }
+    - { text: PHP, logo: mdi:language-php }
+    - { text: Astro, logo: simple-icons:astro }
+    - { text: "Tailwind CSS", logo: mdi:tailwind }
+  # Other categories would follow the same pattern...

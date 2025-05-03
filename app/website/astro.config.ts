@@ -17,10 +17,9 @@ import rehypeDocument from 'rehype-document'
 
 import { pluginCollapsibleSections } from '@expressive-code/plugin-collapsible-sections'
 import { pluginLineNumbers } from '@expressive-code/plugin-line-numbers'
-import { yaml } from '@rollup/plugin-yaml';
 
+import yaml  from '@rollup/plugin-yaml';
 import tailwindcss from '@tailwindcss/vite'
-
 import vercel from '@astrojs/vercel';
 
 
