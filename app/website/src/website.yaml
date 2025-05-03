@@ -10,6 +10,7 @@ site:
 # Navigation structure
 navLinks:
   - { href: /, label: home }
+  - { href: /certifications, label: certifications }
   - { href: /projects, label: projects }
   - { href: /blog, label: blog }
 

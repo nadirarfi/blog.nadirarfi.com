@@ -1,0 +1,164 @@
+---
+import Breadcrumbs from '@/components/Breadcrumbs.astro'
+import TableOfContents from '@/components/TableOfContents.astro'
+import { badgeVariants } from '@/components/ui/badge'
+import Layout from '@/layouts/Layout.astro'
+import { getAllCertifications } from '@/lib/data-utils' // Update this function to fetch certifications
+import { Icon } from 'astro-icon/components'
+import { Image } from 'astro:assets'
+import { render } from 'astro:content'
+import PageHead from '@/components/PageHead.astro'
+
+export async function getStaticPaths() {
+  const certifications = await getAllCertifications() // Update this function to fetch certifications
+  return certifications.map((certification) => ({
+    params: { id: certification.id },
+    props: certification,
+  }))
+}
+
+const certification = Astro.props
+const { Content, headings } = await render(certification)
+
+const structuredData = {
+  '@context': 'https://schema.org',
+  '@type': 'Certifications', // Update the schema type
+  headline: certification.data.name,
+  datePublished: certification.data.issueDate || '', // Update the date fields according to your certification data
+  dateModified: certification.data.expiryDate || certification.data.issueDate || '', // Update the date fields according to your certification data
+  author: {
+    '@type': 'Person',
+    name: 'Author', // You might want to update this to reflect the issuer or holder of the certification
+  },
+  image: new URL(`/image/${certification.id}.png`, Astro.site).toString(),
+  keywords: certification.data.tags ? certification.data.tags.join(', ') : '',
+  description: certification.data.description || '',
+}
+const currentUrl = Astro.url;
+---
+
+
+<Layout canonicalUrl={currentUrl} isWide={true}> 
+    <PageHead slot="head" title={certification.data.name} />
+    <script
+      type="application/ld+json"
+      is:inline
+      set:html={JSON.stringify(structuredData)}
+    />
+    <section
+      class="grid grid-cols-[minmax(0px,1fr)_min(calc(var(--breakpoint-lg)-2rem),100%)_minmax(0px,1fr)] gap-y-6 max-w-[calc(100vw-2rem)] "
+    >
+      <div class="col-start-2">
+        <Breadcrumbs
+          items={[
+            { href: '/certifications', label: 'Certifications', icon: 'lucide:award' }, // Update the breadcrumb
+            { label: certification.data.name, icon: 'lucide:award' }, // Update the icon to reflect certification
+          ]}
+        />
+      </div>
+      <section class="col-start-2 flex flex-col gap-y-6 text-start">
+        <div class="flex flex-col">
+          <h1
+            class="mb-2 text-3xl leading-tight font-medium text-pretty sm:text-5xl"
+          >
+            {certification.data.name}
+          </h1>
+  
+          <div class="flex flex-wrap justify-start gap-2">
+            {
+              certification.data.tags && certification.data.tags.length > 0 ? (
+                certification.data.tags.map((tag) => (
+                  <a
+                    href={`/tags/${tag}`}
+                    class={badgeVariants({ variant: 'secondary' })}
+                  >
+                    <Icon name="lucide:hash" class="size-3" />
+                    {tag}
+                  </a>
+                ))
+              ) : (
+                <span class="text-muted-foreground text-sm">
+                  No tags available
+                </span>
+              )
+            }
+          </div>
+        </div>
+      </section>
+  
+      <Image
+        src={certification.data.image}
+        alt={certification.data.name}
+        class="col-start-2 mb-8 h-auto w-full rounded-3xl object-cover"
+        loading="lazy"
+        fetchpriority="low"      
+        width={800}
+        height={600}
+      />
+  
+      {headings.length > 0 && <TableOfContents headings={headings} />}
+  
+      <article class="prose col-start-2 max-w-none">
+        <Content />
+      </article>
+  
+      <aside
+        class="group col-start-2 rounded-xl border p-4 xl:sticky xl:top-26 xl:col-start-3 xl:mr-auto xl:ml-8 xl:h-[calc(100vh-5rem)] xl:max-w-fit xl:rounded-none xl:border-none xl:p-0"
+      >
+        <div class="flex flex-col gap-4 rounded-xl border bg-card p-4 shadow-md transition-all duration-300 group-hover:shadow-lg xl:group-hover:shadow-none xl:group-hover:shadow-none">
+          <h2 class="text-lg font-semibold">Certification Details</h2> <!-- Update the title -->
+          <div class="flex flex-col gap-2 text-sm text-muted-foreground">
+            <p>{certification.data.description}</p>
+          </div>
+  
+          <hr class="my-4 border-t" />
+  
+          <div class="flex flex-col gap-2 text-sm text-muted-foreground">
+            <h3 class="text-base font-semibold">Certification Information</h3> <!-- Update the title -->
+            <ul class="list-disc pl-4">
+              {certification.data.issuer && (
+                <li>
+                  <strong>Issuer:</strong> {certification.data.issuer}
+                </li>
+              )}
+              {certification.data.issueDate && (
+                <li>
+                  <strong>Issue Date:</strong> {certification.data.issueDate}
+                </li>
+              )}
+              {certification.data.expiryDate && (
+                <li>
+                  <strong>Expiry Date:</strong> {certification.data.expiryDate}
+                </li>
+              )}
+              {certification.data.certificateId && (
+                <li>
+                  <strong>Certificate ID:</strong> {certification.data.certificateId}
+                </li>
+              )}
+              {certification.data.credentialId && (
+                <li>
+                  <strong>Credential ID:</strong> {certification.data.credentialId}
+                </li>
+              )}
+            </ul>
+          </div>
+  
+          {certification.data.verificationLink && (
+            <div class="flex flex-col gap-2 text-sm text-muted-foreground">
+              <h3 class="text-base font-semibold">Verify Certification</h3>
+              <ul class="list-disc pl-4">
+                <li>
+                  <a href={certification.data.verificationLink} target="_blank" rel="noopener noreferrer">
+                    Verify this certification
+                  </a>
+                </li>
+              </ul>
+            </div>
+          )}
+        </div>
+      </aside>
+  
+    </section>
+  </Layout>
+  
