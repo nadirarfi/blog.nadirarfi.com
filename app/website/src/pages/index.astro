@@ -7,7 +7,7 @@ import { buttonVariants } from '@/components/ui/button'
 import Layout from '@/layouts/Layout.astro'
 import { getRecentPosts } from '@/lib/data-utils'
 import { SITE, technologies, SOCIAL_LINKS, ICON_MAP } from '@/consts'
-import configData from '../website.yaml'
+import configData from './website.yaml'
 
 const blog = await getRecentPosts(3)
 const currentUrl = Astro.url;
