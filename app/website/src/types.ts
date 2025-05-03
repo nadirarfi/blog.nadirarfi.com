@@ -49,6 +49,7 @@ export interface Certification {
   date: string;
   description: string;
   link: string;
+  badge?: string; // Add this line
 }
 
 export interface Education {
