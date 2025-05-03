@@ -18,8 +18,8 @@ import rehypeDocument from 'rehype-document'
 import { pluginCollapsibleSections } from '@expressive-code/plugin-collapsible-sections'
 import { pluginLineNumbers } from '@expressive-code/plugin-line-numbers'
 
+import yaml  from '@rollup/plugin-yaml';
 import tailwindcss from '@tailwindcss/vite'
-
 import vercel from '@astrojs/vercel';
 
 
@@ -50,8 +50,11 @@ export default defineConfig({
   ],
 
   vite: {
-    plugins: [tailwindcss()],
-    
+    plugins: [
+      tailwindcss(),
+      yaml()
+    ],
+
     build: {
         rollupOptions: {
           output: {
@@ -59,7 +62,7 @@ export default defineConfig({
           },
         },
     },
-        
+
     optimizeDeps: {
       exclude: ["satori", "satori-html"],
       include: [
@@ -76,7 +79,7 @@ export default defineConfig({
         "@radix-ui/react-separator",
         "@radix-ui/react-slot"
       ]
-    },    
+    },
   },
 
   devToolbar: {

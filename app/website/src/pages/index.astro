@@ -4,98 +4,395 @@ import PageHead from '@/components/PageHead.astro'
 import BlogCard from '@/components/react/blog-card'
 import Skills from '@/components/react/skills'
 import { buttonVariants } from '@/components/ui/button'
-import Logo from '@/components/ui/logo'
 import Layout from '@/layouts/Layout.astro'
 import { getRecentPosts } from '@/lib/data-utils'
-import { SITE } from '@/consts'
+import { SITE, technologies, SOCIAL_LINKS, ICON_MAP } from '@/consts'
+import configData from '../website.yaml'
 
 const blog = await getRecentPosts(3)
 const currentUrl = Astro.url;
+const resume = configData.resume;
+const experiences = resume.experiences || [];
+const certifications = resume.certifications || [];
+const educations = resume.education || [];
+const pageConfig = configData.pages?.home || {};
+const metaTitle = pageConfig.metaTitle || SITE.title;
 ---
 
 <Layout canonicalUrl={currentUrl}>
-  <PageHead slot="head" title="Junior Full Stack Developer" />
-  <section class="flex flex-col gap-y-12 px-4 py-8 sm:px-8 lg:px-16">
-    <div
-      class="flex flex-col items-center text-center sm:flex-row sm:items-start sm:gap-8 sm:text-left"
-    >
-      <div class="relative overflow-hidden rounded-lg sm:shrink-0 sm:overflow-hidden sm:rounded-lg">
-        <Logo
-          className="h-auto w-40 object-cover sm:w-48 md:w-56 lg:w-64 "
-        />
-      </div>
-      <div class="mt-8 sm:mt-0 sm:max-w-xl">
-        <h1
-          class="font-custom text-foreground text-start text-4xl font-extrabold sm:text-5xl"
-        >
-          {SITE.title}
-        </h1>
-        <div class="mt-4 flex items-center gap-2" aria-label="location">
-          <span
-            class="bg-primary text-primary-foreground ring-primary/30 rounded-full px-3 py-1 text-sm font-medium ring-1"
-          >
-            I'm from {SITE.location}.
-          </span>
+  <PageHead slot="head" title={metaTitle} />
+
+  <!-- Main Container with Enhanced Spacing -->
+  <section class="container mx-auto px-4 py-12 sm:px-8 lg:px-16 xl:px-0 max-w-6xl">
+
+    <!-- ==================== HERO SECTION ==================== -->
+    <div class="relative overflow-hidden bg-gradient-to-r from-background to-primary/5 rounded-xl shadow-lg mb-8">
+        <div class="absolute inset-0 bg-[radial-gradient(circle_at_30%_50%,rgba(var(--primary-rgb),0.1),transparent_60%)]"></div>
+
+        <!-- Main content container with improved padding -->
+        <div class="relative px-6 py-8 sm:px-12 lg:px-16 max-w-7xl mx-auto">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+
+            <!-- Left column: Main information -->
+            <div class="lg:col-span-8 space-y-4">
+            <!-- Name and Location -->
+            <div class="flex items-center gap-4 flex-wrap">
+                <h1 class="font-custom text-foreground text-4xl sm:text-5xl font-bold tracking-tight">
+                  {SITE.title}
+                </h1>
+                <span class="inline-flex items-center gap-1.5 bg-primary/20 border border-primary/30 text-primary rounded-full px-3 py-1 text-sm font-medium shadow-sm">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/>
+                    <circle cx="12" cy="10" r="3"/>
+                  </svg>
+                  {SITE.location}
+                </span>
+              </div>
+
+            <!-- Professional headline -->
+            <div class="border-l-4 border-primary pl-4 py-1">
+                <p class="text-xl font-medium text-foreground">
+                {resume.headline || "Cloud/DevOps Engineer"}
+                </p>
+            </div>
+
+            <!-- Description -->
+            <p class="text-muted-foreground text-lg leading-relaxed max-w-2xl" title="description" aria-label="description">
+                {SITE.description}
+            </p>
+
+            <!-- Social links with improved styling -->
+            <div class="flex flex-wrap gap-3 mt-4">
+                {SOCIAL_LINKS.map((link) => (
+                <a
+                    href={link.href}
+                    class="group flex items-center gap-2 rounded-lg border border-muted bg-background px-4 py-2 text-sm font-medium transition-all duration-200 hover:border-primary/40 hover:bg-primary/10"
+                    target={link.href.startsWith('http') ? '_blank' : undefined}
+                    rel={link.href.startsWith('http') ? 'noopener noreferrer' : undefined}
+                >
+                    {ICON_MAP[link.label.toLowerCase()] && (
+                    <span class="text-muted-foreground group-hover:text-primary transition-colors">{ICON_MAP[link.label.toLowerCase()]}</span>
+                    )}
+                    <span class="text-muted-foreground group-hover:text-foreground transition-colors">{link.label}</span>
+                </a>
+                ))}
+            </div>
+            </div>
+
+            <!-- Right column for image -->
+            <!-- <div class="lg:col-span-4 flex items-center justify-center">
+            <img src="{IMAGE_URL}" alt="{SITE.title} image" class="rounded-xl shadow-md max-w-full h-auto" />
+            </div> -->
+
         </div>
-        <p class="text-md text-foreground mt-4 text-start font-sans" title="description" aria-label="description">
-          {SITE.description}
-        </p>
-      </div>
+        </div>
     </div>
 
-    <section class="relative" aria-labelledby="skills-title">
-      <h2
-        id="skills-title"
-        class="font-custom text-foreground text-2xl font-bold"
-        title="skills"
-        aria-label="skills"
-        role="heading"
-      >
-        Skills & Technologies
-      </h2>
-      <p class="text-muted-foreground text-sm" aria-label="skills description">
-        Here are some of the technologies I've been working with:
+
+
+    <!-- ==================== EXPERIENCE SECTION ==================== -->
+    <section class="relative mb-16" aria-labelledby="experience-title">
+      <div class="flex items-center mb-8">
+        <h2
+          id="experience-title"
+          class="font-custom text-foreground text-3xl font-bold"
+          title="professional experience"
+          aria-label="professional experience"
+          role="heading"
+        >
+          {resume.title}
+        </h2>
+        <div class="ml-4 h-px bg-gradient-to-r from-primary/50 to-transparent flex-grow"></div>
+      </div>
+
+      <p class="text-muted-foreground text-lg mb-10 max-w-3xl" aria-label="experience description">
+        {resume.description}
       </p>
-      <div>
+
+      <div class="space-y-12">
+        {experiences.map((exp, index) => (
+          <div class="relative">
+            <!-- Timeline dot -->
+            <div class="absolute left-0 top-0 h-5 w-5 rounded-full bg-primary shadow-md"></div>
+
+            <div class="border-l-2 border-primary/30 pl-8 ml-2 pb-2">
+              <div class="bg-muted/20 p-6 rounded-lg shadow-sm hover:shadow-md transition-shadow duration-300">
+                <h3 class="font-bold text-xl text-primary">{exp.position} @ {exp.company}</h3>
+                <p class="text-sm font-medium text-muted-foreground mt-1 mb-3">{exp.period}</p>
+                <p class="my-4 text-foreground/90 leading-relaxed">{exp.description}</p>
+
+                {exp.achievements && exp.achievements.length > 0 && (
+                  <div class="mt-5 bg-background p-4 rounded-md border border-muted/70">
+                    <h4 class="text-sm font-semibold mb-3 text-primary/90 uppercase tracking-wider">Key Achievements:</h4>
+                    <ul class="list-none space-y-2 text-muted-foreground">
+                      {exp.achievements.map(achievement => (
+                        <li class="flex items-start">
+                          <span class="inline-block mr-2 text-primary">✓</span>
+                          <span>{achievement}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+
+                {exp.projects && exp.projects.length > 0 && (
+                  <div class="mt-6">
+                    <h4 class="text-sm font-semibold mb-4 text-primary/90 uppercase tracking-wider">Projects/Clients</h4>
+                    <div class="grid gap-4 sm:grid-cols-2">
+                      {exp.projects.map(project => (
+                        <div class="p-4 rounded-md bg-background border border-muted/70 shadow-sm hover:shadow transition-all duration-200 hover:border-primary/30">
+                          <h5 class="font-medium text-lg mb-1">{project.name}</h5>
+                          <p class="text-sm text-foreground/80 mb-3">{project.description}</p>
+                          <div class="flex flex-wrap gap-1.5 mb-3">
+                            {project.technologies.map(tech => (
+                              <span class="inline-block text-xs bg-primary/10 text-primary py-1 px-2.5 rounded-full">
+                                {tech}
+                              </span>
+                            ))}
+                          </div>
+                          <p class="text-xs text-muted-foreground border-t border-muted pt-2 mt-2">
+                            <span class="font-medium text-primary/80">Outcome:</span> {project.outcomes}
+                          </p>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <!-- ==================== CERTIFICATIONS SECTION ==================== -->
+    {certifications && certifications.length > 0 && (
+      <section class="relative mb-16" aria-labelledby="certifications-title">
+        <div class="flex items-center mb-8">
+          <h2
+            id="certifications-title"
+            class="font-custom text-foreground text-3xl font-bold"
+            title="certifications"
+            aria-label="certifications"
+            role="heading"
+          >
+            {resume.certificationsTitle || "Certifications"}
+          </h2>
+          <div class="ml-4 h-px bg-gradient-to-r from-primary/50 to-transparent flex-grow"></div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-8">
+          {certifications.map(cert => {
+            // Use the badge property from YAML if it exists
+            const badgePath = cert.badge ? `/static/images/badges/${cert.badge}` : '';
+
+            return (
+              <div class="border rounded-lg p-5 hover:border-primary/50 transition-all duration-300 bg-background hover:shadow-md group">
+                <div class="flex flex-col items-center gap-4">
+                  {badgePath && (
+                    <div class="w-36 h-36 flex items-center justify-center bg-muted/20 rounded-full p-4 overflow-hidden group-hover:scale-105 transition-transform duration-300">
+                      <img
+                        src={badgePath}
+                        alt=""
+                        width="144"
+                        height="144"
+                        class="rounded-md max-w-full max-h-full object-contain"
+                        onError={(e) => {
+                          // Remove the img element if it fails to load
+                          e.target.style.display = 'none';
+                        }}
+                      />
+                    </div>
+                  )}
+                  <div class="w-full text-center">
+                    <h3 class="font-bold text-lg text-primary">{cert.name}</h3>
+                    <p class="text-sm text-muted-foreground">{cert.issuer} • {cert.date}</p>
+                    <p class="mt-3 text-sm">{cert.description}</p>
+                    {cert.link && (
+                      <a
+                        href={cert.link}
+                        class="inline-flex items-center justify-center gap-2 text-primary text-sm mt-4 px-4 py-2 rounded-full bg-primary/10 hover:bg-primary/20 transition-colors"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-badge-check"><path d="M3.85 8.62a4 4 0 0 1 4.78-4.77 4 4 0 0 1 6.74 0 4 4 0 0 1 4.78 4.78 4 4 0 0 1 0 6.74 4 4 0 0 1-4.77 4.78 4 4 0 0 1-6.75 0 4 4 0 0 1-4.78-4.77 4 4 0 0 1 0-6.76Z"/><path d="m9 12 2 2 4-4"/></svg>
+                        {resume.credentialLinkText || "View credential"}
+                      </a>
+                    )}
+                  </div>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </section>
+    )}
+
+    <!-- ==================== EDUCATION SECTION ==================== -->
+    {resume.education && resume.education.institutions && resume.education.institutions.length > 0 && (
+        <section class="relative mb-16" aria-labelledby="education-title">
+          <div class="flex items-center mb-8">
+            <h2
+              id="education-title"
+              class="font-custom text-foreground text-3xl font-bold"
+              title="education"
+              aria-label="education"
+              role="heading"
+            >
+              {resume.education.title || "Education"}
+            </h2>
+            <div class="ml-4 h-px bg-gradient-to-r from-primary/50 to-transparent flex-grow"></div>
+          </div>
+
+          <p class="text-muted-foreground text-lg mb-8 max-w-3xl" aria-label="education description">
+            {resume.education.description}
+          </p>
+
+          <div class="grid gap-8 md:grid-cols-2">
+            {resume.education.institutions.map(edu => (
+              <div class="bg-muted/10 border border-muted rounded-lg p-6 hover:border-primary/30 hover:shadow-md transition-all duration-300">
+                <h3 class="font-bold text-xl text-primary">{edu.degree}</h3>
+                <h4 class="text-md font-medium mt-1">{edu.field}</h4>
+                <p class="text-md font-medium mt-3">{edu.name}</p>
+                <div class="flex flex-wrap gap-x-3 text-sm text-muted-foreground mt-2">
+                  <span class="bg-primary/10 px-3 py-1 rounded-full">{edu.period}</span>
+                  {edu.location && <span class="bg-muted/30 px-3 py-1 rounded-full">{edu.location}</span>}
+                </div>
+                {edu.description && (
+                  <p class="mt-4 text-sm leading-relaxed">{edu.description}</p>
+                )}
+                {edu.achievements && edu.achievements.length > 0 && (
+                  <div class="mt-4 bg-background p-3 rounded-md">
+                    <h5 class="text-xs font-semibold mb-2 text-primary/80 uppercase tracking-wider">Achievements:</h5>
+                    <ul class="list-none space-y-1.5">
+                      {edu.achievements.map(achievement => (
+                        <li class="text-xs flex items-start">
+                          <span class="inline-block mr-2 text-primary">✓</span>
+                          <span>{achievement}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
+
+    <!-- ==================== RESUME DOWNLOAD ==================== -->
+    <div class="flex justify-center mb-16">
+      <Link
+        href={resume.pdfLink}
+        class={buttonVariants({ size: 'lg' }) + ' group shadow-md hover:shadow-lg transition-shadow duration-300'}
+        target="_blank"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-2 group-hover:animate-bounce"><path d="M12 17V3"/><path d="m6 11 6 6 6-6"/><path d="M19 21H5"/></svg>
+        {resume.pdfLinkText || "Download Full Resume PDF"}
+      </Link>
+    </div>
+
+    <!-- ==================== SKILLS SECTION ==================== -->
+    <section class="relative mb-16" aria-labelledby="skills-title">
+      <div class="flex items-center mb-8">
+        <h2
+          id="skills-title"
+          class="font-custom text-foreground text-3xl font-bold"
+          title="skills"
+          aria-label="skills"
+          role="heading"
+        >
+          {pageConfig.skillsTitle || "Skills & Technologies"}
+        </h2>
+        <div class="ml-4 h-px bg-gradient-to-r from-primary/50 to-transparent flex-grow"></div>
+      </div>
+
+      <p class="text-muted-foreground text-lg mb-8 max-w-3xl" aria-label="skills description">
+        {pageConfig.skillsDescription || "Here are some of the technologies I've been working with:"}
+      </p>
+
+      <div class="bg-muted/10 p-6 rounded-xl border border-muted/60 shadow-sm">
         <Skills client:load />
       </div>
     </section>
 
-    <section class="flex flex-col gap-y-4" aria-labelledby="latest-posts-title" role="region">
-      <div class="relative" aria-labelledby="latest-posts-title">
-        <h2
-          id="latest-posts-title"
-          class="font-custom text-foreground text-2xl font-bold"
-          title="latest blog posts"
-          aria-label="latest blog posts"
-        >
-          Latest Blog Posts
-        </h2>
-        <p class="text-muted-foreground text-sm" aria-label="blog description">
-          Here are some of my latest blog posts. You can find more on my blog
-          page.
+    <!-- ==================== BLOG POSTS SECTION ==================== -->
+    <section class="flex flex-col gap-y-4 mb-16" aria-labelledby="latest-posts-title" role="region">
+      <div class="relative mb-6" aria-labelledby="latest-posts-title">
+        <div class="flex items-center mb-8">
+          <h2
+            id="latest-posts-title"
+            class="font-custom text-foreground text-3xl font-bold"
+            title="latest blog posts"
+            aria-label="latest blog posts"
+          >
+            {pageConfig.blogSectionTitle || "Latest Blog Posts"}
+          </h2>
+          <div class="ml-4 h-px bg-gradient-to-r from-primary/50 to-transparent flex-grow"></div>
+        </div>
+
+        <p class="text-muted-foreground text-lg mb-8 max-w-3xl" aria-label="blog description">
+          {pageConfig.blogSectionDescription || "Here are some of my latest blog posts. You can find more on my blog page."}
         </p>
       </div>
-      <ul class="flex flex-col gap-y-4">
+
+      <ul class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {
           blog.map((post) => (
-            <li>
-              <BlogCard entry={post} />
+            <li class="h-full">
+              <div class="h-full transform hover:scale-[1.02] transition-all duration-300">
+                <BlogCard entry={post} />
+              </div>
             </li>
           ))
         }
       </ul>
-      <div class="flex justify-center" aria-label="see all posts">
+
+      <div class="flex justify-center mt-8" aria-label="see all posts">
         <Link
           href="/blog"
-          class={buttonVariants({ variant: 'ghost' }) + ' group'}
+          class={buttonVariants({ variant: 'outline', size: 'lg' }) + ' group'}
         >
-          See all posts <span
+          {pageConfig.blogLinkText || "See all posts"} <span
             class="ml-1.5 transition-transform group-hover:translate-x-1"
             >&rarr;</span
           >
         </Link>
       </div>
     </section>
+
+    <!-- ==================== PROJECTS SECTION ==================== -->
+    <section class="relative mb-16" aria-labelledby="projects-title">
+      <div class="flex items-center mb-8">
+        <h2
+          id="projects-title"
+          class="font-custom text-foreground text-3xl font-bold"
+          title="projects"
+          aria-label="projects"
+          role="heading"
+        >
+          {pageConfig.projectsSectionTitle || "Featured Projects"}
+        </h2>
+        <div class="ml-4 h-px bg-gradient-to-r from-primary/50 to-transparent flex-grow"></div>
+      </div>
+
+      <p class="text-muted-foreground text-lg mb-8 max-w-3xl" aria-label="projects description">
+        {pageConfig.projectsSectionDescription || "Check out some of my recent work:"}
+      </p>
+
+      <div class="relative bg-gradient-to-br from-primary/5 to-background p-8 rounded-xl border border-muted/60 shadow-sm text-center">
+        <p class="text-xl mb-8">Explore my portfolio of completed projects</p>
+        <Link
+          href="/projects"
+          class={buttonVariants({ size: 'lg' }) + ' group shadow-md hover:shadow-lg transition-shadow duration-300'}
+        >
+          {pageConfig.projectsLinkText || "View all projects"} <span
+            class="ml-1.5 transition-transform group-hover:translate-x-1"
+            >&rarr;</span
+          >
+        </Link>
+      </div>
+    </section>
+
   </section>
 </Layout>
