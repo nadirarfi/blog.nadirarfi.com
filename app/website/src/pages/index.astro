@@ -260,57 +260,90 @@ const metaTitle = pageConfig.metaTitle || SITE.title;
       </section>
     )}
 
-    <!-- ==================== EDUCATION SECTION ==================== -->
-    {resume.education && resume.education.institutions && resume.education.institutions.length > 0 && (
-        <section class="relative mb-16" aria-labelledby="education-title">
-          <div class="flex items-center mb-8">
-            <h2
-              id="education-title"
-              class="font-custom text-foreground text-3xl font-bold"
-              title="education"
-              aria-label="education"
-              role="heading"
-            >
-              {resume.education.title || "Education"}
-            </h2>
-            <div class="ml-4 h-px bg-gradient-to-r from-primary/50 to-transparent flex-grow"></div>
-          </div>
+<!-- ==================== EDUCATION SECTION ==================== -->
+{resume.education && resume.education.institutions && resume.education.institutions.length > 0 && (
+  <section class="relative mb-16" aria-labelledby="education-title">
+    <div class="flex items-baseline justify-between mb-8">
+      <h2 id="education-title" class="text-2xl font-bold">{resume.education.title}</h2>
+    </div>
+    
+    {resume.education.description && (
+      <p class="text-base text-neutral-500 dark:text-neutral-400 mb-6">
+        {resume.education.description}
+      </p>
+    )}
 
-          <p class="text-muted-foreground text-lg mb-8 max-w-3xl" aria-label="education description">
-            {resume.education.description}
-          </p>
-
-          <div class="grid gap-8 md:grid-cols-2">
-            {resume.education.institutions.map((edu: EducationInstitution) => (
-              <div class="bg-muted/10 border border-muted rounded-lg p-6 hover:border-primary/30 hover:shadow-md transition-all duration-300">
-                <h3 class="font-bold text-xl text-primary">{edu.degree}</h3>
-                <h4 class="text-md font-medium mt-1">{edu.field}</h4>
-                <p class="text-md font-medium mt-3">{edu.name}</p>
-                <div class="flex flex-wrap gap-x-3 text-sm text-muted-foreground mt-2">
-                  <span class="bg-primary/10 px-3 py-1 rounded-full">{edu.period}</span>
-                  {edu.location && <span class="bg-muted/30 px-3 py-1 rounded-full">{edu.location}</span>}
+    <div class="flex flex-col gap-8">
+      {resume.education.institutions.map(edu => (
+        <div class="p-6 bg-white dark:bg-neutral-800 rounded-xl shadow-sm dark:shadow-none border border-neutral-200 dark:border-neutral-700">
+          <div class="flex justify-between items-start gap-6">
+            {/* Left side: Education information */}
+            <div class="flex-grow">
+              <div class="flex flex-col mb-2">
+                <h3 class="font-bold text-lg">
+                  {edu.link ? (
+                    <a 
+                      href={edu.link} 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      class="hover:text-primary-600 dark:hover:text-primary-400 transition-colors"
+                    >
+                      {edu.name}
+                    </a>
+                  ) : (
+                    edu.name
+                  )}
+                </h3>
+                <div class="text-neutral-500 dark:text-neutral-400 text-sm">
+                  {edu.period} • {edu.location}
                 </div>
-                {edu.description && (
-                  <p class="mt-4 text-sm leading-relaxed">{edu.description}</p>
-                )}
-                {edu.achievements && edu.achievements.length > 0 && (
-                  <div class="mt-4 bg-background p-3 rounded-md">
-                    <h5 class="text-xs font-semibold mb-2 text-primary/80 uppercase tracking-wider">Achievements:</h5>
-                    <ul class="list-none space-y-1.5">
-                      {edu.achievements.map((achievement: string) => (
-                        <li class="text-xs flex items-start">
-                          <span class="inline-block mr-2 text-primary">✓</span>
-                          <span>{achievement}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                )}
               </div>
-            ))}
+              
+              <div class="mb-4">
+                <div class="font-medium">{edu.degree}</div>
+                {edu.field && <div class="text-neutral-500 dark:text-neutral-400">{edu.field}</div>}
+              </div>
+              
+              {edu.description && (
+                <div class="text-neutral-600 dark:text-neutral-300 text-sm">
+                  {edu.description}
+                </div>
+              )}
+              
+              {edu.achievements && edu.achievements.length > 0 && (
+                <div class="mt-4">
+                  <h4 class="font-medium mb-2">Achievements</h4>
+                  <ul class="list-disc list-inside text-sm text-neutral-600 dark:text-neutral-300">
+                    {edu.achievements.map(achievement => (
+                      <li>{achievement}</li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+            </div>
+            
+            {/* Right side: Logo */}
+            {edu.logo && (
+              <a 
+                href={edu.link || "#"} 
+                target="_blank" 
+                rel="noopener noreferrer" 
+                class="shrink-0 flex items-center justify-center"
+              >
+                <img 
+                  src={`/static/images/education/${edu.logo}`} 
+                  alt={`${edu.name} logo`} 
+                  class={`${edu.logoSize || 'w-32 h-32'} object-contain`} 
+                />
+              </a>
+            )}
           </div>
-        </section>
-      )}
+        </div>
+      ))}
+    </div>
+  </section>
+)}
+
 
     <!-- ==================== RESUME DOWNLOAD ==================== -->
     <div class="flex justify-center mb-16">

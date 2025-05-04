@@ -124,7 +124,11 @@ resume:
         period: "Sep 2022 - Jan 2023"
         location: "Sweden"
         description: "Focused on cloud services, distributed systems, and advanced wireless networks."
+        logo: "ltu-logo.png"  # Path to the university logo image
+        logoSize: "w-40 h-40"  # Custom size for this logo
+        link: "https://www.ltu.se/?l=en"  # URL to the university website
         achievements: []
+
 
       - name: "Leeds Beckett University (Erasmus Mundus Mobility Programme)"
         degree: "Master’s degree in IT Sustainable Computing"
@@ -132,6 +136,9 @@ resume:
         period: "Jan 2022 - May 2022"
         location: "United Kingdom"
         description: "Specialized in data analytics and machine learning."
+        logo: "lbu-logo.png"  # Path to the university logo image
+        logoSize: "w-45 h-45"  # Custom size for this logo
+        link: "https://www.leedsbeckett.ac.uk/"  # URL to the university website        
         achievements: []
 
       - name: "Université de Lorraine (Erasmus Mundus Mobility Programme)"
@@ -139,6 +146,9 @@ resume:
         period: "Sep 2021 - Jan 2022"
         location: "France"
         description: "Concentrated on networking and green ICT solutions."
+        logo: "ul-logo.png"  # Path to the university logo image
+        logoSize: "w-33 h-33"  # Custom size for this logo
+        link: "https://www.univ-lorraine.fr/"  # URL to the university website        
         achievements: []
 
       - name: "Ecole Nationale Polytechnique"
@@ -146,6 +156,9 @@ resume:
         period: "2016 - 2021"
         location: "Algiers, Algeria"
         description: "Focused on signals and communication."
+        logo: "enp-logo.png"  # Path to the university logo image
+        logoSize: "w-33 h-33"  # Custom size for this logo
+        link: "https://www.enp.edu.dz/fr/"  # URL to the university website        
         achievements:
           - "Ranked 21st out of 1338 students in national preparatory classes."
 
