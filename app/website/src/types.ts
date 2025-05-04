@@ -40,6 +40,9 @@ export interface EducationInstitution {
   period: string;
   location: string;
   description: string;
+  link: string;
+  logo: string;
+  logoSize: string;
   achievements: string[];
 }
 
