@@ -1,164 +1,113 @@
 ---
 import Breadcrumbs from '@/components/Breadcrumbs.astro'
-import TableOfContents from '@/components/TableOfContents.astro'
-import { badgeVariants } from '@/components/ui/badge'
+import PageHead from '@/components/PageHead.astro'
+import BuyMeCoffee from '@/components/react/buymeacoffe'
+import PaginationComponent from '@/components/ui/pagination'
 import Layout from '@/layouts/Layout.astro'
-import { getAllCertifications } from '@/lib/data-utils' // Update this function to fetch certifications
+import { getAllCertifications } from '@/lib/data-utils'
+import type { PaginateFunction } from 'astro'
 import { Icon } from 'astro-icon/components'
 import { Image } from 'astro:assets'
-import { render } from 'astro:content'
-import PageHead from '@/components/PageHead.astro'
 
-export async function getStaticPaths() {
-  const certifications = await getAllCertifications() // Update this function to fetch certifications
-  return certifications.map((certification) => ({
-    params: { id: certification.id },
-    props: certification,
-  }))
+export async function getStaticPaths({
+  paginate,
+}: {
+  paginate: PaginateFunction
+}) {
+  const allCertifications = await getAllCertifications()
+  return paginate(allCertifications, { pageSize: 6 })
 }
 
-const certification = Astro.props
-const { Content, headings } = await render(certification)
-
-const structuredData = {
-  '@context': 'https://schema.org',
-  '@type': 'Certifications', // Update the schema type
-  headline: certification.data.name,
-  datePublished: certification.data.issueDate || '', // Update the date fields according to your certification data
-  dateModified: certification.data.expiryDate || certification.data.issueDate || '', // Update the date fields according to your certification data
-  author: {
-    '@type': 'Person',
-    name: 'Author', // You might want to update this to reflect the issuer or holder of the certification
-  },
-  image: new URL(`/image/${certification.id}.png`, Astro.site).toString(),
-  keywords: certification.data.tags ? certification.data.tags.join(', ') : '',
-  description: certification.data.description || '',
-}
+const { page } = Astro.props
+const certificationData = await getAllCertifications()
 const currentUrl = Astro.url;
 ---
 
+<Layout canonicalUrl={currentUrl}>
+  <PageHead slot="head" title="Certifications" />
+  <Breadcrumbs
+    items={[
+      { label: 'Certifications', href: '/certifications', icon: 'lucide:folder' },
+    ]}
+  />
 
-<Layout canonicalUrl={currentUrl} isWide={true}> 
-    <PageHead slot="head" title={certification.data.name} />
-    <script
-      type="application/ld+json"
-      is:inline
-      set:html={JSON.stringify(structuredData)}
-    />
-    <section
-      class="grid grid-cols-[minmax(0px,1fr)_min(calc(var(--breakpoint-lg)-2rem),100%)_minmax(0px,1fr)] gap-y-6 max-w-[calc(100vw-2rem)] "
-    >
-      <div class="col-start-2">
-        <Breadcrumbs
-          items={[
-            { href: '/certifications', label: 'Certifications', icon: 'lucide:award' }, // Update the breadcrumb
-            { label: certification.data.name, icon: 'lucide:award' }, // Update the icon to reflect certification
-          ]}
-        />
-      </div>
-      <section class="col-start-2 flex flex-col gap-y-6 text-start">
-        <div class="flex flex-col">
-          <h1
-            class="mb-2 text-3xl leading-tight font-medium text-pretty sm:text-5xl"
+  <section class="max-screen mt-12 px-4 md:px-6">
+    <div class="flex flex-row items-center justify-between mb-8">
+      <div>
+          <div class="flex w-fit items-center gap-2 text-primary">
+            <Icon name="lucide:star" class="h-4 w-4 text-yellow-500 animate-pulse" />
+            <p class="shimmer word-spacing font-mono text-sm uppercase leading-none text-primary">My Work</p>
+          </div>
+          <h2
+            id="skills-title"
+            class="font-custom text-foreground text-4xl font-bold mt-2"
           >
-            {certification.data.name}
-          </h1>
+            Certifications
+          </h2>
+          <p class="text-muted-foreground text-md max-w-2xl mt-3">
+            Here are some of the certifications I have worked on. I am always looking for new challenges and opportunities to learn and grow as a developer. If you have a certification in mind, feel free to reach out!
+          </p>
+      </div>
+      <div>
+        <BuyMeCoffee />
+      </div>  
+    </div>
   
-          <div class="flex flex-wrap justify-start gap-2">
-            {
-              certification.data.tags && certification.data.tags.length > 0 ? (
-                certification.data.tags.map((tag) => (
-                  <a
-                    href={`/tags/${tag}`}
-                    class={badgeVariants({ variant: 'secondary' })}
-                  >
-                    <Icon name="lucide:hash" class="size-3" />
-                    {tag}
-                  </a>
-                ))
-              ) : (
-                <span class="text-muted-foreground text-sm">
-                  No tags available
-                </span>
-              )
-            }
-          </div>
-        </div>
-      </section>
-  
-      <Image
-        src={certification.data.image}
-        alt={certification.data.name}
-        class="col-start-2 mb-8 h-auto w-full rounded-3xl object-cover"
-        loading="lazy"
-        fetchpriority="low"      
-        width={800}
-        height={600}
-      />
-  
-      {headings.length > 0 && <TableOfContents headings={headings} />}
-  
-      <article class="prose col-start-2 max-w-none">
-        <Content />
-      </article>
-  
-      <aside
-        class="group col-start-2 rounded-xl border p-4 xl:sticky xl:top-26 xl:col-start-3 xl:mr-auto xl:ml-8 xl:h-[calc(100vh-5rem)] xl:max-w-fit xl:rounded-none xl:border-none xl:p-0"
-      >
-        <div class="flex flex-col gap-4 rounded-xl border bg-card p-4 shadow-md transition-all duration-300 group-hover:shadow-lg xl:group-hover:shadow-none xl:group-hover:shadow-none">
-          <h2 class="text-lg font-semibold">Certification Details</h2> <!-- Update the title -->
-          <div class="flex flex-col gap-2 text-sm text-muted-foreground">
-            <p>{certification.data.description}</p>
-          </div>
-  
-          <hr class="my-4 border-t" />
-  
-          <div class="flex flex-col gap-2 text-sm text-muted-foreground">
-            <h3 class="text-base font-semibold">Certification Information</h3> <!-- Update the title -->
-            <ul class="list-disc pl-4">
-              {certification.data.issuer && (
-                <li>
-                  <strong>Issuer:</strong> {certification.data.issuer}
-                </li>
-              )}
-              {certification.data.issueDate && (
-                <li>
-                  <strong>Issue Date:</strong> {certification.data.issueDate}
-                </li>
-              )}
-              {certification.data.expiryDate && (
-                <li>
-                  <strong>Expiry Date:</strong> {certification.data.expiryDate}
-                </li>
-              )}
-              {certification.data.certificateId && (
-                <li>
-                  <strong>Certificate ID:</strong> {certification.data.certificateId}
-                </li>
-              )}
-              {certification.data.credentialId && (
-                <li>
-                  <strong>Credential ID:</strong> {certification.data.credentialId}
-                </li>
-              )}
-            </ul>
-          </div>
-  
-          {certification.data.verificationLink && (
-            <div class="flex flex-col gap-2 text-sm text-muted-foreground">
-              <h3 class="text-base font-semibold">Verify Certification</h3>
-              <ul class="list-disc pl-4">
-                <li>
-                  <a href={certification.data.verificationLink} target="_blank" rel="noopener noreferrer">
-                    Verify this certification
-                  </a>
-                </li>
-              </ul>
+    <div class="mt-12 grid grid-cols-1 py-sm sm:grid-cols-2 gap-x-8 mb-16 gap-y-8">
+      {certificationData.map((certification, _) => (
+        <div
+          class="group h-full w-full transition-all duration-300 hover:translate-y-[-4px] even:sm:mt-14"
+        >
+          <a class="flex flex-col h-full w-full rounded-2xl overflow-hidden bg-card hover:shadow-lg transition-all duration-300 border border-card-foreground/10" href={`/certifications/${certification.id}`}>
+            <div
+              class="aspect-[16/10] w-full overflow-hidden"
+            >
+              <Image
+                alt={certification.data.name}
+                src={certification.data.image}
+                class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                loading="lazy"
+                fetchpriority="low"
+                width={600}
+                height={375}
+              />
             </div>
-          )}
+            <div
+              class="flex flex-col justify-between p-5 flex-grow"
+            >
+              <div>
+                <h3 class="text-xl font-medium text-foreground mb-2">{certification.data.name}</h3>
+                <p class="text-sm text-muted-foreground line-clamp-2 mb-4">
+                  {certification.data.description || "An innovative certification showcasing creativity and technical skills"}
+                </p>
+              </div>
+              <div class="flex flex-wrap justify-between items-center mt-auto pt-3 border-t border-border/40">
+                <div class="flex flex-wrap gap-2">
+                  {certification.data.tags?.slice(0, 2).map((tag) => (
+                    <span class="text-xs px-2 py-1 rounded-full bg-primary/10 text-primary font-medium">{tag}</span>
+                  ))}
+                  {certification.data.tags?.length > 2 && (
+                    <span class="text-xs px-2 py-1 rounded-full bg-secondary/80 text-primary font-medium">+{certification.data.tags.length - 2}</span>
+                  )}
+                </div>
+                <p class="text-xs font-medium text-muted-foreground flex items-center">
+                  <Icon name="lucide:calendar" class="h-3 w-3 mr-1" />
+                  {certification.data.endDate ? new Date(certification.data.endDate).getFullYear() : 'Ongoing'}
+                </p>
+              </div>
+            </div>
+          </a>
         </div>
-      </aside>
-  
-    </section>
-  </Layout>
-  
+      ))}
+    </div>
+
+    <div class="mt-16 mb-16">
+      <PaginationComponent
+        currentPage={page.currentPage}
+        totalPages={page.lastPage}
+        baseUrl="/certifications/"
+        client:load
+      />
+    </div>
+  </section>
+</Layout>
