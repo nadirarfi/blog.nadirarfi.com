@@ -9,5 +9,7 @@ link: "https://tailci.cojocarudavid.me"
 startDate: "2025-03-30"
 references: [
   "01-architect-design-prerequisies/index.md",
+  "02-architect-governance/index.md",
+
 ]
 ---

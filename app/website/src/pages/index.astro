@@ -99,28 +99,35 @@ const metaTitle = pageConfig.metaTitle || SITE.title;
     </div>
 
 <!-- ==================== SKILLS SECTION ==================== -->
-<section class="relative mb-20 container mx-auto px-4 max-w-4xl" aria-labelledby="skills-title">
+<section 
+  class="relative mb-12 container mx-auto px-4 max-w-4xl" 
+  aria-labelledby="skills-title"
+>
   <!-- Clean, minimal header -->
-  <div class="mb-8 md:mb-10">
+  <div class="mb-4 md:mb-6">
     <h2
       id="skills-title"
-      class="font-custom text-foreground text-2xl md:text-3xl font-bold mb-3"
+      class="font-custom text-foreground text-xl md:text-2xl font-bold mb-2"
       title="skills"
     >
       {pageConfig.skillsTitle || "Skills & Technologies"}
     </h2>
     
-    <p class="text-muted-foreground text-base md:text-lg" aria-label="skills description">
+    <p 
+      class="text-muted-foreground text-sm md:text-base" 
+      aria-label="skills description"
+    >
       {pageConfig.skillsDescription || "Here are some of the technologies I've been working with:"}
     </p>
   </div>
 
   <!-- Categorized skills with cleaner design -->
-  <div class="grid gap-8 md:gap-10">
+  <div class="grid gap-4 md:gap-6">
     {/* Category groups rendered with space between them */}
     <Skills client:load />
   </div>
 </section>
+
 
 
 
