@@ -95,10 +95,10 @@ const structuredData = {
     set:html={JSON.stringify(structuredData)}
   />
 
-  <!-- Using the grid-based layout similar to the example -->
-  <section class="grid grid-cols-[minmax(0px,1fr)_min(calc(var(--breakpoint-lg)-2rem),100%)_minmax(0px,1fr)] gap-y-6">
+  <!-- Using the grid-based layout similar to the example with improved mobile responsiveness -->
+  <section class="grid grid-cols-[minmax(0px,1fr)_min(calc(var(--breakpoint-lg)-2rem),100%)_minmax(0px,1fr)] gap-y-6 px-4 sm:px-0">
     <!-- Breadcrumbs positioned in centered column -->
-    <div class="col-start-2 mt-8">
+    <div class="col-start-2 mt-4 sm:mt-8">
       <Breadcrumbs
         items={[
           { href: '/certifications', label: 'Certifications', icon: 'lucide:folder' },
@@ -108,9 +108,9 @@ const structuredData = {
     </div>
 
     <!-- Certification header in centered column -->
-    <section class="col-start-2 flex flex-col gap-y-6 text-start">
+    <section class="col-start-2 flex flex-col gap-y-4 sm:gap-y-6 text-start">
       <div class="flex flex-col">
-        <h1 id="page-title" class="mb-2 text-3xl leading-tight font-medium text-pretty sm:text-5xl">
+        <h1 id="page-title" class="mb-2 text-2xl leading-tight font-medium text-pretty sm:text-3xl md:text-4xl lg:text-5xl">
           {certification.data.name}
         </h1>
 
@@ -153,19 +153,23 @@ const structuredData = {
             class="inline-flex items-center text-primary hover:underline"
           >
             <Icon name="lucide:external-link" class="h-4 w-4 mr-2" />
-            View Official Certification
+            <span class="hidden sm:inline">View Official Certification</span>
+            <span class="sm:hidden">View Certificate</span>
           </a>
         </div>
       )}
     </div>
 
-    <!-- Table of Contents -->
+    <!-- Table of Contents - Collapsible on Mobile -->
     {(filteredCertHeadings.length > 0 || renderedSections.length > 0) && (
       <div class="col-start-2">
-        <div class="mt-6 mb-8 border rounded-lg shadow-sm overflow-hidden">
-          <div class="bg-muted px-4 py-3 text-sm font-medium">
-            Table of Contents
-          </div>
+        <details class="mt-6 mb-8 border rounded-lg shadow-sm overflow-hidden" open>
+          <summary class="bg-muted px-4 py-3 text-sm font-medium cursor-pointer flex items-center justify-between">
+            <span>Table of Contents</span>
+            <span class="toc-toggle text-muted-foreground">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="toc-main-chevron"><path d="m6 9 6 6 6-6"/></svg>
+            </span>
+          </summary>
           <nav class="px-4 py-3">
             <!-- Main overview section -->
             <div class="mb-6">
@@ -236,7 +240,7 @@ const structuredData = {
               </div>
             ))}
           </nav>
-        </div>
+        </details>
       </div>
     )}
 
@@ -251,7 +255,7 @@ const structuredData = {
 
     <!-- Certification image if available -->
     {certification.data.image && (
-      <figure class="col-start-2 mb-10 rounded-lg overflow-hidden border shadow-sm">
+      <figure class="col-start-2 mb-6 sm:mb-10 rounded-lg overflow-hidden border shadow-sm">
           <Image 
             src={typeof certification.data.image === 'string' 
               ? certification.data.image 
@@ -266,33 +270,27 @@ const structuredData = {
     )}
 
     <!-- Main content container -->
-    <article class="col-start-2 prose prose-lg max-w-none certification-content mb-8">
+    <article class="col-start-2 prose prose-sm sm:prose-base md:prose-lg max-w-none certification-content mb-8">
       <div class="mb-8">
         <CertificationContent />
       </div>
 
-      <!-- Section contents with improved spacing -->
+      <!-- Section contents with improved spacing - removed duplicate section titles -->
       {renderedSections.map((section) => (
-        <section id={`section-${section.id}`} class="mb-12">
-          <div class="flex items-center border-b border-muted pb-2 mb-6">
-            <h2 class="text-2xl font-bold">
-              {section.title}
-            </h2>
-          </div>
-
+        <section id={`section-${section.id}`} class="mb-8 sm:mb-12">
           <div class="section-content" data-section-id={section.id}>
             <section.Content />
           </div>
         </section>
       ))}
 
-      <!-- Back to top button -->
+      <!-- Back to top button - improved for mobile -->
       <button
         id="back-to-top"
-        class="fixed bottom-8 right-8 p-3 bg-primary text-primary-foreground rounded-full shadow-lg opacity-0 invisible transition-all duration-300"
+        class="fixed bottom-4 right-4 sm:bottom-8 sm:right-8 p-2 sm:p-3 bg-primary text-primary-foreground rounded-full shadow-lg opacity-0 invisible transition-all duration-300 z-10"
         aria-label="Back to top"
       >
-        <Icon name="lucide:arrow-up" class="h-5 w-5" />
+        <Icon name="lucide:arrow-up" class="h-4 w-4 sm:h-5 sm:w-5" />
       </button>
     </article>
   </section>
@@ -325,11 +323,13 @@ const structuredData = {
   }
 
   /* Rotate chevron when details are open */
-  .toc-details[open] .toc-chevron {
+  details[open] .toc-chevron,
+  details[open] .toc-main-chevron {
     transform: rotate(180deg);
   }
 
-  .toc-chevron {
+  .toc-chevron,
+  .toc-main-chevron {
     transition: transform 0.2s ease;
   }
 
@@ -362,6 +362,25 @@ const structuredData = {
   .toc-summary:hover {
     color: hsl(var(--primary));
   }
+
+  /* Mobile optimizations */
+  @media (max-width: 640px) {
+    :global(.certification-content) {
+      font-size: 16px;
+    }
+    
+    :global(.certification-content h1) {
+      font-size: 1.75rem;
+    }
+    
+    :global(.certification-content h2) {
+      font-size: 1.5rem;
+    }
+    
+    :global(.certification-content h3) {
+      font-size: 1.25rem;
+    }
+  }
 </style>
 
 <script>
@@ -383,7 +402,35 @@ const structuredData = {
 
     // Fix section link clicks
     fixSectionLinkBehavior();
+
+    // Close main TOC on small screens after selection
+    setupMobileToC();
   });
+
+  // New function to handle mobile TOC behavior
+  function setupMobileToC() {
+    // Auto-collapse main TOC on mobile devices initially
+    if (window.innerWidth < 768) {
+      const mainTocDetails = document.querySelector('.col-start-2 > details');
+      if (mainTocDetails && mainTocDetails instanceof HTMLDetailsElement) {
+        mainTocDetails.open = false;
+      }
+    }
+
+    // Close main TOC after clicking a link on mobile
+    document.querySelectorAll('.toc-item, .toc-section-link').forEach(link => {
+      link.addEventListener('click', () => {
+        if (window.innerWidth < 768) {
+          const mainTocDetails = document.querySelector('.col-start-2 > details');
+          if (mainTocDetails && mainTocDetails instanceof HTMLDetailsElement) {
+            setTimeout(() => {
+              mainTocDetails.open = false;
+            }, 500); // Short delay to allow navigation to complete
+          }
+        }
+      });
+    });
+  }
 
   // Fix section link behavior to prevent default toggle
   function fixSectionLinkBehavior() {
@@ -485,7 +532,7 @@ const structuredData = {
     const backToTopButton = document.getElementById('back-to-top');
     if (backToTopButton) {
       window.addEventListener('scroll', () => {
-        if (window.scrollY > 400) {
+        if (window.scrollY > 300) {
           backToTopButton.classList.remove('opacity-0', 'invisible');
           backToTopButton.classList.add('opacity-100', 'visible');
         } else {
