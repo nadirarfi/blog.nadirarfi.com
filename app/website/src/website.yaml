@@ -210,21 +210,29 @@ resume:
 
 # Technology stack organized by category
 technologies:
-  "Web Development":
-    - { text: HTML, logo: mdi:language-html5 }
-    - { text: JavaScript, logo: mdi:language-javascript }
-    - { text: CSS, logo: mdi:language-css3 }
-    - { text: PHP, logo: mdi:language-php }
-    - { text: Astro, logo: simple-icons:astro }
-    - { text: "Tailwind CSS", logo: mdi:tailwind }
-  "Cloud & DevOps":
-    - { text: "AWS", logo: logos:aws }
-    - { text: "Azure", logo: logos:microsoft-azure }
-    - { text: "Docker", logo: logos:docker-icon }
-    - { text: "Kubernetes", logo: logos:kubernetes }
-    - { text: "Terraform", logo: logos:terraform-icon }
-    - { text: "Ansible", logo: logos:ansible }
-    - { text: "Jenkins", logo: logos:jenkins }
-  "Programming":
-    - { text: "Python", logo: logos:python }
-    - { text: "Bash", logo: logos:bash-icon }
+  "Cloud Providers":
+    - { text: "AWS", logo: "logos:aws" }
+    - { text: "Azure", logo: "logos:microsoft-azure" }
+  "Infrastructure As Code (IaC) and configuration management"
+    - { text: "Terraform", logo: "logos:terraform-icon" }
+    - { text: "Ansible", logo: "logos:ansible" }
+    - { text: "CloudFormation", logo: "logos:cloudformation" }
+    - { text: "Cloud Development Kit (CDK)", logo: "logos:cdk" }
+    - { text: "Kubernetes", logo: "logos:kubernetes" }
+    - { text: "Helm", logo: "logos:helm" }    
+  "Programming & Scripting":
+    - { text: "Python", logo: "logos:python" }
+    - { text: "Bash", logo: "logos:bash-icon" }
+  "DevOps Tools":
+    - { text: "Linux", logo: "logos:linux" }
+    - { text: "Git", logo: "logos:git" }
+    - { text: "GitHub", logo: "logos:Github" }
+    - { text: "GitLab", logo: "logos:Gitlab" }
+    - { text: "Azure DevOps", logo: "logos:Azure DevOps" }
+    - { text: "Jenkins", logo: "logos:jenkins" }
+    - { text: "Docker", logo: "logos:docker-icon" }
+  "Monitoring & Logging":
+    - { text: "Datadog", logo: "logos:Datadog" }
+    - { text: "Elastic", logo: "logos:Elastic" }
+    - { text: "CloudWatch", logo: "logos:CloudWatch" }
+
