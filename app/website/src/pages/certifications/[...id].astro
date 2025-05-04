@@ -10,7 +10,7 @@ import PageHead from '@/components/PageHead.astro'
 // Generate static paths for all certifications
 export async function getStaticPaths() {
   const allCertifications = await getAllCertifications();
-  
+
   return allCertifications.map(certification => {
     const cleanId = certification.id.replace(/\/index\.md$/, '');
     return {
@@ -20,7 +20,6 @@ export async function getStaticPaths() {
   });
 }
 
-const { id: urlId } = Astro.params;
 const { cleanId } = Astro.props;
 const result = await getCertificationWithSections(cleanId);
 
@@ -36,26 +35,26 @@ const { Content: CertificationContent, headings: certificationHeadings } = await
 const renderedSections = await Promise.all(
   sections.map(async (section) => {
     const { Content, headings } = await section.render();
-    
+
     // Use the name from frontmatter instead of folder name
     // If it doesn't exist, try to get the first h1 heading
     let sectionTitle = section.data.name;
-    
+
     if (!sectionTitle) {
       const h1Heading = headings.find(h => h.depth === 1);
       if (h1Heading) {
         sectionTitle = h1Heading.text;
       }
     }
-    
+
     // If still no title, use a fallback (but avoid using folder name)
     if (!sectionTitle) {
       sectionTitle = "Section";
     }
-    
+
     // Only keep h1 and h2 headings
     const filteredHeadings = headings.filter(h => h.depth <= 2);
-    
+
     return {
       id: section.id.split('/').pop(), // Just use the last part, not whole folder name
       Content,
@@ -80,13 +79,15 @@ const structuredData = {
     '@type': 'Person',
     name: 'Author',
   },
-  image: certification.data.image ? new URL(certification.data.image, Astro.site).toString() : null,
+  image: typeof certification.data.image === 'string'
+  ? new URL(certification.data.image, Astro.site).toString()
+  : null,
   keywords: certification.data.tags ? certification.data.tags.join(', ') : '',
   description: certification.data.description || '',
 }
 ---
 
-<Layout canonicalUrl={Astro.url} isWide={true}> 
+<Layout canonicalUrl={Astro.url} isWide={true}>
   <PageHead slot="head" title={certification.data.name} />
   <script
     type="application/ld+json"
@@ -101,18 +102,18 @@ const structuredData = {
       <Breadcrumbs
         items={[
           { href: '/certifications', label: 'Certifications', icon: 'lucide:folder' },
-          { label: certification.data.name, icon: 'lucide:folder-open' },
+          { label: certification.data.name || 'Certification', icon: 'lucide:folder-open' },
         ]}
       />
     </div>
-    
+
     <!-- Certification header in centered column -->
     <section class="col-start-2 flex flex-col gap-y-6 text-start">
       <div class="flex flex-col">
         <h1 id="page-title" class="mb-2 text-3xl leading-tight font-medium text-pretty sm:text-5xl">
           {certification.data.name}
         </h1>
-        
+
         <div class="flex flex-wrap items-center gap-2">
           {certification.data.tags?.length > 0 && (
             <div class="flex flex-wrap gap-2 items-center">
@@ -142,12 +143,12 @@ const structuredData = {
           )}
         </div>
       )}
-      
+
       {certification.data.link && (
         <div class="flex items-center gap-2">
-          <a 
+          <a
             href={certification.data.link}
-            target="_blank" 
+            target="_blank"
             rel="noopener noreferrer"
             class="inline-flex items-center text-primary hover:underline"
           >
@@ -178,11 +179,11 @@ const structuredData = {
                 <ul class="space-y-1 border-l border-muted pl-3 pt-2">
                   {filteredCertHeadings.map((heading) => (
                     <li>
-                      <a 
+                      <a
                         href={`#${heading.slug}`}
                         class={`
-                          block py-1.5 text-muted-foreground hover:text-foreground 
-                          transition-colors ${heading.depth === 1 ? 'font-medium' : 'text-[15px] pl-3'} 
+                          block py-1.5 text-muted-foreground hover:text-foreground
+                          transition-colors ${heading.depth === 1 ? 'font-medium' : 'text-[15px] pl-3'}
                           hover:bg-muted/40 rounded-md px-2 toc-item
                         `}
                         data-heading-id={heading.slug}
@@ -194,13 +195,13 @@ const structuredData = {
                 </ul>
               </details>
             </div>
-            
+
             <!-- Sections with their headings -->
             {renderedSections.map((section) => (
               <div class="mb-6 toc-section-container">
                 <details class="toc-details">
                   <summary class="toc-summary cursor-pointer flex items-center justify-between font-semibold text-foreground mb-2">
-                    <a 
+                    <a
                       href={`#section-${section.id}`}
                       class="hover:text-primary toc-section-link"
                       data-section-id={section.id}
@@ -211,15 +212,15 @@ const structuredData = {
                       <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="toc-chevron"><path d="m6 9 6 6 6-6"/></svg>
                     </span>
                   </summary>
-                  
+
                   {section.headings.length > 0 && (
                     <ul class="space-y-1 border-l border-muted pl-3 pt-2">
                       {section.headings.map((heading) => (
                         <li>
-                          <a 
+                          <a
                             href={`#section-${section.id}-${heading.slug}`}
                             class={`
-                              block py-1.5 text-muted-foreground hover:text-foreground 
+                              block py-1.5 text-muted-foreground hover:text-foreground
                               transition-colors ${heading.depth === 1 ? 'font-medium' : 'text-[15px] pl-3'}
                               hover:bg-muted/40 rounded-md px-2 toc-item
                             `}
@@ -253,7 +254,7 @@ const structuredData = {
       <figure class="col-start-2 mb-10 rounded-lg overflow-hidden border shadow-sm">
         <Image
           src={certification.data.image}
-          alt={certification.data.name}
+          alt={certification.data.name || ''}
           class="h-auto w-full object-cover max-h-[300px]"
           width={1000}
           height={300}
@@ -261,13 +262,13 @@ const structuredData = {
         />
       </figure>
     )}
-    
+
     <!-- Main content container -->
     <article class="col-start-2 prose prose-lg max-w-none certification-content mb-8">
       <div class="mb-8">
         <CertificationContent />
       </div>
-      
+
       <!-- Section contents with improved spacing -->
       {renderedSections.map((section) => (
         <section id={`section-${section.id}`} class="mb-12">
@@ -276,7 +277,7 @@ const structuredData = {
               {section.title}
             </h2>
           </div>
-          
+
           <div class="section-content" data-section-id={section.id}>
             <section.Content />
           </div>
@@ -303,33 +304,33 @@ const structuredData = {
   :global(.certification-content h4) {
     scroll-margin-top: 5rem;
   }
-  
+
   :global(#page-title) {
     scroll-margin-top: 5rem;
   }
-  
+
   :global([id^="section-"]) {
     scroll-margin-top: 5rem;
   }
-  
+
   /* TOC styling */
   .toc-summary {
     list-style: none;
   }
-  
+
   .toc-summary::-webkit-details-marker {
     display: none;
   }
-  
+
   /* Rotate chevron when details are open */
   .toc-details[open] .toc-chevron {
     transform: rotate(180deg);
   }
-  
+
   .toc-chevron {
     transition: transform 0.2s ease;
   }
-  
+
   /* Active TOC item styling */
   :global(.toc-item.active) {
     background-color: hsl(var(--muted)/0.7);
@@ -337,24 +338,24 @@ const structuredData = {
     font-weight: 500;
     border-left: 2px solid hsl(var(--primary));
   }
-  
+
   /* Active section styling */
   :global(.toc-section-container.active summary) {
     color: hsl(var(--primary));
     font-weight: 600;
   }
-  
+
   /* Indented TOC links */
   .toc-nav ul.border-l {
     border-color: hsl(var(--muted)/0.8);
   }
-  
+
   /* Section title links */
   .toc-section-link {
     flex: 1;
     padding: 0.25rem 0;
   }
-  
+
   /* Make hovering over summary highlight the row */
   .toc-summary:hover {
     color: hsl(var(--primary));
@@ -365,19 +366,19 @@ const structuredData = {
   document.addEventListener('DOMContentLoaded', () => {
     // Fix headings IDs to ensure all links work properly
     fixHeadingIds();
-    
+
     // Setup intersection observer for TOC highlighting
     setupScrollObserver();
-    
+
     // Setup back-to-top button
     setupBackToTopButton();
-    
+
     // Setup smooth scrolling
     setupSmoothScrolling();
-    
+
     // Setup TOC section expansion when scrolled to section
     setupTocSectionExpansion();
-    
+
     // Fix section link clicks
     fixSectionLinkBehavior();
   });
@@ -389,7 +390,7 @@ const structuredData = {
       link.addEventListener('click', (e) => {
         // Allow the link to work without toggling the details element
         e.stopPropagation();
-        
+
         // Get the section ID and scroll to it
         const sectionId = link.getAttribute('data-section-id');
         if (sectionId) {
@@ -400,10 +401,10 @@ const structuredData = {
               top: targetEl.getBoundingClientRect().top + window.pageYOffset - 100,
               behavior: 'smooth'
             });
-            
+
             // Update URL hash
-            history.pushState(null, null, `#section-${sectionId}`);
-            
+            history.pushState(null, '', `#section-${sectionId}`);
+
             // Expand the details element
             const detailsEl = link.closest('details');
             if (detailsEl && !detailsEl.open) {
@@ -420,7 +421,7 @@ const structuredData = {
     document.querySelectorAll('.section-content').forEach(sectionContent => {
       const sectionId = sectionContent.getAttribute('data-section-id');
       if (!sectionId) return;
-      
+
       // Find all h1, h2 tags without IDs and add them
       const headings = sectionContent.querySelectorAll('h1, h2');
       headings.forEach((heading) => {
@@ -430,7 +431,7 @@ const structuredData = {
           .toLowerCase()
           .replace(/[^\w\s-]/g, '')
           .replace(/\s+/g, '-');
-        
+
         if (headingSlug) {
           // Make sure we have consistent heading IDs format
           const headingId = `section-${sectionId}-${headingSlug}`;
@@ -448,17 +449,17 @@ const structuredData = {
           if (entry.isIntersecting) {
             const id = entry.target.getAttribute('id');
             if (!id) return;
-            
+
             // Handle both direct heading IDs and section IDs
             const isSectionHeader = id.startsWith('section-') && id.split('-').length === 2;
             const sectionId = isSectionHeader ? id : id.match(/section-([^-]+)/)?.[0];
-            
+
             // Update all TOC items
             document.querySelectorAll('[data-heading-id]').forEach((item) => {
               const itemId = item.getAttribute('data-heading-id');
               item.classList.toggle('active', itemId === id);
             });
-            
+
             // Expand the corresponding details section
             if (sectionId) {
               const sectionDetails = document.querySelector(`.toc-section-container details summary a[href="#${sectionId}"]`)?.closest('details');
@@ -490,7 +491,7 @@ const structuredData = {
           backToTopButton.classList.remove('opacity-100', 'visible');
         }
       });
-      
+
       backToTopButton.addEventListener('click', () => {
         window.scrollTo({ top: 0, behavior: 'smooth' });
       });
@@ -506,7 +507,7 @@ const structuredData = {
           const targetEl = document.querySelector(href);
           if (targetEl) {
             e.preventDefault();
-            
+
             // Expand the corresponding section if it's in a collapsed details
             const sectionMatch = href.match(/section-([^-]+)/);
             if (sectionMatch) {
@@ -514,19 +515,19 @@ const structuredData = {
               const detailsElement = document.querySelector(
                 `.toc-section-container details summary a[href="#${sectionId}"]`
               )?.closest('details');
-              
+
               if (detailsElement) {
                 detailsElement.open = true;
               }
             }
-            
+
             window.scrollTo({
               top: targetEl.getBoundingClientRect().top + window.pageYOffset - 100,
               behavior: 'smooth'
             });
-            
+
             // Set URL hash without jumping
-            history.pushState(null, null, href);
+            history.pushState(null, '', href);
           }
         }
       });
@@ -541,23 +542,25 @@ const structuredData = {
           if (entry.isIntersecting) {
             const id = entry.target.getAttribute('id');
             if (!id || !id.startsWith('section-')) return;
-            
+
             // Find and expand the corresponding details in TOC
             const sectionDetails = document.querySelector(
               `.toc-section-container details summary a[href="#${id}"]`
             )?.closest('details');
-            
+
             if (sectionDetails) {
               // Close all other sections first
               document.querySelectorAll('.toc-section-container details').forEach(details => {
                 if (details !== sectionDetails) {
-                  details.open = false;
+                  if (details instanceof HTMLDetailsElement) {
+                     details.open = false;
+                  }
                 }
               });
-              
+
               // Open this section
               sectionDetails.open = true;
-              
+
               // Add active class to the section container
               document.querySelectorAll('.toc-section-container').forEach(container => {
                 container.classList.remove('active');

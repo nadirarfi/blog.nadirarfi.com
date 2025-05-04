@@ -49,7 +49,7 @@ const currentUrl = Astro.url;
         </p>
       </div>
     </div>
-  
+
     <div class="mt-12 grid grid-cols-1 py-sm sm:grid-cols-2 gap-x-8 mb-16 gap-y-8">
       {certificationData.map((certification) => {
         // Clean ID for the URL
@@ -62,7 +62,7 @@ const currentUrl = Astro.url;
               {certification.data.image && (
                 <div class="aspect-[16/10] w-full overflow-hidden">
                   <Image
-                    alt={certification.data.name}
+                    alt={certification.data.name || ''}
                     src={certification.data.image}
                     class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
                     loading="lazy"
