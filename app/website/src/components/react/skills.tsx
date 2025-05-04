@@ -1,6 +1,4 @@
-import { useEffect } from 'react'
-import { technologies, type Technologies, type Category } from '../../consts'
-import { InfiniteScroll } from '../ui/infinite-scroll'
+import { technologies, type Category } from '../../consts'
 import { type IconType } from 'react-icons'
 import { FaQuestionCircle } from 'react-icons/fa'
 
@@ -69,18 +67,11 @@ const iconMap: { [key: string]: IconType } = {
 }
 
 
-const categories = Object.keys(technologies)
-const groupSize = Math.ceil(categories.length / 3)
-const categoryGroups = [
-  categories.slice(0, groupSize),
-  categories.slice(groupSize, groupSize * 2),
-  categories.slice(groupSize * 2),
-]
 const Skills: React.FC = () => {
   return (
     <div className="w-full space-y-10">
       {/* Iterate through each category of technologies */}
-      {Object.entries(technologies).map(([category, skills], categoryIndex) => (
+      {Object.entries(technologies).map(([category, skills]) => (
         <div key={category} className="space-y-4">
           {/* Category header */}
           <h3 className="text-lg md:text-xl font-semibold text-foreground/90">

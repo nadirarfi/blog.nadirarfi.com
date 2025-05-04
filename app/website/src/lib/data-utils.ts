@@ -1,5 +1,5 @@
-// import { getCollection, type CollectionEntry } from 'astro:content'
-import { getCollection, getEntries, getEntry, type CollectionEntry } from 'astro:content';
+import { getCollection, type CollectionEntry } from 'astro:content';
+
 
 
 
@@ -112,12 +112,6 @@ export async function getProjectsFeaturedTags(maxCount: number): Promise<string[
 
 
 ////////////////////////////////// Certifications
-
-
-// Function to clean up ID by removing /index.md suffix
-function cleanId(id: string): string {
-  return id.replace(/\/index\.md$/, '');
-}
 
 export async function getAllCertifications(): Promise<CollectionEntry<'certifications'>[]> {
   const allCertifications = await getCollection('certifications');

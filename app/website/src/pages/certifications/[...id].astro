@@ -252,14 +252,16 @@ const structuredData = {
     <!-- Certification image if available -->
     {certification.data.image && (
       <figure class="col-start-2 mb-10 rounded-lg overflow-hidden border shadow-sm">
-        <Image
-          src={certification.data.image}
-          alt={certification.data.name || ''}
-          class="h-auto w-full object-cover max-h-[300px]"
-          width={1000}
-          height={300}
-          loading="lazy"
-        />
+          <Image 
+            src={typeof certification.data.image === 'string' 
+              ? certification.data.image 
+              : certification.data.image?.src || ''}
+            alt={certification.data.name || ''}
+            class="w-full h-auto rounded-lg shadow-md"
+            width={800}
+            height={600}
+            loading="lazy"
+          />
       </figure>
     )}
 
