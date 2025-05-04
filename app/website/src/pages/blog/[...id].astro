@@ -12,7 +12,6 @@ import { getAdjacentPosts, getAllPosts } from '@/lib/data-utils'
 import { formatDate, readingTime } from '@/lib/utils'
 import { Icon } from 'astro-icon/components'
 import { render } from 'astro:content'
-import LikePost from '@/components/LikePost.astro'
 
 export async function getStaticPaths() {
   const posts = await getAllPosts()
