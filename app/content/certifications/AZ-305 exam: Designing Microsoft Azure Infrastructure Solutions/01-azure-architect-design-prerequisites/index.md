@@ -1,10 +1,7 @@
-# Gov
+# Azure Architect Design Prerequisites
 
 When designing Azure solutions — particularly for the AZ-305 certification — it’s essential to first understand **how Azure is built and organized**. This includes the **physical infrastructure** (regions, datacenters, and network) and the **management structure** (how resources are controlled, secured, and organized). This guide offers a breakdown of the key concepts, structured to help both exam preparation and real-world Azure usage.
 
----
-
-# Azure Architect Design Prerequisites
 
    ## 🌍 Azure Regions, Region Pairs, and Datacenters
 
