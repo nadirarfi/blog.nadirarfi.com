@@ -94,25 +94,78 @@ const structuredData = {
     set:html={JSON.stringify(structuredData)}
   />
 
-  <!-- SIGNIFICANTLY increased padding at top to create even more distance from navigation -->
-  <div class="max-w-[1400px] mx-auto px-4 md:px-6 relative pt-32 md:pt-36">
-    <!-- Breadcrumbs at the top -->
-    <Breadcrumbs
-      items={[
-        { href: '/certifications', label: 'Certifications', icon: 'lucide:folder' },
-        { label: certification.data.name, icon: 'lucide:folder-open' },
-      ]}
-      class="mb-6"
-    />
+  <!-- Using the grid-based layout similar to the example -->
+  <section class="grid grid-cols-[minmax(0px,1fr)_min(calc(var(--breakpoint-lg)-2rem),100%)_minmax(0px,1fr)] gap-y-6">
+    <!-- Breadcrumbs positioned in centered column -->
+    <div class="col-start-2 mt-8">
+      <Breadcrumbs
+        items={[
+          { href: '/certifications', label: 'Certifications', icon: 'lucide:folder' },
+          { label: certification.data.name, icon: 'lucide:folder-open' },
+        ]}
+      />
+    </div>
     
-    <!-- Main content grid -->
-    <div class="grid grid-cols-1 lg:grid-cols-[270px_1fr] xl:grid-cols-[300px_1fr] gap-x-10">
-      <!-- Redesigned sidebar with table of contents -->
-      <aside class="hidden lg:block relative">
-        <div class="sticky top-32 overflow-y-auto pr-4 max-h-[calc(100vh-8rem)]">
-          <nav class="toc-nav">
-            <h2 class="font-bold text-lg mb-6 text-foreground">Contents</h2>
-            
+    <!-- Certification header in centered column -->
+    <section class="col-start-2 flex flex-col gap-y-6 text-start">
+      <div class="flex flex-col">
+        <h1 id="page-title" class="mb-2 text-3xl leading-tight font-medium text-pretty sm:text-5xl">
+          {certification.data.name}
+        </h1>
+        
+        <div class="flex flex-wrap items-center gap-2">
+          {certification.data.tags?.length > 0 && (
+            <div class="flex flex-wrap gap-2 items-center">
+              {certification.data.tags.map((tag) => (
+                <a
+                  href={`/tags/${tag}`}
+                  class={badgeVariants({ variant: 'secondary' })}
+                >
+                  <Icon name="lucide:hash" class="size-3" />
+                  {tag}
+                </a>
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
+    </section>
+
+    <!-- Certification metadata in centered column -->
+    <div class="col-start-2 flex flex-wrap items-center gap-2 text-sm text-muted-foreground">
+      {certification.data.startDate && (
+        <div class="flex items-center gap-2">
+          <Icon name="lucide:calendar" class="h-4 w-4" />
+          <span>{new Date(certification.data.startDate).toLocaleDateString()}</span>
+          {certification.data.endDate && (
+            <span>- {new Date(certification.data.endDate).toLocaleDateString()}</span>
+          )}
+        </div>
+      )}
+      
+      {certification.data.link && (
+        <div class="flex items-center gap-2">
+          <a 
+            href={certification.data.link}
+            target="_blank" 
+            rel="noopener noreferrer"
+            class="inline-flex items-center text-primary hover:underline"
+          >
+            <Icon name="lucide:external-link" class="h-4 w-4 mr-2" />
+            View Official Certification
+          </a>
+        </div>
+      )}
+    </div>
+
+    <!-- Table of Contents -->
+    {(filteredCertHeadings.length > 0 || renderedSections.length > 0) && (
+      <div class="col-start-2">
+        <div class="mt-6 mb-8 border rounded-lg shadow-sm overflow-hidden">
+          <div class="bg-muted px-4 py-3 text-sm font-medium">
+            Contents
+          </div>
+          <nav class="px-4 py-3">
             <!-- Main overview section -->
             <div class="mb-6">
               <details class="toc-details" open>
@@ -183,177 +236,63 @@ const structuredData = {
             ))}
           </nav>
         </div>
-      </aside>
-      
-      <!-- Main content container with better spacing -->
-      <main class="min-w-0">
-        <!-- Certification header with improved spacing -->
-        <header class="mb-10">
-          <h1 id="page-title" class="text-3xl md:text-4xl font-bold mb-6 mt-0">
-            {certification.data.name}
-          </h1>
-          
-          <div class="flex flex-wrap items-center gap-4 mb-6">
-            {certification.data.tags?.length > 0 && (
-              <div class="flex flex-wrap gap-2 items-center">
-                {certification.data.tags.map((tag) => (
-                  <a
-                    href={`/tags/${tag}`}
-                    class={badgeVariants({ variant: 'secondary', class: 'text-xs' })}
-                  >
-                    {tag}
-                  </a>
-                ))}
-              </div>
-            )}
-            
-            {certification.data.startDate && (
-              <p class="text-sm text-muted-foreground flex items-center">
-                <Icon name="lucide:calendar" class="h-4 w-4 mr-1" />
-                {new Date(certification.data.startDate).toLocaleDateString()} 
-                {certification.data.endDate && (
-                  <span class="ml-2">- {new Date(certification.data.endDate).toLocaleDateString()}</span>
-                )}
-              </p>
-            )}
-          </div>
-          
-          {certification.data.description && (
-            <div class="text-muted-foreground text-base border-l-4 border-muted pl-4 py-2 mb-6 bg-muted/20 rounded-r-md">
-              {certification.data.description}
-            </div>
-          )}
-          
-          {certification.data.link && (
-            <a 
-              href={certification.data.link}
-              target="_blank" 
-              rel="noopener noreferrer"
-              class="inline-flex items-center text-sm text-primary hover:underline mb-6"
-            >
-              <Icon name="lucide:external-link" class="h-4 w-4 mr-2" />
-              View Official Certification Page
-            </a>
-          )}
-          
-          <hr class="border-t border-muted/70 my-6" />
-        </header>
-        
-        <!-- Mobile TOC dropdown -->
-        <div class="lg:hidden mb-8">
-          <details class="rounded-lg border shadow-sm overflow-hidden">
-            <summary class="flex cursor-pointer items-center justify-between bg-muted px-4 py-3 text-sm font-medium">
-              On This Page
-              <Icon name="lucide:chevron-down" class="h-4 w-4" />
-            </summary>
-            <nav class="px-4 py-3 bg-card max-h-[60vh] overflow-y-auto">
-              <!-- Overview -->
-              <details open class="mb-4">
-                <summary class="flex cursor-pointer items-center justify-between font-semibold text-sm mb-2">
-                  <span>Overview</span>
-                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="toc-chevron"><path d="m6 9 6 6 6-6"/></svg>
-                </summary>
-                <ul class="border-l border-muted pl-3 pt-2 space-y-1">
-                  {filteredCertHeadings.map((heading) => (
-                    <li class="mb-1">
-                      <a 
-                        href={`#${heading.slug}`}
-                        class={`
-                          block py-1 text-muted-foreground hover:text-foreground 
-                          ${heading.depth === 1 ? 'font-medium' : 'text-sm pl-3'}
-                        `}
-                      >
-                        {heading.text}
-                      </a>
-                    </li>
-                  ))}
-                </ul>
-              </details>
-              
-              <!-- Sections -->
-              {renderedSections.map((section) => (
-                <details class="mb-4">
-                  <summary class="flex cursor-pointer items-center justify-between font-semibold text-sm mb-2">
-                    <a 
-                      href={`#section-${section.id}`}
-                      class="mobile-section-link"
-                      data-section-id={section.id}
-                    >
-                      {section.title}
-                    </a>
-                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="toc-chevron"><path d="m6 9 6 6 6-6"/></svg>
-                  </summary>
-                  
-                  {section.headings.length > 0 && (
-                    <ul class="border-l border-muted pl-3 pt-2 space-y-1">
-                      {section.headings.map((heading) => (
-                        <li class="mb-1">
-                          <a 
-                            href={`#section-${section.id}-${heading.slug}`}
-                            class={`
-                              block py-1 text-muted-foreground hover:text-foreground 
-                              ${heading.depth === 1 ? 'font-medium' : 'text-sm pl-3'}
-                            `}
-                          >
-                            {heading.text}
-                          </a>
-                        </li>
-                      ))}
-                    </ul>
-                  )}
-                </details>
-              ))}
-            </nav>
-          </details>
+      </div>
+    )}
+
+    <!-- Description if available -->
+    {certification.data.description && (
+      <div class="col-start-2">
+        <div class="text-muted-foreground border-l-4 border-muted pl-4 py-2 mb-6 bg-muted/20 rounded-r-md">
+          {certification.data.description}
         </div>
-        
-        <!-- Certification image -->
-        {certification.data.image && (
-          <figure class="mb-10 rounded-lg overflow-hidden border shadow-sm">
-            <Image
-              src={certification.data.image}
-              alt={certification.data.name}
-              class="h-auto w-full object-cover max-h-[300px]"
-              width={1000}
-              height={300}
-              loading="lazy"
-            />
-          </figure>
-        )}
-        
-        <!-- Main certification overview content -->
-        <article class="prose prose-lg max-w-none certification-content">
-          <div class="mb-16">
-            <CertificationContent />
+      </div>
+    )}
+
+    <!-- Certification image if available -->
+    {certification.data.image && (
+      <figure class="col-start-2 mb-10 rounded-lg overflow-hidden border shadow-sm">
+        <Image
+          src={certification.data.image}
+          alt={certification.data.name}
+          class="h-auto w-full object-cover max-h-[300px]"
+          width={1000}
+          height={300}
+          loading="lazy"
+        />
+      </figure>
+    )}
+    
+    <!-- Main content container -->
+    <article class="col-start-2 prose prose-lg max-w-none certification-content mb-8">
+      <div class="mb-8">
+        <CertificationContent />
+      </div>
+      
+      <!-- Section contents with improved spacing -->
+      {renderedSections.map((section) => (
+        <section id={`section-${section.id}`} class="mb-12">
+          <div class="flex items-center border-b border-muted pb-2 mb-6">
+            <h2 class="text-2xl font-bold">
+              {section.title}
+            </h2>
           </div>
           
-          <!-- Section contents with improved ID tracking -->
-          {renderedSections.map((section) => (
-            <section id={`section-${section.id}`} class="mb-16">
-              <div class="flex items-center border-b border-muted pb-2 mb-6">
-                <h2 class="text-2xl font-bold">
-                  {section.title}
-                </h2>
-              </div>
-              
-              <div class="section-content" data-section-id={section.id}>
-                <section.Content />
-              </div>
-            </section>
-          ))}
-        </article>
-        
-        <!-- Floating back to top button -->
-        <button
-          id="back-to-top"
-          class="fixed bottom-8 right-8 p-3 bg-primary text-primary-foreground rounded-full shadow-lg opacity-0 invisible transition-all duration-300"
-          aria-label="Back to top"
-        >
-          <Icon name="lucide:arrow-up" class="h-5 w-5" />
-        </button>
-      </main>
-    </div>
-  </div>
+          <div class="section-content" data-section-id={section.id}>
+            <section.Content />
+          </div>
+        </section>
+      ))}
+
+      <!-- Back to top button -->
+      <button
+        id="back-to-top"
+        class="fixed bottom-8 right-8 p-3 bg-primary text-primary-foreground rounded-full shadow-lg opacity-0 invisible transition-all duration-300"
+        aria-label="Back to top"
+      >
+        <Icon name="lucide:arrow-up" class="h-5 w-5" />
+      </button>
+    </article>
+  </section>
 </Layout>
 
 <style>
@@ -362,32 +301,33 @@ const structuredData = {
   :global(.certification-content h2),
   :global(.certification-content h3),
   :global(.certification-content h4) {
-    scroll-margin-top: 10rem; /* Increased for better spacing */
+    scroll-margin-top: 5rem;
   }
   
   :global(#page-title) {
-    scroll-margin-top: 10rem; /* Increased for better spacing */
+    scroll-margin-top: 5rem;
   }
   
   :global([id^="section-"]) {
-    scroll-margin-top: 10rem; /* Increased for better spacing */
+    scroll-margin-top: 5rem;
   }
   
-  /* Natural-feeling TOC style with better indentation */
-  .toc-nav {
-    background: transparent;
-    border: 0;
-    font-family: inherit;
-    line-height: 1.6;
+  /* TOC styling */
+  .toc-summary {
+    list-style: none;
   }
   
-  /* Improved TOC indentation */
-  .toc-nav ul {
-    position: relative;
+  .toc-summary::-webkit-details-marker {
+    display: none;
   }
   
-  .toc-nav ul.border-l {
-    border-color: hsl(var(--muted)/0.8);
+  /* Rotate chevron when details are open */
+  .toc-details[open] .toc-chevron {
+    transform: rotate(180deg);
+  }
+  
+  .toc-chevron {
+    transition: transform 0.2s ease;
   }
   
   /* Active TOC item styling */
@@ -404,43 +344,20 @@ const structuredData = {
     font-weight: 600;
   }
   
-  /* Images in content */
-  :global(.certification-content img) {
-    border-radius: 0.375rem;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  /* Indented TOC links */
+  .toc-nav ul.border-l {
+    border-color: hsl(var(--muted)/0.8);
   }
   
-  /* Back to top button hover state */
-  #back-to-top:hover {
-    transform: translateY(-4px);
-  }
-  
-  /* Collapsible section styling */
-  .toc-summary {
-    list-style: none;
-  }
-  .toc-summary::-webkit-details-marker {
-    display: none;
-  }
-  
-  /* Rotate chevron when details are open */
-  .toc-details[open] .toc-chevron {
-    transform: rotate(180deg);
-  }
-  
-  .toc-chevron {
-    transition: transform 0.2s ease;
-  }
-  
-  /* Make hovering over summary highlight the whole row */
-  .toc-summary:hover {
-    color: hsl(var(--primary));
-  }
-  
-  /* Section title links in TOC should take up most of the click area */
+  /* Section title links */
   .toc-section-link {
     flex: 1;
     padding: 0.25rem 0;
+  }
+  
+  /* Make hovering over summary highlight the row */
+  .toc-summary:hover {
+    color: hsl(var(--primary));
   }
 </style>
 
@@ -461,11 +378,11 @@ const structuredData = {
     // Setup TOC section expansion when scrolled to section
     setupTocSectionExpansion();
     
-    // Fix section link clicks - CRITICAL FIX
+    // Fix section link clicks
     fixSectionLinkBehavior();
   });
 
-  // NEW: Fix section link behavior to prevent default toggle
+  // Fix section link behavior to prevent default toggle
   function fixSectionLinkBehavior() {
     // Handle desktop section links
     document.querySelectorAll('.toc-section-link').forEach(link => {
@@ -480,35 +397,7 @@ const structuredData = {
           if (targetEl) {
             e.preventDefault();
             window.scrollTo({
-              top: targetEl.getBoundingClientRect().top + window.pageYOffset - 120,
-              behavior: 'smooth'
-            });
-            
-            // Update URL hash
-            history.pushState(null, null, `#section-${sectionId}`);
-            
-            // Expand the details element
-            const detailsEl = link.closest('details');
-            if (detailsEl && !detailsEl.open) {
-              detailsEl.open = true;
-            }
-          }
-        }
-      });
-    });
-    
-    // Handle mobile section links
-    document.querySelectorAll('.mobile-section-link').forEach(link => {
-      link.addEventListener('click', (e) => {
-        e.stopPropagation();
-        
-        const sectionId = link.getAttribute('data-section-id');
-        if (sectionId) {
-          const targetEl = document.getElementById(`section-${sectionId}`);
-          if (targetEl) {
-            e.preventDefault();
-            window.scrollTo({
-              top: targetEl.getBoundingClientRect().top + window.pageYOffset - 120,
+              top: targetEl.getBoundingClientRect().top + window.pageYOffset - 100,
               behavior: 'smooth'
             });
             
@@ -527,12 +416,6 @@ const structuredData = {
   }
 
   function fixHeadingIds() {
-    // Process all headings in certification content
-    const contentHeadings = document.querySelectorAll('.certification-content h1[id], .certification-content h2[id]');
-    contentHeadings.forEach(heading => {
-      // No processing needed for these, they already have IDs from Astro
-    });
-    
     // Process all headings in section contents
     document.querySelectorAll('.section-content').forEach(sectionContent => {
       const sectionId = sectionContent.getAttribute('data-section-id');
@@ -540,7 +423,7 @@ const structuredData = {
       
       // Find all h1, h2 tags without IDs and add them
       const headings = sectionContent.querySelectorAll('h1, h2');
-      headings.forEach((heading, index) => {
+      headings.forEach((heading) => {
         // Always assign ID even if it already has one, to ensure consistent format
         const headingText = heading.textContent?.trim() || '';
         const headingSlug = headingText
@@ -552,48 +435,6 @@ const structuredData = {
           // Make sure we have consistent heading IDs format
           const headingId = `section-${sectionId}-${headingSlug}`;
           heading.id = headingId;
-          
-          // Now find if there's any TOC link that should point to this
-          const tocLinks = document.querySelectorAll(`a[href="#${headingId}"]`);
-          if (tocLinks.length === 0) {
-            // We need to make sure the TOC link exists
-            const sectionContainer = document.querySelector(`.toc-section-container details summary a[href="#section-${sectionId}"]`);
-            if (sectionContainer) {
-              const sectionList = sectionContainer.closest('details')?.querySelector('ul');
-              if (sectionList) {
-                const newItem = document.createElement('li');
-                const newLink = document.createElement('a');
-                
-                newLink.href = `#${headingId}`;
-                newLink.className = `block py-1.5 text-muted-foreground hover:text-foreground transition-colors 
-                  ${heading.tagName === 'H1' ? 'font-medium' : 'text-[15px] pl-3'} 
-                  hover:bg-muted/40 rounded-md px-2 toc-item`;
-                newLink.setAttribute('data-heading-id', headingId);
-                newLink.textContent = headingText;
-                
-                newItem.appendChild(newLink);
-                sectionList.appendChild(newItem);
-                
-                // Add click handler to this new link
-                newLink.addEventListener('click', (e) => {
-                  const href = newLink.getAttribute('href');
-                  if (href) {
-                    const targetEl = document.querySelector(href);
-                    if (targetEl) {
-                      e.preventDefault();
-                      window.scrollTo({
-                        top: targetEl.getBoundingClientRect().top + window.pageYOffset - 120,
-                        behavior: 'smooth'
-                      });
-                      
-                      // Set URL hash without jumping
-                      history.pushState(null, null, href);
-                    }
-                  }
-                });
-              }
-            }
-          }
         }
       });
     });
@@ -628,7 +469,7 @@ const structuredData = {
           }
         });
       },
-      { rootMargin: '-12% 0px -85% 0px', threshold: 0.1 }
+      { rootMargin: '-10% 0px -85% 0px', threshold: 0.1 }
     );
 
     // Observe all headings and section elements
@@ -658,7 +499,7 @@ const structuredData = {
 
   function setupSmoothScrolling() {
     // Add smooth scrolling to TOC links (except section titles which are handled separately)
-    document.querySelectorAll('a[href^="#"]:not(.toc-section-link):not(.mobile-section-link)').forEach(link => {
+    document.querySelectorAll('a[href^="#"]:not(.toc-section-link)').forEach(link => {
       link.addEventListener('click', (e) => {
         const href = link.getAttribute('href');
         if (href) {
@@ -680,7 +521,7 @@ const structuredData = {
             }
             
             window.scrollTo({
-              top: targetEl.getBoundingClientRect().top + window.pageYOffset - 120,
+              top: targetEl.getBoundingClientRect().top + window.pageYOffset - 100,
               behavior: 'smooth'
             });
             
@@ -693,7 +534,7 @@ const structuredData = {
   }
 
   function setupTocSectionExpansion() {
-    // When a heading is in view, expand its section in the TOC
+    // When a section is in view, expand its section in the TOC
     const sectionObserver = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
