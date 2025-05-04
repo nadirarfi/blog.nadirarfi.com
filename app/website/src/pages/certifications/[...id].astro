@@ -94,8 +94,8 @@ const structuredData = {
     set:html={JSON.stringify(structuredData)}
   />
 
-  <!-- Increased padding at top to create even more distance from navigation -->
-  <div class="max-w-[1400px] mx-auto px-4 md:px-6 relative pt-24 md:pt-28">
+  <!-- SIGNIFICANTLY increased padding at top to create even more distance from navigation -->
+  <div class="max-w-[1400px] mx-auto px-4 md:px-6 relative pt-32 md:pt-36">
     <!-- Breadcrumbs at the top -->
     <Breadcrumbs
       items={[
@@ -149,11 +149,8 @@ const structuredData = {
                   <summary class="toc-summary cursor-pointer flex items-center justify-between font-semibold text-foreground mb-2">
                     <a 
                       href={`#section-${section.id}`}
-                      class="hover:text-primary"
-                      data-heading-id={`section-${section.id}`}
-                      onClick={(e) => {
-                        e.stopPropagation(); // Allow link to work without toggling the details
-                      }}
+                      class="hover:text-primary toc-section-link"
+                      data-section-id={section.id}
                     >
                       {section.title}
                     </a>
@@ -265,7 +262,6 @@ const structuredData = {
                           block py-1 text-muted-foreground hover:text-foreground 
                           ${heading.depth === 1 ? 'font-medium' : 'text-sm pl-3'}
                         `}
-                        data-heading-id={heading.slug}
                       >
                         {heading.text}
                       </a>
@@ -280,8 +276,8 @@ const structuredData = {
                   <summary class="flex cursor-pointer items-center justify-between font-semibold text-sm mb-2">
                     <a 
                       href={`#section-${section.id}`}
-                      onClick={(e) => e.stopPropagation()}
-                      data-heading-id={`section-${section.id}`}
+                      class="mobile-section-link"
+                      data-section-id={section.id}
                     >
                       {section.title}
                     </a>
@@ -298,7 +294,6 @@ const structuredData = {
                               block py-1 text-muted-foreground hover:text-foreground 
                               ${heading.depth === 1 ? 'font-medium' : 'text-sm pl-3'}
                             `}
-                            data-heading-id={`section-${section.id}-${heading.slug}`}
                           >
                             {heading.text}
                           </a>
@@ -367,15 +362,15 @@ const structuredData = {
   :global(.certification-content h2),
   :global(.certification-content h3),
   :global(.certification-content h4) {
-    scroll-margin-top: 8rem;
+    scroll-margin-top: 10rem; /* Increased for better spacing */
   }
   
   :global(#page-title) {
-    scroll-margin-top: 8rem;
+    scroll-margin-top: 10rem; /* Increased for better spacing */
   }
   
   :global([id^="section-"]) {
-    scroll-margin-top: 8rem;
+    scroll-margin-top: 10rem; /* Increased for better spacing */
   }
   
   /* Natural-feeling TOC style with better indentation */
@@ -441,6 +436,12 @@ const structuredData = {
   .toc-summary:hover {
     color: hsl(var(--primary));
   }
+  
+  /* Section title links in TOC should take up most of the click area */
+  .toc-section-link {
+    flex: 1;
+    padding: 0.25rem 0;
+  }
 </style>
 
 <script>
@@ -459,7 +460,71 @@ const structuredData = {
     
     // Setup TOC section expansion when scrolled to section
     setupTocSectionExpansion();
+    
+    // Fix section link clicks - CRITICAL FIX
+    fixSectionLinkBehavior();
   });
+
+  // NEW: Fix section link behavior to prevent default toggle
+  function fixSectionLinkBehavior() {
+    // Handle desktop section links
+    document.querySelectorAll('.toc-section-link').forEach(link => {
+      link.addEventListener('click', (e) => {
+        // Allow the link to work without toggling the details element
+        e.stopPropagation();
+        
+        // Get the section ID and scroll to it
+        const sectionId = link.getAttribute('data-section-id');
+        if (sectionId) {
+          const targetEl = document.getElementById(`section-${sectionId}`);
+          if (targetEl) {
+            e.preventDefault();
+            window.scrollTo({
+              top: targetEl.getBoundingClientRect().top + window.pageYOffset - 120,
+              behavior: 'smooth'
+            });
+            
+            // Update URL hash
+            history.pushState(null, null, `#section-${sectionId}`);
+            
+            // Expand the details element
+            const detailsEl = link.closest('details');
+            if (detailsEl && !detailsEl.open) {
+              detailsEl.open = true;
+            }
+          }
+        }
+      });
+    });
+    
+    // Handle mobile section links
+    document.querySelectorAll('.mobile-section-link').forEach(link => {
+      link.addEventListener('click', (e) => {
+        e.stopPropagation();
+        
+        const sectionId = link.getAttribute('data-section-id');
+        if (sectionId) {
+          const targetEl = document.getElementById(`section-${sectionId}`);
+          if (targetEl) {
+            e.preventDefault();
+            window.scrollTo({
+              top: targetEl.getBoundingClientRect().top + window.pageYOffset - 120,
+              behavior: 'smooth'
+            });
+            
+            // Update URL hash
+            history.pushState(null, null, `#section-${sectionId}`);
+            
+            // Expand the details element
+            const detailsEl = link.closest('details');
+            if (detailsEl && !detailsEl.open) {
+              detailsEl.open = true;
+            }
+          }
+        }
+      });
+    });
+  }
 
   function fixHeadingIds() {
     // Process all headings in certification content
@@ -474,8 +539,9 @@ const structuredData = {
       if (!sectionId) return;
       
       // Find all h1, h2 tags without IDs and add them
-      const headings = sectionContent.querySelectorAll('h1:not([id]), h2:not([id])');
+      const headings = sectionContent.querySelectorAll('h1, h2');
       headings.forEach((heading, index) => {
+        // Always assign ID even if it already has one, to ensure consistent format
         const headingText = heading.textContent?.trim() || '';
         const headingSlug = headingText
           .toLowerCase()
@@ -483,11 +549,12 @@ const structuredData = {
           .replace(/\s+/g, '-');
         
         if (headingSlug) {
+          // Make sure we have consistent heading IDs format
           const headingId = `section-${sectionId}-${headingSlug}`;
           heading.id = headingId;
           
           // Now find if there's any TOC link that should point to this
-          const tocLinks = document.querySelectorAll(`.toc-item[href="#${headingId}"]`);
+          const tocLinks = document.querySelectorAll(`a[href="#${headingId}"]`);
           if (tocLinks.length === 0) {
             // We need to make sure the TOC link exists
             const sectionContainer = document.querySelector(`.toc-section-container details summary a[href="#section-${sectionId}"]`);
@@ -506,6 +573,24 @@ const structuredData = {
                 
                 newItem.appendChild(newLink);
                 sectionList.appendChild(newItem);
+                
+                // Add click handler to this new link
+                newLink.addEventListener('click', (e) => {
+                  const href = newLink.getAttribute('href');
+                  if (href) {
+                    const targetEl = document.querySelector(href);
+                    if (targetEl) {
+                      e.preventDefault();
+                      window.scrollTo({
+                        top: targetEl.getBoundingClientRect().top + window.pageYOffset - 120,
+                        behavior: 'smooth'
+                      });
+                      
+                      // Set URL hash without jumping
+                      history.pushState(null, null, href);
+                    }
+                  }
+                });
               }
             }
           }
@@ -525,7 +610,7 @@ const structuredData = {
             
             // Handle both direct heading IDs and section IDs
             const isSectionHeader = id.startsWith('section-') && id.split('-').length === 2;
-            const sectionId = isSectionHeader ? id : id.match(/section-([^-]+)/)?.[1];
+            const sectionId = isSectionHeader ? id : id.match(/section-([^-]+)/)?.[0];
             
             // Update all TOC items
             document.querySelectorAll('[data-heading-id]').forEach((item) => {
@@ -572,8 +657,8 @@ const structuredData = {
   }
 
   function setupSmoothScrolling() {
-    // Add smooth scrolling to TOC links
-    document.querySelectorAll('a[href^="#"]').forEach(link => {
+    // Add smooth scrolling to TOC links (except section titles which are handled separately)
+    document.querySelectorAll('a[href^="#"]:not(.toc-section-link):not(.mobile-section-link)').forEach(link => {
       link.addEventListener('click', (e) => {
         const href = link.getAttribute('href');
         if (href) {
@@ -582,8 +667,9 @@ const structuredData = {
             e.preventDefault();
             
             // Expand the corresponding section if it's in a collapsed details
-            const sectionId = href.match(/section-([^-]+)/)?.[0];
-            if (sectionId) {
+            const sectionMatch = href.match(/section-([^-]+)/);
+            if (sectionMatch) {
+              const sectionId = sectionMatch[0];
               const detailsElement = document.querySelector(
                 `.toc-section-container details summary a[href="#${sectionId}"]`
               )?.closest('details');
