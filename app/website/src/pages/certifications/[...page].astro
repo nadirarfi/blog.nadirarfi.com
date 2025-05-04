@@ -2,7 +2,6 @@
 // certifications/[...page].astro
 import Breadcrumbs from '@/components/Breadcrumbs.astro'
 import PageHead from '@/components/PageHead.astro'
-import BuyMeCoffee from '@/components/react/buymeacoffe'
 import PaginationComponent from '@/components/ui/pagination'
 import Layout from '@/layouts/Layout.astro'
 import { getAllCertifications } from '@/lib/data-utils'
@@ -49,9 +48,6 @@ const currentUrl = Astro.url;
           Here are some of the certifications I have worked on. I am always looking for new challenges and opportunities to learn and grow as a developer. If you have a certification in mind, feel free to reach out!
         </p>
       </div>
-      <!-- <div>
-        <BuyMeCoffee />
-      </div>   -->
     </div>
   
     <div class="mt-12 grid grid-cols-1 py-sm sm:grid-cols-2 gap-x-8 mb-16 gap-y-8">
