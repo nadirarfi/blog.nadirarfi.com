@@ -1,4 +1,7 @@
-import { getCollection, type CollectionEntry } from 'astro:content'
+// import { getCollection, type CollectionEntry } from 'astro:content'
+import { getCollection, getEntries, getEntry, type CollectionEntry } from 'astro:content';
+
+
 
 export async function getAllPosts(): Promise<CollectionEntry<'blog'>[]> {
   const posts = await getCollection('blog')
@@ -106,19 +109,40 @@ export async function getProjectsFeaturedTags(maxCount: number): Promise<string[
   return Array.from(tags).slice(0, maxCount)
 }
 
+
+
+////////////////////////////////// Certifications
+
+
+// Function to clean up ID by removing /index.md suffix
+function cleanId(id: string): string {
+  return id.replace(/\/index\.md$/, '');
+}
+
 export async function getAllCertifications(): Promise<CollectionEntry<'certifications'>[]> {
-  const certifications = await getCollection('certifications')
-  return certifications
-    .sort((a, b) => (b.data.startDate?.valueOf() ?? 0) - (a.data.startDate?.valueOf() ?? 0))
+  const allCertifications = await getCollection('certifications');
+  
+  console.log("All certification IDs:", allCertifications.map(cert => cert.id));
+  
+  // Filter to include only main certification entries 
+  const mainCertifications = allCertifications.filter(certification => {
+    // Only include 'main' type certifications
+    return certification.data.type === 'main';
+  });
+  
+  console.log("Final certification IDs:", mainCertifications.map(cert => cert.id));
+  
+  return mainCertifications
+    .sort((a, b) => (b.data.startDate?.valueOf() ?? 0) - (a.data.startDate?.valueOf() ?? 0));
 }
 
 export async function getCertificationsFeaturedTags(maxCount: number): Promise<string[]> {
   const certifications = await getAllCertifications()
   const tags = new Set<string>()
 
-  for (const project of certifications) {
-    if (project.data.tags) {
-      for (const tag of project.data.tags) {
+  for (const certification of certifications) {
+    if (certification.data.tags) {
+      for (const tag of certification.data.tags) {
         tags.add(tag)
       }
     }
@@ -128,4 +152,72 @@ export async function getCertificationsFeaturedTags(maxCount: number): Promise<s
   }
 
   return Array.from(tags).slice(0, maxCount)
+}
+
+// Function to find certification by its cleaned ID (without /index.md)
+export async function getCertificationByCleanId(cleanId: string): Promise<CollectionEntry<'certifications'> | null> {
+  const certifications = await getCollection('certifications');
+  
+  // Find certification that matches the clean ID
+  const certification = certifications.find(cert => {
+    const certCleanId = cert.id.replace(/\/index\.md$/, '');
+    return certCleanId === cleanId;
+  });
+  
+  return certification || null;
+}
+
+// Updated function to load certification with its sections by clean ID
+export async function getCertificationWithSections(cleanIdParam: string): Promise<{
+  certification: CollectionEntry<'certifications'>,
+  sections: CollectionEntry<'certifications'>[]
+} | null> {
+  try {
+    // Get the main certification using the clean ID
+    const certification = await getCertificationByCleanId(cleanIdParam);
+    
+    if (!certification) {
+      console.error(`Certification not found with clean ID: ${cleanIdParam}`);
+      return null;
+    }
+    
+    // Get all sections by looking for entries that are referenced by the main certification
+    const sections: CollectionEntry<'certifications'>[] = [];
+    
+    if (certification.data.references && certification.data.references.length > 0) {
+      const certificationFolder = cleanIdParam; // The clean ID is actually the folder name
+      
+      // Process each reference (these should be relative paths within the certification folder)
+      for (const reference of certification.data.references) {
+        // Build the full path to the referenced section
+        const fullRefPath = `${certificationFolder}/${reference}`;
+        
+        try {
+          const allCertifications = await getCollection('certifications');
+          // Find the referenced certification
+          const refCert = allCertifications.find(c => {
+            const normalizedRefPath = reference.endsWith('/index.md') ? reference : `${reference}/index.md`;
+            const normalizedFullPath = `${certificationFolder}/${normalizedRefPath}`;
+            return c.id === normalizedFullPath;
+          });
+          
+          if (refCert) {
+            sections.push(refCert);
+          } else {
+            console.warn(`Referenced section not found: ${fullRefPath}`);
+          }
+        } catch (error) {
+          console.error(`Error including section ${reference}:`, error);
+        }
+      }
+    }
+    
+    return {
+      certification,
+      sections
+    };
+  } catch (error) {
+    console.error(`Error loading certification ${cleanIdParam}:`, error);
+    return null;
+  }
 }

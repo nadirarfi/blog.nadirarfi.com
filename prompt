@@ -1,0 +1,30 @@
+Provide a structured summary of the Microsoft official course on COURSE_TOPIC_NAME, following this template:
+
+1. Course Overview:
+Provide a brief introduction about the course, its objectives, and its relevance to the Azure environment (or the certification if applicable).
+
+Highlight the key skills and knowledge the course aims to impart.
+
+2. Summary of Course Modules:
+For each module in the course, summarize the content as follows:
+
+Module [Module Number]: [Module Title]
+High-Level Summary: Provide a brief overview of the content covered in this module.
+
+Key Concepts, Tools, and Techniques: Describe the key concepts, tools, and techniques introduced in this module.
+
+Intended Outcomes: Mention the intended outcomes for learners after completing the module. What should they be able to accomplish with the knowledge gained?
+
+If there are additional sections or subtopics within each module, automatically organize and summarize them:
+
+Section [Section Number]: [Section Title] (if applicable)
+Summary: Summarize the content covered in this section.
+
+Key Points: List the main points or takeaways from the section.
+
+Practical Applications: Describe how the concepts introduced can be applied in real-world scenarios.
+
+Resources/Links: Link to any additional resources or documentation mentioned in this section, if relevant.
+
+------------------
+CONTENT:

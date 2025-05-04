@@ -3,43 +3,89 @@ import Breadcrumbs from '@/components/Breadcrumbs.astro'
 import TableOfContents from '@/components/TableOfContents.astro'
 import { badgeVariants } from '@/components/ui/badge'
 import Layout from '@/layouts/Layout.astro'
-import { getAllCertifications } from '@/lib/data-utils'
+import { getAllCertifications, getCertificationWithSections } from '@/lib/data-utils'
 import { Icon } from 'astro-icon/components'
 import { Image } from 'astro:assets'
-import { render } from 'astro:content'
 import PageHead from '@/components/PageHead.astro'
 
+// Generate static paths for all certifications
 export async function getStaticPaths() {
-  const certifications = await getAllCertifications
-()
-  return certifications.map((ceritification) => ({
-    params: { id: ceritification.id },
-    props: ceritification,
-  }))
+  const allCertifications = await getAllCertifications();
+  
+  return allCertifications.map(certification => {
+    // Clean the ID by removing /index.md
+    const cleanId = certification.id.replace(/\/index\.md$/, '');
+    
+    return {
+      params: { id: cleanId },
+      props: { cleanId }
+    };
+  });
 }
 
-const ceritification = Astro.props
-const { Content, headings } = await render(ceritification)
+// Get the clean ID from params or props
+const { id: urlId } = Astro.params;
+const { cleanId } = Astro.props;
 
+// Get the certification and its sections using the clean ID
+const result = await getCertificationWithSections(cleanId);
+
+if (!result) {
+  console.error(`Could not find certification: ${cleanId}`);
+  return Astro.redirect('/certifications');
+}
+
+const { certification, sections } = result;
+
+// Render the certification content
+const { Content: CertificationContent, headings: certificationHeadings } = await certification.render();
+
+// Render each section's content
+const renderedSections = await Promise.all(
+  sections.map(async (section) => {
+    const { Content, headings } = await section.render();
+    // Extract the section name from the ID (last part of path)
+    const sectionName = section.id.split('/').slice(-2)[0];
+    return {
+      id: sectionName,
+      Content,
+      headings,
+      data: section.data
+    };
+  })
+);
+
+// Combine all headings for the Table of Contents
+const allHeadings = [
+  ...certificationHeadings,
+  ...renderedSections.flatMap(section => section.headings.map(heading => ({
+    ...heading,
+    depth: heading.depth + 1, // Increase depth for section headings
+    text: `${section.data.name || 'Section'}: ${heading.text}` // Prefix with section title
+  })))
+];
+
+// Schema for structured data
 const structuredData = {
   '@context': 'https://schema.org',
   '@type': 'Certifications',
-  headline: ceritification.data.name,
-  datePublished: ceritification.data.startDate || '',
-  dateModified: ceritification.data.endDate || ceritification.data.startDate || '',
+  headline: certification.data.name,
+  datePublished: certification.data.startDate || '',
+  dateModified: certification.data.endDate || certification.data.startDate || '',
   author: {
     '@type': 'Person',
     name: 'Author',
   },
-  image: new URL(`/image/${ceritification.id}.png`, Astro.site).toString(),
-  keywords: ceritification.data.tags ? ceritification.data.tags.join(', ') : '',
-  description: ceritification.data.description || '',
+  image: certification.data.image ? new URL(certification.data.image, Astro.site).toString() : null,
+  keywords: certification.data.tags ? certification.data.tags.join(', ') : '',
+  description: certification.data.description || '',
 }
+
 const currentUrl = Astro.url;
 ---
 
 <Layout canonicalUrl={currentUrl} isWide={true}> 
-  <PageHead slot="head" title={ceritification.data.name} />
+  <PageHead slot="head" title={certification.data.name} />
   <script
     type="application/ld+json"
     is:inline
@@ -52,7 +98,7 @@ const currentUrl = Astro.url;
       <Breadcrumbs
         items={[
           { href: '/certifications', label: 'Certifications', icon: 'lucide:folder' },
-          { label: ceritification.data.name, icon: 'lucide:folder-open' },
+          { label: certification.data.name, icon: 'lucide:folder-open' },
         ]}
       />
     </div>
@@ -61,13 +107,13 @@ const currentUrl = Astro.url;
         <h1
           class="mb-2 text-3xl leading-tight font-medium text-pretty sm:text-5xl"
         >
-          {ceritification.data.name}
+          {certification.data.name}
         </h1>
 
         <div class="flex flex-wrap justify-start gap-2">
           {
-            ceritification.data.tags && ceritification.data.tags.length > 0 ? (
-              ceritification.data.tags.map((tag) => (
+            certification.data.tags && certification.data.tags.length > 0 ? (
+              certification.data.tags.map((tag) => (
                 <a
                   href={`/tags/${tag}`}
                   class={badgeVariants({ variant: 'secondary' })}
@@ -86,45 +132,74 @@ const currentUrl = Astro.url;
       </div>
     </section>
 
-    <Image
-      src={ceritification.data.image}
-      alt={ceritification.data.name}
-      class="col-start-2 mb-8 h-auto w-full rounded-3xl object-cover"
-      loading="lazy"
-      fetchpriority="low"      
-      width={800}
-      height={600}
-    />
+    {certification.data.image && (
+      <Image
+        src={certification.data.image}
+        alt={certification.data.name}
+        class="col-start-2 mb-8 h-auto w-full rounded-3xl object-cover"
+        loading="lazy"
+        fetchpriority="low"      
+        width={800}
+        height={600}
+      />
+    )}
 
-    {headings.length > 0 && <TableOfContents headings={headings} />}
+    {allHeadings.length > 0 && <TableOfContents headings={allHeadings} />}
 
     <article class="prose col-start-2 max-w-none">
-      <Content />
+      <!-- Main certification content -->
+      <CertificationContent />
+      
+      <!-- Section contents -->
+      {renderedSections.map((section) => (
+        <div class="mt-8 border-t pt-6">
+          <h2 id={`section-${section.id}`} class="text-2xl font-bold mb-4">{section.data.name || 'Section'}</h2>
+          <div class="section-content">
+            <section.Content />
+          </div>
+        </div>
+      ))}
     </article>
 
     <aside
-    class="group col-start-2 rounded-xl border p-4 xl:sticky xl:top-26 xl:col-start-3 xl:mr-auto xl:ml-8 xl:h-[calc(100vh-5rem)] xl:max-w-fit xl:rounded-none xl:border-none xl:p-0"
-  >
-    <div class="flex flex-col gap-4 rounded-xl border bg-card p-4 shadow-md transition-all duration-300 group-hover:shadow-lg xl:group-hover:shadow-none xl:group-hover:shadow-none">
-      <h2 class="text-lg font-semibold">Ceritification Details</h2>
-      <div class="flex flex-col gap-2 text-sm text-muted-foreground">
-        <p>{ceritification.data.description}</p>
+      class="group col-start-2 rounded-xl border p-4 xl:sticky xl:top-26 xl:col-start-3 xl:mr-auto xl:ml-8 xl:h-[calc(100vh-5rem)] xl:max-w-fit xl:rounded-none xl:border-none xl:p-0"
+    >
+      <div class="flex flex-col gap-4 rounded-xl border bg-card p-4 shadow-md transition-all duration-300 group-hover:shadow-lg xl:group-hover:shadow-none xl:group-hover:shadow-none">
+        <h2 class="text-lg font-semibold">Certification Details</h2>
+        <div class="flex flex-col gap-2 text-sm text-muted-foreground">
+          <p>{certification.data.description}</p>
+        </div>
+
+        <hr class="my-4 border-t" />
+
+        {certification.data.link && (
+          <div class="flex flex-col gap-2 text-sm text-muted-foreground">
+            <h3 class="text-base font-semibold">Certification Links</h3>
+            <ul class="list-disc pl-4">
+              <li>
+                <a href={certification.data.link} target="_blank" rel="noopener noreferrer">
+                  {certification.data.link}
+                </a>
+              </li>
+            </ul>
+          </div>
+        )}
+        
+        {sections.length > 0 && (
+          <div class="flex flex-col gap-2 text-sm text-muted-foreground mt-4">
+            <h3 class="text-base font-semibold">Certification Sections</h3>
+            <ul class="list-disc pl-4">
+              {renderedSections.map((section) => (
+                <li>
+                  <a href={`#section-${section.id}`} class="hover:underline">
+                    {section.data.name || 'Section'}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
       </div>
-
-      <hr class="my-4 border-t" />
-
-      <div class="flex flex-col gap-2 text-sm text-muted-foreground">
-        <h3 class="text-base font-semibold">Ceritification Links</h3>
-        <ul class="list-disc pl-4">
-          <li>
-            <a href={ceritification.data.link} target="_blank" rel="noopener noreferrer">
-              {ceritification.data.link}
-            </a>
-          </li>
-        </ul>
-      </div>
-    </div>
-  </aside>
-
+    </aside>
   </section>
 </Layout>
