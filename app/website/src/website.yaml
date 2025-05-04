@@ -213,11 +213,11 @@ technologies:
   "Cloud Providers":
     - { text: "AWS", logo: "logos:aws" }
     - { text: "Azure", logo: "logos:microsoft-azure" }
-  "Infrastructure As Code (IaC) and configuration management"
+  "Infrastructure As Code (IaC) and configuration management":
     - { text: "Terraform", logo: "logos:terraform-icon" }
     - { text: "Ansible", logo: "logos:ansible" }
     - { text: "CloudFormation", logo: "logos:cloudformation" }
-    - { text: "Cloud Development Kit (CDK)", logo: "logos:cdk" }
+    - { text: "CDK", logo: "logos:cdk" }
     - { text: "Kubernetes", logo: "logos:kubernetes" }
     - { text: "Helm", logo: "logos:helm" }    
   "Programming & Scripting":

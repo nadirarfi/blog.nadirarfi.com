@@ -69,6 +69,7 @@
     "lucide-react": "^0.503.0",
     "patch-package": "^8.0.0",
     "react": "19.1.0",
+    "react-aws-icons": "^1.2.1",
     "react-dom": "19.1.0",
     "react-icons": "^5.5.0",
     "rehype-document": "^7.0.3",

@@ -17,6 +17,7 @@ import {
 import { 
   SiKubernetes, 
   SiTerraform,
+  SiHelm,
   SiPython,
   SiGnubash,
   SiLinux,
@@ -32,6 +33,8 @@ import {
   
 } from 'react-icons/si';
 
+import { DiAws } from "react-icons/di";
+import { BsCloudFog } from "react-icons/bs";
 import { TbSdk } from "react-icons/tb";
 
 const iconMap: { [key: string]: IconType } = {
@@ -40,6 +43,9 @@ const iconMap: { [key: string]: IconType } = {
   'logos:microsoft-azure': VscAzure,
   'logos:kubernetes': SiKubernetes,
   'logos:terraform-icon': SiTerraform,
+  'logos:helm': SiHelm,
+  'logos:cdk': DiAws ,
+  'logos:cloudformation': BsCloudFog,
   
   // Programming & Scripting
   'logos:python': SiPython,
