@@ -36,9 +36,9 @@ export const POST: APIRoute = async ({ params, request }) => {
   // SECURITY CHECK: Validate origin/referer to prevent CSRF attacks
   const origin = request.headers.get('origin');
   const allowedOrigins = [
-    'https://cojocarudavid.me',  // Replace with your actual domain
+    'https://blog.nadirarfi.com',  // Replace with your actual domain
     'http://localhost:3000',   // For local development
-    'https://www.cojocarudavid.me', // Replace with your actual domain
+    'https://www.blog.nadirarfi.com', // Replace with your actual domain
   ];
 
   if (!origin || !allowedOrigins.includes(origin)) {
@@ -143,7 +143,7 @@ export const POST: APIRoute = async ({ params, request }) => {
 // TODO: Move this to a separate file for better organization
 export const GET: APIRoute = async ({ params }) => {
   const { postId } = params;
-  
+
   // Add input validation for the postId
   if (!postId || !/^[a-zA-Z0-9-]+$/.test(postId)) {
     return new Response(
@@ -160,10 +160,10 @@ export const GET: APIRoute = async ({ params }) => {
 
     if (result.length === 0) {
       return new Response(
-        JSON.stringify({ 
-          success: true, 
-          data: { likes: 0, dislikes: 0 }, 
-          error: null 
+        JSON.stringify({
+          success: true,
+          data: { likes: 0, dislikes: 0 },
+          error: null
         }),
         { status: 200, headers: { 'Content-Type': 'application/json' } }
       );

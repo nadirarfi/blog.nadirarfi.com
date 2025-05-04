@@ -59,13 +59,13 @@ export async function GET(context: APIContext) {
     `<div
       style="display: flex; flex-direction: column; width: 100%; height: 100%; border-radius: 24px; overflow: hidden; color: white; border: 1px solid rgba(255, 255, 255, 0.12); position: relative;background: #171717;"
     >
-      
+
       <div style="position: absolute;display: flex; width: 100%; height: 100%; background-color: rgba(255, 255, 255, 0.01); opacity: 0.6;"></div>
 
-      
+
       <div style="position: absolute; width: 350px; height: 350px;display: flex; background: radial-gradient(circle, rgba(250, 255, 100, 0.12) 0%, transparent 70%); top: -100px; right: -50px; border-radius: 50%;"></div>
 
-      
+
       <div style="flex: 4; padding: 48px 50px; display: flex; flex-direction: column; justify-content: center; position: relative;">
         <div style="color: ${colors.text.secondary}; font-size: 16px; display: flex; font-weight: 400; letter-spacing: 0.05em; text-transform: uppercase;">
           ${formattedDate}
@@ -88,13 +88,13 @@ export async function GET(context: APIContext) {
         </div>
       </div>
 
-      
+
       <div
         style="flex: 1; border-top: 1px solid rgba(255, 255, 255, 0.1); display: flex; padding: 32px 50px; align-items: center; justify-content: space-between; font-size: 20px; background: rgba(0,0,0,0.3); position: relative;"
       >
         <div style="display: flex; align-items: center;">
           <div style="width: 6px; height: 28px;display: flex; background: rgb(27,27,27); margin-right: 16px; border-radius: 3px;"></div>
-          <span style="color: ${colors.text.secondary}; font-weight: 500; letter-spacing: 0.02em;">cojocarudavid.me</span>
+          <span style="color: ${colors.text.secondary}; font-weight: 500; letter-spacing: 0.02em;">blog.nadirarfi.com</span>
         </div>
 
         <div style="display: flex; align-items: center; background: rgba(21,21,21, 0.8); border-radius: 18px; padding: 12px 22px; border: 1px solid rgba(255, 255, 255, 0.1);">

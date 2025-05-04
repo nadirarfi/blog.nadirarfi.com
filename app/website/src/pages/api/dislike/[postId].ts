@@ -35,9 +35,9 @@ export const POST: APIRoute = async ({ params, request }) => {
   // SECURITY CHECK: Validate origin/referer to prevent CSRF attacks
   const origin = request.headers.get('origin');
   const allowedOrigins = [
-    'https://cojocarudavid.me',  // Replace with your actual domain
+    'https://blog.nadirarfi.com',  // Replace with your actual domain
     'http://localhost:3000',   // For local development
-    'https://www.cojocarudavid.me', // Replace with your actual domain
+    'https://www.blog.nadirarfi.com', // Replace with your actual domain
   ];
 
   if (!origin || !allowedOrigins.includes(origin)) {
