@@ -3,7 +3,7 @@
 When designing Azure solutions — particularly for the AZ-305 certification — it’s essential to first understand **how Azure is built and organized**. This includes the **physical infrastructure** (regions, datacenters, and network) and the **management structure** (how resources are controlled, secured, and organized). This guide offers a breakdown of the key concepts, structured to help both exam preparation and real-world Azure usage.
 
 
-   ## 🌍 Azure Regions, Region Pairs, and Datacenters
+   ## Azure Regions, Region Pairs, and Datacenters
 
    ### Azure Regions
 
@@ -29,11 +29,11 @@ When designing Azure solutions — particularly for the AZ-305 certification —
    * **Staggered Updates**: Reduces downtime by rolling out updates to each region separately.
    * **Durability**: Data replication in services like Azure Storage ensures durability.
 
-   👉 [Learn more about Azure regions and region pairs](https://learn.microsoft.com/en-us/azure/reliability/availability-zones-overview#what-are-availability-zones)
+   - [Learn more about Azure regions and region pairs](https://learn.microsoft.com/en-us/azure/reliability/availability-zones-overview#what-are-availability-zones)
 
    ---
 
-   ## 🏢 Azure Datacenters
+   ## Azure Datacenters
 
    Azure regions consist of **datacenters** — large-scale facilities housing servers, storage, and networking equipment. Key characteristics of Azure datacenters:
 
@@ -46,7 +46,7 @@ When designing Azure solutions — particularly for the AZ-305 certification —
 
    ---
 
-   ## ⚡ Availability Zones
+   ## Availability Zones
 
    **Availability Zones** are distinct datacenters within a single Azure region, designed to increase the reliability and availability of applications and data. Key features:
 
@@ -64,11 +64,11 @@ When designing Azure solutions — particularly for the AZ-305 certification —
    * Running **geo-redundant** databases.
    * Hosting **load-balanced web apps** across zones.
 
-   👉 [What are Availability Zones?](https://learn.microsoft.com/en-us/azure/reliability/availability-zones-overview)
+   - [What are Availability Zones?](https://learn.microsoft.com/en-us/azure/reliability/availability-zones-overview)
 
    ---
 
-   ## 🔧 Azure Resources and Resource Groups
+   ## Azure Resources and Resource Groups
 
    ### Resources
 
@@ -94,7 +94,7 @@ When designing Azure solutions — particularly for the AZ-305 certification —
 
    **Best practice**: Group resources based on their **lifecycle**. For example, group a web app, its database, and the associated networking components together.
 
-   👉 [Learn how to manage Resource Groups](https://learn.microsoft.com/en-us/azure/azure-resource-manager/management/manage-resource-groups-portal)
+   - [Learn how to manage Resource Groups](https://learn.microsoft.com/en-us/azure/azure-resource-manager/management/manage-resource-groups-portal)
 
    ---
 
@@ -114,11 +114,11 @@ When designing Azure solutions — particularly for the AZ-305 certification —
    * **Policy Enforcement**: Apply different policies and quotas per subscription.
    * **Cost Management**: Assign different billing accounts or cost centers for better cost control.
 
-   👉 [Explore Azure Subscriptions](https://learn.microsoft.com/en-us/azure/cost-management-billing/manage/create-subscription)
+   - [Explore Azure Subscriptions](https://learn.microsoft.com/en-us/azure/cost-management-billing/manage/create-subscription)
 
    ---
 
-   ## 🏢 Management Groups
+   ## Management Groups
 
    In enterprise environments, managing multiple subscriptions is streamlined through **Management Groups**.
 
@@ -133,11 +133,11 @@ When designing Azure solutions — particularly for the AZ-305 certification —
    * A **Production** management group might include all production subscriptions, with stricter governance and security policies.
    * A **Dev/Test** management group might include less restrictive settings to support agile development.
 
-   👉 [Learn about Management Groups](https://learn.microsoft.com/en-us/azure/governance/management-groups/overview)
+   - [Learn about Management Groups](https://learn.microsoft.com/en-us/azure/governance/management-groups/overview)
 
    ---
 
-   ## 🧭 Azure Management Hierarchy
+   ## Azure Management Hierarchy
 
    Azure resources are organized into a **hierarchical structure** that includes:
 
