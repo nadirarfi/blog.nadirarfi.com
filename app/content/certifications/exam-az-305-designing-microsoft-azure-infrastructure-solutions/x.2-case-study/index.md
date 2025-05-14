@@ -1,17 +1,17 @@
-# Litware, Inc. Case Study - Comprehensive Analysis with Answer Options
+# nadirarfi
 
 ## Organization Profile
-- **Company**: Litware, Inc.
+- **Company**: nadirarfi, Inc.
 - **Industry**: Medium-sized finance company
-- **Main Office**: Boston
+- **Main Office**: London
 - **Focus**: Finance services requiring high compliance and data security
 
 ## Existing Environment - Detailed
 
 ### Identity Environment
-- Active Directory forest named **Litware.com** (on-premises)
-- Azure AD tenant named **Litware.com** (cloud identity)
-- Second Azure AD tenant named **dev.Litware.com** (isolated development environment)
+- Active Directory forest named **nadirarfi.com** (on-premises)
+- Azure AD tenant named **nadirarfi.com** (cloud identity)
+- Second Azure AD tenant named **dev.nadirarfi.com** (isolated development environment)
 - **Azure AD Connect**: Currently synchronizing identities between on-premises AD and Azure AD
 - **Licensing**: All users have Azure AD Premium P2 licenses (includes advanced security features like PIM, Identity Protection, etc.)
 - **Conditional Access Policy**:
@@ -21,10 +21,10 @@
   - No MFA requirement currently configured in this policy
 
 ### Azure Environment
-- **Production Tenant (Litware.com)**:
+- **Production Tenant (nadirarfi.com)**:
   - 10 Azure subscriptions
   - Used for all production workloads
-- **Development Tenant (dev.Litware.com)**:
+- **Development Tenant (dev.nadirarfi.com)**:
   - 5 Azure subscriptions
   - Isolated environment for development and testing
 - **Subscription Management**:
@@ -444,14 +444,14 @@
 **Technical Implementation**:
 
 **Management Group Structure**:
-- **Litware.com Tenant**:
+- **nadirarfi.com Tenant**:
   - Root Management Group
   - All 10 production subscriptions nested below
 
-- **dev.Litware.com Tenant**:
+- **dev.nadirarfi.com Tenant**:
   - Root Management Group
   - All 5 development subscriptions nested below
 
 **Role Assignment Strategy**:
-- **Assignment 1**: Network Contributor role at root management group of Litware.com tenant
-- **Assignment 2**: Network Contributor role at root management group of dev.Litware.com tenant
+- **Assignment 1**: Network Contributor role at root management group of nadirarfi.com tenant
+- **Assignment 2**: Network Contributor role at root management group of dev.nadirarfi.com tenant
