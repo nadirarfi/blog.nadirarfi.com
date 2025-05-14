@@ -1,0 +1,69 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: 'GitHub Actions IAM Role using existing OIDC Provider (using SSM Parameter)'
+
+Parameters:
+  GitHubOrganization:
+    Type: String
+    Description: GitHub organization name
+
+  RepositoryName:
+    Type: String
+    Default: '*'
+    Description: Repository name (use * for all repositories)
+
+  # BranchName:
+  #   Type: String
+  #   Default: '*'
+  #   Description: Branch name (use * for all branches)
+
+  RoleName:
+    Type: String
+    Default: GitHubActionsRole
+    Description: Name of the IAM role
+
+  # OIDCProviderSSMParam:
+  #   Type: String
+  #   Default: /nadirarfi/github/actions/oidc/provider/arn
+  #   Description: SSM parameter path containing the ARN of the existing GitHub OIDC provider
+
+  PolicyARNs:
+    Type: String
+    Default: "arn:aws:iam::aws:policy/ReadOnlyAccess"
+    Description: Comma-separated list of IAM policy ARNs to attach to the role
+
+Resources:
+  GitHubActionsRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: !Ref RoleName
+      Description: !Sub 'Role for GitHub Actions in ${GitHubOrganization}/${RepositoryName}'
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Federated: 
+              - !Sub 'arn:${AWS::Partition}:iam::${AWS::AccountId}:oidc-provider/token.actions.githubusercontent.com'
+            Action: 'sts:AssumeRoleWithWebIdentity'
+            Condition:
+              StringEquals:
+                token.actions.githubusercontent.com:aud: 'sts.amazonaws.com'
+              StringLike:
+                token.actions.githubusercontent.com:sub: !Sub 'repo:${GitHubOrganization}/${RepositoryName}:*'
+                # token.actions.githubusercontent.com:sub: !Sub 'repo:${GitHubOrganization}/${RepositoryName}:ref:refs/heads/${BranchName}'
+      ManagedPolicyArns: !Split [',', !Ref PolicyARNs]
+      Tags:
+        - Key: Name
+          Value: !Ref RoleName
+        - Key: GitHubOrg
+          Value: !Ref GitHubOrganization
+        - Key: Repository
+          Value: !Ref RepositoryName
+
+Outputs:
+  RoleARN:
+    Description: ARN of the GitHub Actions IAM role
+    Value: !GetAtt GitHubActionsRole.Arn
+  RoleName:
+    Description: Name of the GitHub Actions IAM role
+    Value: !Ref RoleName

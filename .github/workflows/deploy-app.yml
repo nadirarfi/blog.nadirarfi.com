@@ -33,7 +33,7 @@ env:
   SOURCE_DIR: "app/website/dist"
   S3_BUCKET_PARAMETER_KEY: /arfin/aws/ssm/prod/blog/nadiarfi/com/s3/bucket/name
   CLOUDFRONT_DISTRIBUTION_ID_PARAMETER_KEY: /arfin/aws/ssm/prod/blog/nadiarfi/com/cloudfront/distribution/id
-  GITHUB_ACTIONS_ROLE_NAME: GitHubActionsRole
+  GITHUB_ACTIONS_ROLE_NAME: BlogNadirArfiGithubActionRole
   SITE_URL: https://blog.nadirarfi.com
   NODE_VERSION: "18"
 
