@@ -9,6 +9,8 @@ startDate: "2025-05-04"
 references: [
   "01-azure-architect-design-prerequisites/index.md",
   "02-design-identity-governance-and-monitor-solutions/index.md",
+  "x.1-case-study/index.md",
+  "x.2-case-study/index.md"
 ]
 ---
 
