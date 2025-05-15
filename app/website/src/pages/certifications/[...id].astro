@@ -110,6 +110,7 @@ const structuredData = {
     <!-- Main content area - flexible width with centered content -->
     <main id="main-content" class="flex-1 transition-all duration-300 ease-in-out pb-12">
       <div class="mx-auto max-w-5xl px-4 md:px-6 lg:px-8">
+        <!-- Certification header -->
         <section class="flex flex-col gap-y-4 sm:gap-y-6 text-start mb-8">
           <div class="flex flex-col">
             <h1 id="page-title" class="mb-2 text-2xl leading-tight font-medium text-pretty sm:text-3xl md:text-4xl lg:text-5xl">
@@ -254,6 +255,7 @@ const structuredData = {
               {filteredCertHeadings.length > 0 && (
                 <details class="toc-details" open>
                   <summary class="toc-summary cursor-pointer flex items-center justify-between font-semibold text-foreground py-2 px-2 rounded-md hover:bg-muted">
+                    <span>Overview</span>
                     <span class="text-muted-foreground toc-toggle" aria-hidden="true">
                       <Icon name="lucide:chevron-down" class="toc-chevron h-4 w-4" />
                     </span>
@@ -549,6 +551,7 @@ const structuredData = {
         body.classList.add('sidebar-collapsed');
       }
     });
+  }
 
   function setupReadingProgress() {
     const progressBar = document.getElementById('reading-progress-bar');
