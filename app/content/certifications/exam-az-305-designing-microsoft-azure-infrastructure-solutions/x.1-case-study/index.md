@@ -1,32 +1,30 @@
 # Case Study #1
 
-## Overview:
-
 **Nadirarfi Inc.** is an engineering company with offices throughout Europe. The company has a main office in **Paris**, and branch offices in **London**, **Sweden**, and **Rome**.
 
-### Active Directory Environment:
+### Active Directory Environment
 The network contains two **Active Directory forests**: 
 - **corp.nadirarfi.com** (production forest)
 - **rd.nadirarfi.com** (used only for the Research and Development (R&D) department).
 
 There are **no trust relationships** between the forests, and **corp.nadirarfi.com** is used for **internal user and computer authentication**. The **rd.nadirarfi.com** forest is **restricted to on-premises resources only**.
 
-### Network Infrastructure:
+### Network Infrastructure
 Each office has at least one **domain controller** from the **corp.nadirarfi.com** domain, with the main office containing all domain controllers for the **rd.nadirarfi.com** forest. All offices are connected with a high-speed connection to the internet.
 
 An existing application, **WebApp1**, is hosted in the **Paris office's data center**. **WebApp1** is used by customers to place and track orders. It has:
 - **Web tier** using **IIS**.
 - **Database tier** running **SQL Server 2016** on virtual machines in a **Hyper-V** environment.
 
-### Problem Statement:
+### Problem Statement
 - The use of **WebApp1** is **unpredictable**. During peak times, users report delays, and during off-peak times, resources are underutilized.
 
-### Planned Changes:
+### Planned Changes
 - **Nadirarfi Inc.** plans to move most of its production workloads to **Azure** over the next few years.
 - The company is planning a **hybrid identity model** for **Microsoft Office 365 deployment**, while **R&D operations** will remain **on-premises**.
 - The initial project involves migrating the **production** and **test instances** of **WebApp1** to **Azure**.
 
-### Technical Requirements:
+### Technical Requirements
 - Website content must be **easily updated** from a **single point**.
 - User input must be minimized when provisioning new app instances.
 - Whenever possible, **existing on-premises licenses** should be used to reduce cost.
@@ -36,12 +34,12 @@ An existing application, **WebApp1**, is hosted in the **Paris office's data cen
 - An **email distribution group** named **IT Support** must be notified of any **directory synchronization** issues.
 - Directory synchronization between **Azure Active Directory (AAD)** and **corp.nadirarfi.com** should not be impacted by a **link failure** between Azure and on-premises.
 
-### Database Requirements:
+### Database Requirements
 - Database metrics for **WebApp1's production instance** should be available for performance analysis and optimization.
 - **Database downtime** during migration should be minimized to avoid disrupting customer access.
 - **Database backups** should be retained for a minimum of **seven years** to meet compliance requirements.
 
-### Security Requirements:
+### Security Requirements
 - Company information, including policies, templates, and data, should remain inaccessible to anyone outside the company.
 - Users on the **on-premises network** must be able to authenticate to **corp.nadirarfi.com** if the **internet link fails**.
 - Administrators should be able to authenticate to the **Azure portal** using **corp.nadirarfi.com** credentials.
@@ -50,7 +48,7 @@ An existing application, **WebApp1**, is hosted in the **Paris office's data cen
 
 ---
 
-## Questions & Answers:
+## Questions & Answers
 
 ### 1. **What should you include in the identity management strategy to support the planned changes?**
 **Options:**
@@ -157,7 +155,7 @@ Azure AD Connect cloud sync provides **resilience** to network link failures by 
 
 
 
-## Conclusion:
+## Conclusion
 This case study focuses on **Azure migrations**, **hybrid identity management**, and **database migration strategies**. The goal is to ensure that **Nadirarfi Inc.** can smoothly migrate to Azure, maintain secure access and compliance, and optimize the use of resources. By leveraging Azure’s **PaaS offerings** and **long-term retention policies**, the company can achieve its technical and business goals efficiently.
 
 ---

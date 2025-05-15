@@ -1,6 +1,5 @@
-# nadirarfi
+# Case Study #2
 
-## Organization Profile
 - **Company**: nadirarfi, Inc.
 - **Industry**: Medium-sized finance company
 - **Main Office**: London

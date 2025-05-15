@@ -1,9 +1,9 @@
-# AZ-305: Azure Architect Design Prerequisites
+# Prerequisites
 
 When designing Azure solutions — particularly for the AZ-305 certification — it’s essential to first understand **how Azure is built and organized**. This includes the **physical infrastructure** (regions, datacenters, and network) and the **management structure** (how resources are controlled, secured, and organized). This guide offers a breakdown of the key concepts, structured to help both exam preparation and real-world Azure usage.
 
 
-   ## 🌍 Azure Regions, Region Pairs, and Datacenters
+   ## Azure Regions, Region Pairs, and Datacenters
 
    ### Azure Regions
 
@@ -33,7 +33,7 @@ When designing Azure solutions — particularly for the AZ-305 certification —
 
    ---
 
-   ## 🏢 Azure Datacenters
+   ## Azure Datacenters
 
    Azure regions consist of **datacenters** — large-scale facilities housing servers, storage, and networking equipment. Key characteristics of Azure datacenters:
 
@@ -46,7 +46,7 @@ When designing Azure solutions — particularly for the AZ-305 certification —
 
    ---
 
-   ## ⚡ Availability Zones
+   ## Availability Zones
 
    **Availability Zones** are distinct datacenters within a single Azure region, designed to increase the reliability and availability of applications and data. Key features:
 
@@ -68,7 +68,7 @@ When designing Azure solutions — particularly for the AZ-305 certification —
 
    ---
 
-   ## 🔧 Azure Resources and Resource Groups
+   ## Azure Resources and Resource Groups
 
    ### Resources
 
@@ -98,7 +98,7 @@ When designing Azure solutions — particularly for the AZ-305 certification —
 
    ---
 
-   ## 💳 Subscriptions
+   ## Subscriptions
 
    An **Azure Subscription** serves as the container for Azure resources and is closely tied to the following:
 
@@ -118,7 +118,7 @@ When designing Azure solutions — particularly for the AZ-305 certification —
 
    ---
 
-   ## 🏢 Management Groups
+   ## Management Groups
 
    In enterprise environments, managing multiple subscriptions is streamlined through **Management Groups**.
 
@@ -137,7 +137,7 @@ When designing Azure solutions — particularly for the AZ-305 certification —
 
    ---
 
-   ## 🧭 Azure Management Hierarchy
+   ## Azure Management Hierarchy
 
    Azure resources are organized into a **hierarchical structure** that includes:
 

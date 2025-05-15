@@ -7,14 +7,14 @@ tags: ["codeigniter", "tailwindcss", "php"]
 link: ""
 startDate: "2025-05-04"
 references: [
-  "01-azure-architect-design-prerequisites/index.md",
-  "02-design-identity-governance-and-monitor-solutions/index.md",
+  "01-prerequisites/index.md",
+  "02-design-identity-governance/index.md",
   "x.1-case-study/index.md",
   "x.2-case-study/index.md"
 ]
 ---
 
-### 🎯 **Exam AZ-305 Overview**
+### **Exam AZ-305 Overview**
 
 * **Audience**: Experienced Azure professionals with prior knowledge of **Azure administration (AZ-104)**.
 * **Certification**: Part of earning the **Microsoft Certified: Azure Solutions Architect Expert** certification.
@@ -44,24 +44,17 @@ references: [
    * Compute (VMs, App Services, containers, AKS)
    * Hybrid and multi-cloud integration
 
----
 
----
-
-### ✅ **AZ-305 Prerequisites**
+### **AZ-305 Prerequisites**
 
 This exam is **not for beginners**. It assumes **real-world experience** with Azure infrastructure and services. Below are the recommended prerequisites:
 
----
-
 ### 1. **Certification Prerequisite**
 
-* 🧾 **Must complete Exam AZ-104** *(Microsoft Azure Administrator)* or have equivalent knowledge.
+* **Must complete Exam AZ-104** *(Microsoft Azure Administrator)* or have equivalent knowledge.
 
   * Covers core services: compute, storage, networking, identity, and governance.
   * Exam link: [AZ-104 Exam Overview](https://learn.microsoft.com/en-us/credentials/certifications/exams/az-104)
-
----
 
 ### 2. **Hands-On Experience**
 
@@ -78,5 +71,3 @@ You should be confident in **designing and implementing solutions** in the follo
 | **Identity**    | Hybrid identity, Azure AD Connect, SSO          |
 | **Governance**  | Azure Policy, Blueprints, Cost Management       |
 
-
----
