@@ -95,10 +95,10 @@ const structuredData = {
     set:html={JSON.stringify(structuredData)}
   />
 
-  <!-- Using the grid-based layout similar to the example with improved mobile responsiveness -->
-  <section class="grid grid-cols-[minmax(0px,1fr)_min(calc(var(--breakpoint-lg)-2rem),100%)_minmax(0px,1fr)] gap-y-6 px-4 sm:px-0">
-    <!-- Breadcrumbs positioned in centered column -->
-    <div class="col-start-2 mt-4 sm:mt-8">
+  <!-- Main layout with sidebar -->
+  <div class="flex flex-col max-w-full relative">
+    <!-- Breadcrumbs positioned at top -->
+    <div class="w-full max-w-6xl mx-auto px-4 md:px-6 py-4">
       <Breadcrumbs
         items={[
           { href: '/certifications', label: 'Certifications', icon: 'lucide:folder' },
@@ -106,88 +106,165 @@ const structuredData = {
         ]}
       />
     </div>
+    
+    <!-- Main content area - flexible width with centered content -->
+    <main id="main-content" class="flex-1 transition-all duration-300 ease-in-out pb-12">
+      <div class="mx-auto max-w-5xl px-4 md:px-6 lg:px-8"
 
-    <!-- Certification header in centered column -->
-    <section class="col-start-2 flex flex-col gap-y-4 sm:gap-y-6 text-start">
-      <div class="flex flex-col">
-        <h1 id="page-title" class="mb-2 text-2xl leading-tight font-medium text-pretty sm:text-3xl md:text-4xl lg:text-5xl">
-          {certification.data.name}
-        </h1>
+      <!-- Certification header -->
+      <section class="flex flex-col gap-y-4 sm:gap-y-6 text-start mb-8">
+        <div class="flex flex-col">
+          <h1 id="page-title" class="mb-2 text-2xl leading-tight font-medium text-pretty sm:text-3xl md:text-4xl lg:text-5xl">
+            {certification.data.name}
+          </h1>
 
-        <div class="flex flex-wrap items-center gap-2">
-          {certification.data.tags?.length > 0 && (
-            <div class="flex flex-wrap gap-2 items-center">
-              {certification.data.tags.map((tag) => (
-                <a
-                  href={`/tags/${tag}`}
-                  class={badgeVariants({ variant: 'secondary' })}
-                >
-                  <Icon name="lucide:hash" class="size-3" />
-                  {tag}
-                </a>
-              ))}
-            </div>
-          )}
+          <div class="flex flex-wrap items-center gap-2">
+            {certification.data.tags?.length > 0 && (
+              <div class="flex flex-wrap gap-2 items-center">
+                {certification.data.tags.map((tag) => (
+                  <a
+                    href={`/tags/${tag}`}
+                    class={badgeVariants({ variant: 'secondary' })}
+                  >
+                    <Icon name="lucide:hash" class="size-3" />
+                    {tag}
+                  </a>
+                ))}
+              </div>
+            )}
+          </div>
         </div>
+      </section>
+
+      <!-- Certification metadata -->
+      <div class="flex flex-wrap items-center gap-4 text-sm text-muted-foreground mb-6">
+        {certification.data.startDate && (
+          <div class="flex items-center gap-2">
+            <Icon name="lucide:calendar" class="h-4 w-4" />
+            <span>{new Date(certification.data.startDate).toLocaleDateString()}</span>
+            {certification.data.endDate && (
+              <span>- {new Date(certification.data.endDate).toLocaleDateString()}</span>
+            )}
+          </div>
+        )}
+
+        {certification.data.link && (
+          <div class="flex items-center gap-2">
+            <a
+              href={certification.data.link}
+              target="_blank"
+              rel="noopener noreferrer"
+              class="inline-flex items-center text-primary hover:underline"
+            >
+              <Icon name="lucide:external-link" class="h-4 w-4 mr-2" />
+              <span>View Official Certification</span>
+            </a>
+          </div>
+        )}
       </div>
-    </section>
 
-    <!-- Certification metadata in centered column -->
-    <div class="col-start-2 flex flex-wrap items-center gap-2 text-sm text-muted-foreground">
-      {certification.data.startDate && (
-        <div class="flex items-center gap-2">
-          <Icon name="lucide:calendar" class="h-4 w-4" />
-          <span>{new Date(certification.data.startDate).toLocaleDateString()}</span>
-          {certification.data.endDate && (
-            <span>- {new Date(certification.data.endDate).toLocaleDateString()}</span>
-          )}
+      <!-- Description if available -->
+      {certification.data.description && (
+        <div class="mb-8">
+          <div class="text-muted-foreground border-l-4 border-primary/50 pl-4 py-2 bg-muted/20 rounded-r-md">
+            {certification.data.description}
+          </div>
         </div>
       )}
 
-      {certification.data.link && (
-        <div class="flex items-center gap-2">
-          <a
-            href={certification.data.link}
-            target="_blank"
-            rel="noopener noreferrer"
-            class="inline-flex items-center text-primary hover:underline"
-          >
-            <Icon name="lucide:external-link" class="h-4 w-4 mr-2" />
-            <span class="hidden sm:inline">View Official Certification</span>
-            <span class="sm:hidden">View Certificate</span>
-          </a>
-        </div>
+      <!-- Certification image if available -->
+      {certification.data.image && (
+        <figure class="mb-8 sm:mb-10 rounded-lg overflow-hidden border shadow-sm">
+            <Image 
+              src={typeof certification.data.image === 'string' 
+                ? certification.data.image 
+                : certification.data.image?.src || ''}
+              alt={certification.data.name || ''}
+              class="w-full h-auto rounded-lg shadow-md"
+              width={1200}
+              height={800}
+              loading="lazy"
+            />
+        </figure>
       )}
-    </div>
 
-    <!-- Table of Contents - Collapsible on Mobile -->
-    {(filteredCertHeadings.length > 0 || renderedSections.length > 0) && (
-      <div class="col-start-2">
-        <details class="mt-6 mb-8 border rounded-lg shadow-sm overflow-hidden" open>
-          <summary class="bg-muted px-4 py-3 text-sm font-medium cursor-pointer flex items-center justify-between">
-            <span>Table of Contents</span>
-            <span class="toc-toggle text-muted-foreground">
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="toc-main-chevron"><path d="m6 9 6 6 6-6"/></svg>
-            </span>
-          </summary>
-          <nav class="px-4 py-3">
+      <!-- Mobile TOC toggle button -->
+      <button 
+        id="mobile-toc-toggle" 
+        class="fixed right-4 bottom-20 z-50 bg-primary hover:bg-primary/90 text-primary-foreground shadow-lg rounded-full p-3 flex items-center justify-center"
+        aria-label="Toggle table of contents"
+      >
+        <Icon name="lucide:list" class="h-5 w-5" />
+      </button>
+
+      <!-- Main content container with improved spacing -->
+      <article class="prose prose-lg max-w-none certification-content mb-12">
+        <div class="mb-8">
+          <CertificationContent />
+        </div>
+
+        <!-- Section contents with improved spacing -->
+        {renderedSections.map((section) => (
+          <section id={`section-${section.id}`} class="mb-10 sm:mb-14 border-t border-muted/60 pt-8">
+            <div class="section-content" data-section-id={section.id}>
+              <section.Content />
+            </div>
+          </section>
+        ))}
+
+        <!-- Back to top button -->
+        <button
+          id="back-to-top"
+          class="fixed bottom-4 right-4 sm:bottom-8 sm:right-8 p-3 bg-primary text-primary-foreground rounded-full shadow-lg opacity-0 invisible transition-all duration-300 z-10"
+          aria-label="Back to top"
+        >
+          <Icon name="lucide:arrow-up" class="h-5 w-5" />
+        </button>
+      </article>      </div>
+    </main>
+
+    <!-- Floating sidebar toggle button -->
+    <button 
+      id="sidebar-toggle" 
+      class="fixed right-0 top-1/2 -translate-y-1/2 z-40 bg-primary hover:bg-primary/90 text-primary-foreground h-12 w-8 flex items-center justify-center rounded-l-md shadow-lg transition-all duration-300"
+      aria-label="Toggle sidebar navigation"
+    >
+      <Icon name="lucide:chevron-left" id="sidebar-toggle-icon" class="h-5 w-5 transition-transform duration-300" />
+    </button>
+
+    <!-- Side navigation bar - floating overlay -->
+    <aside 
+      id="sidebar-nav" 
+      class="fixed top-0 right-0 bottom-0 w-full sm:max-w-xs md:w-80 bg-background/95 backdrop-blur-sm border-l border-muted shadow-xl transform translate-x-full transition-transform duration-300 ease-in-out overflow-hidden z-30"
+    >
+      <div class="h-full flex flex-col">
+        <!-- Close button for mobile -->
+        <div class="flex items-center justify-between p-4 border-b border-muted md:justify-center">
+          <h2 class="font-semibold text-lg">Table of Contents</h2>
+          <button id="mobile-close-toc" class="md:hidden p-2 rounded-md hover:bg-muted" aria-label="Close table of contents">
+            <Icon name="lucide:x" class="h-5 w-5" />
+          </button>
+        </div>
+
+        <!-- Scrollable TOC content -->
+        <div class="flex-1 overflow-y-auto p-4">
+          <nav class="toc-nav">
             <!-- Main overview section -->
             <div class="mb-6">
               <details class="toc-details" open>
-                <summary class="toc-summary cursor-pointer flex items-center justify-between font-semibold text-foreground mb-2">
-                  <span>Overview</span>
+                <summary class="toc-summary cursor-pointer flex items-center justify-between font-semibold text-foreground py-2 px-1 rounded-md hover:bg-muted">
                   <span class="text-muted-foreground toc-toggle" aria-hidden="true">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="toc-chevron"><path d="m6 9 6 6 6-6"/></svg>
+                    <Icon name="lucide:chevron-down" class="toc-chevron h-4 w-4" />
                   </span>
                 </summary>
-                <ul class="space-y-1 border-l border-muted pl-3 pt-2">
+                <ul class="space-y-1 border-l border-muted pl-3 pt-2 ml-2">
                   {filteredCertHeadings.map((heading) => (
                     <li>
                       <a
                         href={`#${heading.slug}`}
                         class={`
                           block py-1.5 text-muted-foreground hover:text-foreground
-                          transition-colors ${heading.depth === 1 ? 'font-medium' : 'text-[15px] pl-3'}
+                          transition-colors ${heading.depth === 1 ? 'font-medium' : 'text-[15px] pl-2'}
                           hover:bg-muted/40 rounded-md px-2 toc-item
                         `}
                         data-heading-id={heading.slug}
@@ -204,29 +281,29 @@ const structuredData = {
             {renderedSections.map((section) => (
               <div class="mb-6 toc-section-container">
                 <details class="toc-details">
-                  <summary class="toc-summary cursor-pointer flex items-center justify-between font-semibold text-foreground mb-2">
+                  <summary class="toc-summary cursor-pointer flex items-center justify-between font-semibold text-foreground py-2 px-1 rounded-md hover:bg-muted">
                     <a
                       href={`#section-${section.id}`}
-                      class="hover:text-primary toc-section-link"
+                      class="flex-1 hover:text-primary toc-section-link"
                       data-section-id={section.id}
                     >
                       {section.title}
                     </a>
-                    <span class="text-muted-foreground toc-toggle" aria-hidden="true">
-                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="toc-chevron"><path d="m6 9 6 6 6-6"/></svg>
+                    <span class="text-muted-foreground toc-toggle ml-2" aria-hidden="true">
+                      <Icon name="lucide:chevron-down" class="toc-chevron h-4 w-4" />
                     </span>
                   </summary>
 
                   {section.headings.length > 0 && (
-                    <ul class="space-y-1 border-l border-muted pl-3 pt-2">
+                    <ul class="space-y-1 border-l border-muted/60 pl-3 pt-2 ml-2">
                       {section.headings.map((heading) => (
                         <li>
                           <a
                             href={`#section-${section.id}-${heading.slug}`}
                             class={`
                               block py-1.5 text-muted-foreground hover:text-foreground
-                              transition-colors ${heading.depth === 1 ? 'font-medium' : 'text-[15px] pl-3'}
-                              hover:bg-muted/40 rounded-md px-2 toc-item
+                              transition-colors ${heading.depth === 1 ? 'font-medium' : 'text-[15px] pl-2'}
+                              hover:bg-muted/50 rounded-md px-2 toc-item
                             `}
                             data-heading-id={`section-${section.id}-${heading.slug}`}
                           >
@@ -240,60 +317,23 @@ const structuredData = {
               </div>
             ))}
           </nav>
-        </details>
-      </div>
-    )}
-
-    <!-- Description if available -->
-    {certification.data.description && (
-      <div class="col-start-2">
-        <div class="text-muted-foreground border-l-4 border-muted pl-4 py-2 mb-6 bg-muted/20 rounded-r-md">
-          {certification.data.description}
+        </div>
+        
+        <!-- Progress indicator with improved styling -->
+        <div class="p-4 border-t border-muted bg-muted/10">
+          <div class="relative pt-1">
+            <div class="flex items-center justify-between mb-2">
+              <div class="text-sm font-medium text-foreground/80">Reading Progress</div>
+              <div class="text-sm font-medium text-foreground/80"><span id="progress-percentage">0</span>%</div>
+            </div>
+            <div class="overflow-hidden h-2 text-xs flex rounded-full bg-muted/50">
+              <div id="reading-progress-bar" class="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-primary rounded-full w-0 transition-all duration-300 ease-out"></div>
+            </div>
+          </div>
         </div>
       </div>
-    )}
-
-    <!-- Certification image if available -->
-    {certification.data.image && (
-      <figure class="col-start-2 mb-6 sm:mb-10 rounded-lg overflow-hidden border shadow-sm">
-          <Image 
-            src={typeof certification.data.image === 'string' 
-              ? certification.data.image 
-              : certification.data.image?.src || ''}
-            alt={certification.data.name || ''}
-            class="w-full h-auto rounded-lg shadow-md"
-            width={800}
-            height={600}
-            loading="lazy"
-          />
-      </figure>
-    )}
-
-    <!-- Main content container -->
-    <article class="col-start-2 prose prose-sm sm:prose-base md:prose-lg max-w-none certification-content mb-8">
-      <div class="mb-8">
-        <CertificationContent />
-      </div>
-
-      <!-- Section contents with improved spacing - removed duplicate section titles -->
-      {renderedSections.map((section) => (
-        <section id={`section-${section.id}`} class="mb-8 sm:mb-12">
-          <div class="section-content" data-section-id={section.id}>
-            <section.Content />
-          </div>
-        </section>
-      ))}
-
-      <!-- Back to top button - improved for mobile -->
-      <button
-        id="back-to-top"
-        class="fixed bottom-4 right-4 sm:bottom-8 sm:right-8 p-2 sm:p-3 bg-primary text-primary-foreground rounded-full shadow-lg opacity-0 invisible transition-all duration-300 z-10"
-        aria-label="Back to top"
-      >
-        <Icon name="lucide:arrow-up" class="h-4 w-4 sm:h-5 sm:w-5" />
-      </button>
-    </article>
-  </section>
+    </aside>
+  </div>
 </Layout>
 
 <style>
@@ -302,15 +342,81 @@ const structuredData = {
   :global(.certification-content h2),
   :global(.certification-content h3),
   :global(.certification-content h4) {
-    scroll-margin-top: 5rem;
+    scroll-margin-top: 2rem;
+    margin-top: 2.5rem;
+    margin-bottom: 1.5rem;
   }
 
   :global(#page-title) {
-    scroll-margin-top: 5rem;
+    scroll-margin-top: 2rem;
   }
 
   :global([id^="section-"]) {
-    scroll-margin-top: 5rem;
+    scroll-margin-top: 2rem;
+  }
+
+  /* Improve typography in the markdown content */
+  :global(.certification-content) {
+    font-size: 1.125rem;
+    line-height: 1.75;
+  }
+
+  :global(.certification-content p) {
+    margin-bottom: 1.5rem;
+    max-width: 70ch;
+  }
+
+  :global(.certification-content ul),
+  :global(.certification-content ol) {
+    margin-bottom: 1.5rem;
+    padding-left: 1.5rem;
+  }
+
+  :global(.certification-content li) {
+    margin-bottom: 0.5rem;
+  }
+
+  :global(.certification-content pre) {
+    padding: 1.25rem;
+    margin: 1.5rem 0;
+    border-radius: 0.5rem;
+    background-color: hsl(var(--muted));
+    overflow-x: auto;
+  }
+
+  :global(.certification-content img) {
+    max-width: 100%;
+    height: auto;
+    border-radius: 0.5rem;
+    margin: 1.5rem 0;
+  }
+
+  :global(.certification-content table) {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1.5rem 0;
+  }
+
+  :global(.certification-content th),
+  :global(.certification-content td) {
+    padding: 0.75rem;
+    border: 1px solid hsl(var(--border));
+  }
+
+  :global(.certification-content th) {
+    background-color: hsl(var(--muted));
+    text-align: left;
+    font-weight: 600;
+  }
+
+  :global(.certification-content blockquote) {
+    border-left: 4px solid hsl(var(--primary)/0.5);
+    padding: 1rem 1.5rem;
+    margin: 1.5rem 0;
+    font-style: italic;
+    color: hsl(var(--muted-foreground));
+    background-color: hsl(var(--muted)/0.2);
+    border-radius: 0 0.5rem 0.5rem 0;
   }
 
   /* TOC styling */
@@ -323,19 +429,17 @@ const structuredData = {
   }
 
   /* Rotate chevron when details are open */
-  details[open] .toc-chevron,
-  details[open] .toc-main-chevron {
+  details[open] .toc-chevron {
     transform: rotate(180deg);
   }
 
-  .toc-chevron,
-  .toc-main-chevron {
+  .toc-chevron {
     transition: transform 0.2s ease;
   }
 
   /* Active TOC item styling */
   :global(.toc-item.active) {
-    background-color: hsl(var(--muted)/0.7);
+    background-color: hsl(var(--muted));
     color: hsl(var(--foreground));
     font-weight: 500;
     border-left: 2px solid hsl(var(--primary));
@@ -345,40 +449,35 @@ const structuredData = {
   :global(.toc-section-container.active summary) {
     color: hsl(var(--primary));
     font-weight: 600;
+    background-color: hsl(var(--muted)/0.5);
   }
 
-  /* Indented TOC links */
-  .toc-nav ul.border-l {
-    border-color: hsl(var(--muted)/0.8);
+  /* Handle sidebar toggle state */
+  body.sidebar-expanded #main-content {
+    width: 100%;
   }
 
-  /* Section title links */
-  .toc-section-link {
-    flex: 1;
-    padding: 0.25rem 0;
+  body.sidebar-collapsed #main-content {
+    width: 100%;
   }
 
-  /* Make hovering over summary highlight the row */
-  .toc-summary:hover {
-    color: hsl(var(--primary));
+  /* Responsive adjustments */
+  @media (min-width: 1024px) {
+    body.sidebar-expanded #sidebar-toggle-icon {
+      transform: rotate(180deg);
+    }
+  }
+
+  /* TOC container styling */
+  .toc-nav {
+    margin-right: 0.5rem;
   }
 
   /* Mobile optimizations */
-  @media (max-width: 640px) {
+  @media (max-width: 767px) {
     :global(.certification-content) {
-      font-size: 16px;
-    }
-    
-    :global(.certification-content h1) {
-      font-size: 1.75rem;
-    }
-    
-    :global(.certification-content h2) {
-      font-size: 1.5rem;
-    }
-    
-    :global(.certification-content h3) {
-      font-size: 1.25rem;
+      font-size: 1rem;
+      line-height: 1.6;
     }
   }
 </style>
@@ -397,72 +496,99 @@ const structuredData = {
     // Setup smooth scrolling
     setupSmoothScrolling();
 
+    // Setup sidebar toggle functionality
+    setupSidebar();
+
+    // Setup reading progress tracking
+    setupReadingProgress();
+
     // Setup TOC section expansion when scrolled to section
     setupTocSectionExpansion();
 
     // Fix section link clicks
     fixSectionLinkBehavior();
-
-    // Close main TOC on small screens after selection
-    setupMobileToC();
   });
 
-  // New function to handle mobile TOC behavior
-  function setupMobileToC() {
-    // Auto-collapse main TOC on mobile devices initially
-    if (window.innerWidth < 768) {
-      const mainTocDetails = document.querySelector('.col-start-2 > details');
-      if (mainTocDetails && mainTocDetails instanceof HTMLDetailsElement) {
-        mainTocDetails.open = false;
+  function setupSidebar() {
+    const body = document.body;
+    const sidebarToggle = document.getElementById('sidebar-toggle');
+    const sidebarNav = document.getElementById('sidebar-nav');
+    const mobileTocToggle = document.getElementById('mobile-toc-toggle');
+    const mobileCloseButton = document.getElementById('mobile-close-toc');
+    
+    // Set initial state
+    body.classList.add('sidebar-collapsed');
+    
+    // Toggle sidebar
+    sidebarToggle?.addEventListener('click', () => {
+      if (body.classList.contains('sidebar-expanded')) {
+        body.classList.remove('sidebar-expanded');
+        body.classList.add('sidebar-collapsed');
+        sidebarNav?.classList.add('translate-x-full');
+        sidebarToggle.querySelector('#sidebar-toggle-icon')?.classList.remove('rotate-180');
+      } else {
+        body.classList.remove('sidebar-collapsed');
+        body.classList.add('sidebar-expanded');
+        sidebarNav?.classList.remove('translate-x-full');
+        sidebarToggle.querySelector('#sidebar-toggle-icon')?.classList.add('rotate-180');
       }
-    }
+    });
 
-    // Close main TOC after clicking a link on mobile
+    // Show sidebar on mobile
+    mobileTocToggle?.addEventListener('click', () => {
+      sidebarNav?.classList.remove('translate-x-full');
+      body.classList.add('sidebar-expanded');
+      body.classList.remove('sidebar-collapsed');
+    });
+
+    // Hide sidebar on mobile
+    mobileCloseButton?.addEventListener('click', () => {
+      sidebarNav?.classList.add('translate-x-full');
+      body.classList.remove('sidebar-expanded');
+      body.classList.add('sidebar-collapsed');
+    });
+
+    // Close TOC when clicking a link
     document.querySelectorAll('.toc-item, .toc-section-link').forEach(link => {
       link.addEventListener('click', () => {
-        if (window.innerWidth < 768) {
-          const mainTocDetails = document.querySelector('.col-start-2 > details');
-          if (mainTocDetails && mainTocDetails instanceof HTMLDetailsElement) {
-            setTimeout(() => {
-              mainTocDetails.open = false;
-            }, 500); // Short delay to allow navigation to complete
-          }
+        if (window.innerWidth < 1024) {
+          sidebarNav?.classList.add('translate-x-full');
+          body.classList.remove('sidebar-expanded');
+          body.classList.add('sidebar-collapsed');
         }
       });
+    });
+
+    // Close on backdrop click (for mobile)
+    document.addEventListener('click', (e) => {
+      const clickedOutside = !sidebarNav?.contains(e.target) && 
+                            !sidebarToggle?.contains(e.target) && 
+                            !mobileTocToggle?.contains(e.target);
+      
+      if (clickedOutside && window.innerWidth < 1024 && body.classList.contains('sidebar-expanded')) {
+        sidebarNav?.classList.add('translate-x-full');
+        body.classList.remove('sidebar-expanded');
+        body.classList.add('sidebar-collapsed');
+      }
     });
   }
 
-  // Fix section link behavior to prevent default toggle
-  function fixSectionLinkBehavior() {
-    // Handle desktop section links
-    document.querySelectorAll('.toc-section-link').forEach(link => {
-      link.addEventListener('click', (e) => {
-        // Allow the link to work without toggling the details element
-        e.stopPropagation();
-
-        // Get the section ID and scroll to it
-        const sectionId = link.getAttribute('data-section-id');
-        if (sectionId) {
-          const targetEl = document.getElementById(`section-${sectionId}`);
-          if (targetEl) {
-            e.preventDefault();
-            window.scrollTo({
-              top: targetEl.getBoundingClientRect().top + window.pageYOffset - 100,
-              behavior: 'smooth'
-            });
-
-            // Update URL hash
-            history.pushState(null, '', `#section-${sectionId}`);
-
-            // Expand the details element
-            const detailsEl = link.closest('details');
-            if (detailsEl && !detailsEl.open) {
-              detailsEl.open = true;
-            }
-          }
-        }
+  function setupReadingProgress() {
+    const progressBar = document.getElementById('reading-progress-bar');
+    const progressPercentage = document.getElementById('progress-percentage');
+    
+    if (progressBar && progressPercentage) {
+      window.addEventListener('scroll', () => {
+        const scrollTop = window.scrollY;
+        const docHeight = document.body.offsetHeight;
+        const winHeight = window.innerHeight;
+        const scrollPercent = scrollTop / (docHeight - winHeight);
+        const scrollPercentRounded = Math.round(scrollPercent * 100);
+        
+        progressBar.style.width = `${scrollPercentRounded}%`;
+        progressPercentage.textContent = scrollPercentRounded;
       });
-    });
+    }
   }
 
   function fixHeadingIds() {
@@ -471,8 +597,8 @@ const structuredData = {
       const sectionId = sectionContent.getAttribute('data-section-id');
       if (!sectionId) return;
 
-      // Find all h1, h2 tags without IDs and add them
-      const headings = sectionContent.querySelectorAll('h1, h2');
+      // Find all h1, h2, h3 tags without IDs and add them
+      const headings = sectionContent.querySelectorAll('h1, h2, h3');
       headings.forEach((heading) => {
         // Always assign ID even if it already has one, to ensure consistent format
         const headingText = heading.textContent?.trim() || '';
@@ -515,6 +641,12 @@ const structuredData = {
               if (sectionDetails && !sectionDetails.open) {
                 sectionDetails.open = true;
               }
+
+              // Add active class to the section container
+              document.querySelectorAll('.toc-section-container').forEach(container => {
+                container.classList.remove('active');
+              });
+              sectionDetails?.closest('.toc-section-container')?.classList.add('active');
             }
           }
         });
@@ -523,7 +655,7 @@ const structuredData = {
     );
 
     // Observe all headings and section elements
-    document.querySelectorAll('h1[id], h2[id], section[id]').forEach((el) => {
+    document.querySelectorAll('h1[id], h2[id], h3[id], section[id]').forEach((el) => {
       observer.observe(el);
     });
   }
@@ -571,7 +703,7 @@ const structuredData = {
             }
 
             window.scrollTo({
-              top: targetEl.getBoundingClientRect().top + window.pageYOffset - 100,
+              top: targetEl.getBoundingClientRect().top + window.pageYOffset - 80,
               behavior: 'smooth'
             });
 
@@ -598,15 +730,6 @@ const structuredData = {
             )?.closest('details');
 
             if (sectionDetails) {
-              // Close all other sections first
-              document.querySelectorAll('.toc-section-container details').forEach(details => {
-                if (details !== sectionDetails) {
-                  if (details instanceof HTMLDetailsElement) {
-                     details.open = false;
-                  }
-                }
-              });
-
               // Open this section
               sectionDetails.open = true;
 
@@ -625,6 +748,39 @@ const structuredData = {
     // Observe all section elements
     document.querySelectorAll('section[id^="section-"]').forEach((el) => {
       sectionObserver.observe(el);
+    });
+  }
+
+  // Fix section link behavior to prevent default toggle
+  function fixSectionLinkBehavior() {
+    // Handle desktop section links
+    document.querySelectorAll('.toc-section-link').forEach(link => {
+      link.addEventListener('click', (e) => {
+        // Allow the link to work without toggling the details element
+        e.stopPropagation();
+
+        // Get the section ID and scroll to it
+        const sectionId = link.getAttribute('data-section-id');
+        if (sectionId) {
+          const targetEl = document.getElementById(`section-${sectionId}`);
+          if (targetEl) {
+            e.preventDefault();
+            window.scrollTo({
+              top: targetEl.getBoundingClientRect().top + window.pageYOffset - 80,
+              behavior: 'smooth'
+            });
+
+            // Update URL hash
+            history.pushState(null, '', `#section-${sectionId}`);
+
+            // Expand the details element
+            const detailsEl = link.closest('details');
+            if (detailsEl && !detailsEl.open) {
+              detailsEl.open = true;
+            }
+          }
+        }
+      });
     });
   }
 </script>
