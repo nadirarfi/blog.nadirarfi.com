@@ -571,6 +571,42 @@ const structuredData = {
     }
   }
 
+    function setupTocSectionExpansion() {
+      // When a section is in view, expand its section in the TOC
+      const sectionObserver = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              const id = entry.target.getAttribute('id');
+              if (!id || !id.startsWith('section-')) return;
+
+              // Find and expand the corresponding details in TOC
+              const sectionDetails = document.querySelector(
+                `.toc-section-container details summary a[href="#${id}"]`
+              )?.closest('details');
+
+              if (sectionDetails) {
+                // Open this section
+                sectionDetails.open = true;
+
+                // Add active class to the section container
+                document.querySelectorAll('.toc-section-container').forEach(container => {
+                  container.classList.remove('active');
+                });
+                sectionDetails.closest('.toc-section-container')?.classList.add('active');
+              }
+            }
+          });
+        },
+        { rootMargin: '-10% 0px -80% 0px', threshold: 0.1 }
+      );
+
+      // Observe all section elements
+      document.querySelectorAll('section[id^="section-"]').forEach((el) => {
+        sectionObserver.observe(el);
+      });
+    }
+
   function fixHeadingIds() {
     // Process all headings in section contents
     document.querySelectorAll('.section-content').forEach(sectionContent => {
